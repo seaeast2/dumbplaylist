@@ -10,7 +10,7 @@ import com.example.dumbplaylist.R
 import com.example.dumbplaylist.util.Injector
 import com.example.dumbplaylist.viewmodel.PlaylistsViewModel
 
-class YoutubePlayerFragment : Fragment() {
+class VideoListFragment : Fragment() {
     private val viewModel: PlaylistsViewModel by viewModels {
         Injector.providePlaylistViewModelFactory(requireContext())
     }
@@ -19,7 +19,9 @@ class YoutubePlayerFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.youtube_player_fragment, container, false)
+        return inflater.inflate(R.layout.video_list_fragment, container, false)
+
+
     }
 }
 

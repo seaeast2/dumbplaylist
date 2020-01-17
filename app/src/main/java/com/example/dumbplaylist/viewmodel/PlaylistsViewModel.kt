@@ -10,7 +10,7 @@ import com.example.dumbplaylist.model.PlaylistRepository
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
-class MyPlaylistViewModel(private val repository: PlaylistRepository) : ViewModel() {
+class PlaylistsViewModel(private val repository: PlaylistRepository) : ViewModel() {
     // TODO : 어디 구석에 아래 값들 저장해 놓을 것
     private val GOOGLE_YOUTUBE_API_KEY: String = "AIzaSyDeiMcA8WswiJJu6IyUYit3Zjg7vmo7U9A"
     private val CHANNEL_ID: String = "UCGDA1e6qQSAH0R9hoip9VrA"

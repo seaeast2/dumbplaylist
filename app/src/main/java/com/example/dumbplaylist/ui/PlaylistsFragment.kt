@@ -12,13 +12,13 @@ import com.example.dumbplaylist.adapter.PlaylistAdapter
 import com.example.dumbplaylist.databinding.MyPlaylistFragmentBinding
 import com.example.dumbplaylist.model.PlaylistRepository
 import com.example.dumbplaylist.util.Injector
-import com.example.dumbplaylist.viewmodel.MyPlaylistViewModel
+import com.example.dumbplaylist.viewmodel.PlaylistsViewModel
 
 
-class MyPlaylistFragment : Fragment() {
+class PlaylistsFragment : Fragment() {
     // viewModel 은 observe 되기 전에 항상 생성되어 있어야 함.
     // 그래서 class 생성시 초기화 되도록 property delegation 으로 처리
-    private val viewModel: MyPlaylistViewModel by viewModels {
+    private val viewModel: PlaylistsViewModel by viewModels {
         Injector.providePlaylistViewModelFactory(requireContext())
     }
 
@@ -51,7 +51,7 @@ class MyPlaylistFragment : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when(item.itemId) {
             R.id.add_dummy_menu -> {
-                updateData()
+                //updateData()
                 true
             }
             R.id.del_dummy_menu -> {
@@ -70,17 +70,17 @@ class MyPlaylistFragment : Fragment() {
 
     companion object {
         private val TAG = "PlaylistFragment"
-        fun newInstance() = MyPlaylistFragment()
+        fun newInstance() = PlaylistsFragment()
     }
 }
 
 /**
- * Factory for creating a [MyPlaylistViewModel] with a constructor that takes a [PlaylistRepository].
+ * Factory for creating a [PlaylistsViewModel] with a constructor that takes a [PlaylistRepository].
  */
 
 class MyPlaylistViewModelFactory(
     private val repository: PlaylistRepository
 ) : ViewModelProvider.NewInstanceFactory() {
     @Suppress("UNCHECKED_CAST")
-    override fun <T : ViewModel> create(modelClass: Class<T>) = MyPlaylistViewModel(repository) as T
+    override fun <T : ViewModel> create(modelClass: Class<T>) = PlaylistsViewModel(repository) as T
 }

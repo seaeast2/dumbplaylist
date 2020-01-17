@@ -2,7 +2,7 @@ package com.example.dumbplaylist
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import com.example.dumbplaylist.ui.MyPlaylistFragment
+import com.example.dumbplaylist.ui.PlaylistsFragment
 
 class MainActivity : AppCompatActivity() {
 
@@ -11,7 +11,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.main_activity)
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction()
-                .replace(R.id.container, MyPlaylistFragment.newInstance())
+                .replace(R.id.container, PlaylistsFragment.newInstance())
                 .commitNow()
         }
     }
