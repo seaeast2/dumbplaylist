@@ -5,8 +5,6 @@ import com.example.dumbplaylist.model.AppDatabase
 import com.example.dumbplaylist.model.NetworkService
 import com.example.dumbplaylist.model.PlaylistRepository
 import com.example.dumbplaylist.ui.MyPlaylistViewModelFactory
-import com.example.dumbplaylist.ui.VideoListViewModelFactory
-import com.example.dumbplaylist.ui.YoutubePlayerViewModelFactory
 
 interface ViewModelFactoryProvider {
     fun providePlaylistViewModelFactory(context: Context): MyPlaylistViewModelFactory
