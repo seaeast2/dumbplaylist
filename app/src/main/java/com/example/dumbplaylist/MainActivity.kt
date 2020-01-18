@@ -12,7 +12,6 @@ class MainActivity : AppCompatActivity() {
         // After Navigation
         setContentView<MainActivityBinding>(this, R.layout.main_activity)
 
-
         /* Befor Navigation
         setContentView(R.layout.main_activity)
         if (savedInstanceState == null) {
