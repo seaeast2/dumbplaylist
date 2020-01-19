@@ -5,8 +5,8 @@
 
     <data>
         <variable
-            name="playlist"
-            type="com.example.dumbplaylist.model.Playlist" />
+            name="videolist"
+            type="com.example.dumbplaylist.model.PlayItem" />
         <variable
             name="clickListener"
             type="android.view.View.OnClickListener" />
@@ -19,12 +19,11 @@
         android:onClick="@{clickListener}">
 
         <TextView
-            android:id="@+id/playlist_item_name"
+            android:id="@+id/video_list_item_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="50sp"
-            android:text="@{playlist.title}"/>
+            android:text="@{videolist.title}"/>
 
     </LinearLayout>
-
 </layout>

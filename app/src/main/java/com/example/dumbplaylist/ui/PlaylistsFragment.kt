@@ -9,7 +9,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.observe
 import com.example.dumbplaylist.R
 import com.example.dumbplaylist.adapter.PlaylistAdapter
-import com.example.dumbplaylist.databinding.MyPlaylistFragmentBinding
+import com.example.dumbplaylist.databinding.PlaylistsFragmentBinding
 import com.example.dumbplaylist.model.PlaylistRepository
 import com.example.dumbplaylist.util.Injector
 import com.example.dumbplaylist.viewmodel.PlaylistsViewModel
@@ -25,11 +25,12 @@ class PlaylistsFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle? ): View {
-        val binding = MyPlaylistFragmentBinding.inflate(inflater, container, false)
+        val binding = PlaylistsFragmentBinding.inflate(inflater, container, false)
         context ?: return binding.root
 
         val adapter = PlaylistAdapter()
-        binding.myPlaylists.adapter = adapter // binding 을 사용해서 RecyclerView.Adapter 를 바로 연결함
+        // binding 을 사용해서 RecyclerView.Adapter 를 연결함
+        binding.playlistsRcview.adapter = adapter
         subscribeUi(adapter) // RecyclerView.Adapter 에 데이터 연결
 
         // Fragment용 메뉴활성화
@@ -51,7 +52,7 @@ class PlaylistsFragment : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when(item.itemId) {
             R.id.add_dummy_menu -> {
-                //updateData()
+                updateData()
                 true
             }
             R.id.del_dummy_menu -> {
@@ -70,7 +71,6 @@ class PlaylistsFragment : Fragment() {
 
     companion object {
         private val TAG = "PlaylistFragment"
-        fun newInstance() = PlaylistsFragment()
     }
 }
 
