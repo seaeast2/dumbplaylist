@@ -8,7 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.example.dumbplaylist.R
+import com.example.dumbplaylist.databinding.YoutubePlayerFragmentBinding
 import com.example.dumbplaylist.model.PlaylistRepository
 import com.example.dumbplaylist.util.Injector
 import com.example.dumbplaylist.viewmodel.YoutubePlayerViewModel
@@ -22,7 +22,13 @@ class YoutubePlayerFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.youtube_player_fragment, container, false)
+        val binding = YoutubePlayerFragmentBinding.inflate(inflater, container, false)
+        context?:binding.root
+
+        val youTubePlayerView = binding.youtubePlayerView
+        lifecycle.addObserver(youTubePlayerView)
+
+        return binding.root
     }
 }
 
