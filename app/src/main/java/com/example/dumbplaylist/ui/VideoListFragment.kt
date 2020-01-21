@@ -37,9 +37,28 @@ class VideoListFragment : Fragment() {
         return binding.root
     }
 
+    // Menu ====================================
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.playlist_frag_menu, menu)
     }
+
+    // 메뉴 선택 처리
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when(item.itemId) {
+            R.id.add_dummy_menu -> {
+                updateData()
+                true
+            }
+            R.id.del_dummy_menu -> {
+                true
+            }
+
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+
+    // Update data =============================
 
     fun subscribeUi(adapter: VideoListAdapter) {
         viewModel.playItems.observe(viewLifecycleOwner) {

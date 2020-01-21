@@ -5,9 +5,11 @@ import com.example.dumbplaylist.model.AppDatabase
 import com.example.dumbplaylist.model.NetworkService
 import com.example.dumbplaylist.model.PlaylistRepository
 import com.example.dumbplaylist.ui.MyPlaylistViewModelFactory
+import com.example.dumbplaylist.ui.YoutubePlayerViewModelFactory
 
 interface ViewModelFactoryProvider {
     fun providePlaylistViewModelFactory(context: Context): MyPlaylistViewModelFactory
+    fun provideYoutubePlayerViewModelFactory(context: Context): YoutubePlayerViewModelFactory
 }
 
 // 실제로 사용되는건 이것임
@@ -31,6 +33,11 @@ private object DefaultViewModelProvider: ViewModelFactoryProvider {
     override fun providePlaylistViewModelFactory(context: Context): MyPlaylistViewModelFactory {
         val repository = getRepository(context)
         return MyPlaylistViewModelFactory(repository)
+    }
+
+    override fun provideYoutubePlayerViewModelFactory(context: Context): YoutubePlayerViewModelFactory {
+        val repository = getRepository(context)
+        return YoutubePlayerViewModelFactory(repository)
     }
 }
 

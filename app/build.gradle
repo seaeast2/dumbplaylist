@@ -64,7 +64,6 @@ dependencies {
     implementation "androidx.navigation:navigation-fragment-ktx:2.1.0"
     implementation "androidx.navigation:navigation-ui-ktx:2.1.0"
 
-
     // Room database
     implementation "androidx.room:room-runtime:2.2.3"
     // Room for database
@@ -87,10 +86,10 @@ dependencies {
     implementation "com.squareup.retrofit2:converter-gson:2.6.2"
     implementation "com.squareup.retrofit2:retrofit:2.6.2"
 
-    // Youtube API
-    //implementation "com.google.api-client:google-api-client-android:1.23.0"
-    //implementation "com.google.apis:google-api-services-youtube:v3-rev198-1.23.0"
+    // Youtube Player API
+    implementation 'com.pierfrancescosoffritti.androidyoutubeplayer:core:10.0.5'
 
+    // Multidex
     implementation 'com.android.support:multidex:1.0.3'
 
     testImplementation 'junit:junit:4.12'
