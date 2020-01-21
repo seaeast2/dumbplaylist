@@ -56,6 +56,7 @@ class PlaylistsFragment : Fragment() {
                 true
             }
             R.id.del_dummy_menu -> {
+
                 true
             }
 

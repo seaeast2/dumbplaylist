@@ -8,9 +8,9 @@ import androidx.navigation.findNavController
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.example.dumbplaylist.R
 import com.example.dumbplaylist.databinding.ListItemPlaylistBinding
 import com.example.dumbplaylist.model.Playlist
+import com.example.dumbplaylist.ui.PlaylistsFragmentDirections
 
 class PlaylistAdapter: ListAdapter<Playlist, RecyclerView.ViewHolder>(PlaylistDiffCallback()) {
     // 뷰홀더 생성
@@ -39,14 +39,20 @@ class PlaylistAdapter: ListAdapter<Playlist, RecyclerView.ViewHolder>(PlaylistDi
         init {
             // TODO : Navigation transition 연결
             // Click 이벤트는 이곳에서 구현
-            binding.setClickListener {
-                navigateToVideoList(it)
-                //Toast.makeText(context, "Test", Toast.LENGTH_SHORT).show()
+            binding.setClickListener {view ->
+                binding.playlist?.let {playlist ->
+                    navigateToVideoList(view, playlist.playlistId)
+                }
             }
         }
 
-        private fun navigateToVideoList(view: View) {
-            view.findNavController().navigate(R.id.action_playlistsFragment_to_videoListFragment)
+        private fun navigateToVideoList(view: View, playlistId: String) {
+            // ID 를 통해 이동
+            //view.findNavController().navigate(R.id.action_playlistsFragment_to_videoListFragment)
+
+            // SafeArgs 를 통해 이동
+            val direction = PlaylistsFragmentDirections.actionPlaylistsFragmentToVideoListFragment("test")
+            view.findNavController().navigate(direction)
         }
 
         // 데이터를 ViewHolder 에 채워 넣음.

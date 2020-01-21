@@ -21,6 +21,9 @@
         <action
             android:id="@+id/action_videoListFragment_to_youtubePlayerFragment"
             app:destination="@id/youtubePlayerFragment" />
+        <argument
+            android:name="playlistId"
+            app:argType="string" />
     </fragment>
     <fragment
         android:id="@+id/youtubePlayerFragment"
