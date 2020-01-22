@@ -6,6 +6,7 @@ import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
+import retrofit2.http.Query
 
 
 //val youtTube: YouTube
@@ -44,6 +45,16 @@ class NetworkService {
 }
 
 interface YoutubeService {
+    // 검색
+    @GET("youtube/v3/search?part=snippet&key=AIzaSyDeiMcA8WswiJJu6IyUYit3Zjg7vmo7U9A")
+    suspend fun fetchSearchResult(@Query("q")searchTerm: String,
+                                   @Query("type")queryType: String = "playlist")
+
+    // PlaylistItems
+    @GET("youtube/v3/playlistItems?part=snippet&key=AIzaSyDeiMcA8WswiJJu6IyUYit3Zjg7vmo7U9A")
+    suspend fun fetchPlaylistItems(@Query("id")playlistId: String,
+                                   @Query("type")queryType: String = "playlist")
+
     @GET("youtube/v3/search?part=snippet&q=Kpop&type=playlist&key=AIzaSyDeiMcA8WswiJJu6IyUYit3Zjg7vmo7U9A")
     suspend fun fetchPlaylists(): PlaylistsJson
 
