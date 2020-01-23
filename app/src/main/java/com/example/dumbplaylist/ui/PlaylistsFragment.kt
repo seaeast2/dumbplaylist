@@ -52,11 +52,9 @@ class PlaylistsFragment : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when(item.itemId) {
             R.id.add_dummy_menu -> {
-                updateData()
                 true
             }
             R.id.del_dummy_menu -> {
-
                 true
             }
 
@@ -64,11 +62,11 @@ class PlaylistsFragment : Fragment() {
         }
     }
 
-    fun updateData() {
-        with(viewModel) {
-            fetchPlaylists()
-        }
-    }
+//    fun updateData() {
+//        with(viewModel) {
+//
+//        }
+//    }
 
     companion object {
         private val TAG = "PlaylistFragment"

@@ -20,7 +20,8 @@ val Injector: ViewModelFactoryProvider
 private object DefaultViewModelProvider: ViewModelFactoryProvider {
     // Get repository
     private fun getRepository(context: Context) =
-        PlaylistRepository.getInstance(playlistDao(context), playlistItemDao(context), networkService())
+        PlaylistRepository.getInstance(playlistDao(context),
+            playlistItemDao(context), networkService())
 
     // Get playlist, playlist item Dao object
     private fun playlistDao(context: Context) =

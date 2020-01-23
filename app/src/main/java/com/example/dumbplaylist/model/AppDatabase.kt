@@ -10,12 +10,12 @@ import androidx.room.RoomDatabase
  *  The Room database for this app
  */
 
-@Database(entities = [Playlist::class, PlayItem::class], version = 1, exportSchema = false)
+@Database(entities = [Playlist::class, PlaylistItem::class], version = 1, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
     // 이거 자동생성되는 함수. 아마도 return Type 으로 타입추론 해서 생성되는 것 같음.
     abstract fun playlistDao(): PlaylistDao
 
-    abstract fun playlistItemDao(): PlayItemDao
+    abstract fun playlistItemDao(): PlaylistItemDao
 
     companion object {
         // For Singleton instantiation

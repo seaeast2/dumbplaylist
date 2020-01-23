@@ -15,7 +15,7 @@
     </fragment>
     <fragment
         android:id="@+id/videoListFragment"
-        android:name="com.example.dumbplaylist.ui.VideoListFragment"
+        android:name="com.example.dumbplaylist.ui.PlaylistItemsFragment"
         android:label="video_list_fragment"
         tools:layout="@layout/video_list_fragment" >
         <action

@@ -1,43 +1,42 @@
 package com.example.dumbplaylist.model
 
-data class PlaylistsJson(
+data class PlaylistsSearchResult(
     val kind: String,
     val etag: String,
     val nextPageToken: String,
     val prevPageToken: String,
     val regionCode: String,
     val pageInfo: PageInfo,
-    val items: List<PlaylistItem>)
+    val items: List<PlaylistsItem>)
 
-
-data class PlayItemsJson(val kind: String,
-                         val etag: String,
-                         val nextPageToken: String,
-                         val regionCode: String,
-                         val pageInfo: PageInfo,
-                         val items: List<VideoItem>)
+// YouTube PlaylistItems 목록
+data class PlaylistItemsList(val kind: String,
+                             val etag: String,
+                             val nextPageToken: String,
+                             val prevPageToken: String,
+                             val regionCode: String,
+                             val pageInfo: PageInfo,
+                             val items: List<PlaylistItemsItem>)
 
 
 data class PageInfo(val totalResults: Int,
                     val resultsPerPage: Int)
 
 // for playlist
-data class PlaylistItem(val kind: String,
+data class PlaylistsItem(val kind: String,
                 val etag: String,
                 val id: PlaylistId, // 이것만 다름
-                val snippet: Snippet)
+                val snippet: SnippetForSearch)
 data class PlaylistId(val kind: String,
-              val playlistId: String)
+                      val playlistId: String)
+
 // for video list
-data class VideoItem(val kind: String,
+data class PlaylistItemsItem(val kind: String,
                      val etag: String,
-                     val id: VideoId, // 이것만 다름
-                     val snippet: Snippet)
-data class VideoId(val kind: String,
-                   val videoId: String)
-
-
-data class Snippet(val publishedAt: String,
+                     val id: String, // 이것만 다름
+                     val snippet: SnippetForPlaylistItems)
+// for playlists
+data class SnippetForSearch(val publishedAt: String,
                    val channelId: String,
                    val title: String,
                    val description: String,
@@ -45,6 +44,18 @@ data class Snippet(val publishedAt: String,
                    val channelTitle: String,
                    val liveBroadcastContent: String)
 
+data class SnippetForPlaylistItems(val publishedAt: String,
+                                   val channelId: String,
+                                   val title: String,
+                                   val description: String,
+                                   val thumbnails: Thumbnails,
+                                   val channelTitle: String,
+                                   val playlistId: String,
+                                   val position: Int,
+                                   val resourceId: ResourceId)
+
+data class ResourceId(val kind: String,
+                      val videoId: String)
 
 data class Thumbnails( val default: Thumbnail,
                        val medium: Thumbnail,

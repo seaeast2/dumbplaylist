@@ -5,13 +5,18 @@ import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.observe
+import androidx.navigation.fragment.navArgs
 import com.example.dumbplaylist.R
 import com.example.dumbplaylist.adapter.VideoListAdapter
 import com.example.dumbplaylist.databinding.VideoListFragmentBinding
 import com.example.dumbplaylist.util.Injector
 import com.example.dumbplaylist.viewmodel.PlaylistsViewModel
 
-class VideoListFragment : Fragment() {
+class PlaylistItemsFragment : Fragment() {
+
+    // Recieve argument through navagation.
+    private val args: PlaylistItemsFragmentArgs by navArgs()
+
 
     // ViewModel 은 공유한다.
     private val viewModel: PlaylistsViewModel by viewModels {
@@ -34,6 +39,9 @@ class VideoListFragment : Fragment() {
         subscribeUi(adapter)
         // 6. 메뉴 활성화
         setHasOptionsMenu(true)
+        // 7. Playlist
+        // 7. args 를통해 받은 playlistId 을 기반으로 PlaylistItems Query 를 날려서 리스트 갱신
+        //viewModel.fetchPlaylistItems(args.playlistId)
         return binding.root
     }
 
@@ -46,7 +54,6 @@ class VideoListFragment : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when(item.itemId) {
             R.id.add_dummy_menu -> {
-                updateData()
                 true
             }
             R.id.del_dummy_menu -> {
@@ -57,18 +64,9 @@ class VideoListFragment : Fragment() {
         }
     }
 
-
-    // Update data =============================
-
     fun subscribeUi(adapter: VideoListAdapter) {
-        viewModel.playItems.observe(viewLifecycleOwner) {
+        viewModel.playlistItems.observe(viewLifecycleOwner) {
             adapter.submitList(it)
-        }
-    }
-
-    fun updateData() {
-        with(viewModel) {
-            fetchPlayItems()
         }
     }
 }

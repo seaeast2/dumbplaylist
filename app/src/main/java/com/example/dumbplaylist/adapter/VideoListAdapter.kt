@@ -11,9 +11,9 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.dumbplaylist.R
 import com.example.dumbplaylist.databinding.ListItemVideolistBinding
-import com.example.dumbplaylist.model.PlayItem
+import com.example.dumbplaylist.model.PlaylistItem
 
-class VideoListAdapter: ListAdapter<PlayItem, RecyclerView.ViewHolder>(PlayItemDiffCallback()) {
+class VideoListAdapter: ListAdapter<PlaylistItem, RecyclerView.ViewHolder>(PlayItemDiffCallback()) {
 
     // ViewHolder 생성
     // ViewHolder 가 필요할 때마다 하나씩 생성한다.
@@ -50,7 +50,7 @@ class VideoListAdapter: ListAdapter<PlayItem, RecyclerView.ViewHolder>(PlayItemD
             view.findNavController().navigate(R.id.action_videoListFragment_to_youtubePlayerFragment)
         }
 
-        fun bind(item: PlayItem) {
+        fun bind(item: PlaylistItem) {
             binding.apply {
                 videolist = item
                 executePendingBindings()
@@ -62,13 +62,13 @@ class VideoListAdapter: ListAdapter<PlayItem, RecyclerView.ViewHolder>(PlayItemD
 
 
 
-private class PlayItemDiffCallback : DiffUtil.ItemCallback<PlayItem>() {
+private class PlayItemDiffCallback : DiffUtil.ItemCallback<PlaylistItem>() {
     // 자료구조에 id 가 있으면 id 로 비교 하는 코드로 교환 가능
-    override fun areItemsTheSame(oldItem: PlayItem, newItem: PlayItem): Boolean {
+    override fun areItemsTheSame(oldItem: PlaylistItem, newItem: PlaylistItem): Boolean {
         return oldItem.id == newItem.id
     }
 
-    override fun areContentsTheSame(oldItem: PlayItem, newItem: PlayItem): Boolean {
+    override fun areContentsTheSame(oldItem: PlaylistItem, newItem: PlaylistItem): Boolean {
         return oldItem == newItem
     }
 }

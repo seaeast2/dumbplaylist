@@ -6,7 +6,7 @@
     <data>
         <variable
             name="videolist"
-            type="com.example.dumbplaylist.model.PlayItem" />
+            type="com.example.dumbplaylist.model.PlaylistItem" />
         <variable
             name="clickListener"
             type="android.view.View.OnClickListener" />

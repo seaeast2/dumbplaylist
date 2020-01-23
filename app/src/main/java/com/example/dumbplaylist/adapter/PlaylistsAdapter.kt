@@ -33,11 +33,11 @@ class PlaylistAdapter: ListAdapter<Playlist, RecyclerView.ViewHolder>(PlaylistDi
 
     // ViewHolder 가 실제적인 item 껍데기를 가지고 있음.
     // 화면 출력에 필요한 양만큼 생성된다.
-    class PlaylistViewHolder(private val binding: ListItemPlaylistBinding, private val context: Context) :
+    class PlaylistViewHolder(private val binding: ListItemPlaylistBinding,
+                             private val context: Context) :
         RecyclerView.ViewHolder(binding.root) {
 
         init {
-            // TODO : Navigation transition 연결
             // Click 이벤트는 이곳에서 구현
             binding.setClickListener {view ->
                 binding.playlist?.let {playlist ->
@@ -48,10 +48,12 @@ class PlaylistAdapter: ListAdapter<Playlist, RecyclerView.ViewHolder>(PlaylistDi
 
         private fun navigateToVideoList(view: View, playlistId: String) {
             // ID 를 통해 이동
-            //view.findNavController().navigate(R.id.action_playlistsFragment_to_videoListFragment)
+            //view.findNavController().
+            // navigate(R.id.action_playlistsFragment_to_videoListFragment)
 
             // SafeArgs 를 통해 이동
-            val direction = PlaylistsFragmentDirections.actionPlaylistsFragmentToVideoListFragment("test")
+            val direction = PlaylistsFragmentDirections.
+                actionPlaylistsFragmentToVideoListFragment(playlistId)
             view.findNavController().navigate(direction)
         }
 

@@ -8,10 +8,13 @@ import androidx.room.Query
 
 
 @Dao
-interface PlayItemDao {
-    @Query("SELECT * FROM playitems")
-    fun getPlayItems(): LiveData<List<PlayItem>>
+interface PlaylistItemDao {
+    @Query("SELECT * FROM playlistItems")
+    fun getPlayItems(): LiveData<List<PlaylistItem>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAll(plants: List<PlayItem>)
+    suspend fun insertAll(plants: List<PlaylistItem>)
+
+    @Query("DELETE FROM playlistItems")
+    suspend fun deleteAll()
 }

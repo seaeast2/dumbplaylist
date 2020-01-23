@@ -1,10 +1,7 @@
 package com.example.dumbplaylist.model
 
 import androidx.lifecycle.LiveData
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
+import androidx.room.*
 
 @Dao
 interface PlaylistDao {
@@ -13,4 +10,7 @@ interface PlaylistDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(plants: List<Playlist>)
+
+    @Query("DELETE FROM PLAYLISTS")
+    suspend fun deleteAll()
 }

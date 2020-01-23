@@ -10,6 +10,7 @@ data class Playlist(
     @PrimaryKey @ColumnInfo(name = "id") val playlistId: String,
     val title: String,
     val description: String,
-    val thumbnailUrl: String) {
-    override fun toString() = title
+    val thumbnailUrl: String,
+    val pageToken: String) {
+        override fun toString() = playlistId
 }
