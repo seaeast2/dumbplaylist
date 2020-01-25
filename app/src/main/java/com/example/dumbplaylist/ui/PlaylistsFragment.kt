@@ -35,6 +35,9 @@ class PlaylistsFragment : Fragment() {
 
         // Fragment용 메뉴활성화
         setHasOptionsMenu(true)
+
+        // TODO : 테스트용으로 삭제
+        viewModel.clearPlaylists()
         return binding.root
     }
 
@@ -52,6 +55,7 @@ class PlaylistsFragment : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when(item.itemId) {
             R.id.add_dummy_menu -> {
+                updateData()
                 true
             }
             R.id.del_dummy_menu -> {
@@ -62,11 +66,11 @@ class PlaylistsFragment : Fragment() {
         }
     }
 
-//    fun updateData() {
-//        with(viewModel) {
-//
-//        }
-//    }
+    fun updateData() {
+        with(viewModel) {
+            viewModel.searchPlaylists("bts")
+        }
+    }
 
     companion object {
         private val TAG = "PlaylistFragment"

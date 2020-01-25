@@ -11,6 +11,6 @@ interface PlaylistDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(plants: List<Playlist>)
 
-    @Query("DELETE FROM PLAYLISTS")
+    @Query("DELETE FROM playlists")
     suspend fun deleteAll()
 }

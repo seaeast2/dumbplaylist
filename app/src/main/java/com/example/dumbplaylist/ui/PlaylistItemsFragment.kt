@@ -13,7 +13,6 @@ import com.example.dumbplaylist.util.Injector
 import com.example.dumbplaylist.viewmodel.PlaylistsViewModel
 
 class PlaylistItemsFragment : Fragment() {
-
     // Recieve argument through navagation.
     private val args: PlaylistItemsFragmentArgs by navArgs()
 
@@ -39,9 +38,10 @@ class PlaylistItemsFragment : Fragment() {
         subscribeUi(adapter)
         // 6. 메뉴 활성화
         setHasOptionsMenu(true)
-        // 7. Playlist
-        // 7. args 를통해 받은 playlistId 을 기반으로 PlaylistItems Query 를 날려서 리스트 갱신
-        //viewModel.fetchPlaylistItems(args.playlistId)
+        // 7. PlaylistItems db 를 초기화
+        viewModel.clearPlaylistItems()
+        // 8. args 를통해 받은 playlistId로 PlaylistItem fetch
+        viewModel.fetchPlaylistItems(args.playlistId)
         return binding.root
     }
 

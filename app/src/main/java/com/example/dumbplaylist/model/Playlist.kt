@@ -7,10 +7,11 @@ import androidx.room.ColumnInfo
 // Playlist 에 대한 정보
 @Entity(tableName = "playlists")
 data class Playlist(
-    @PrimaryKey @ColumnInfo(name = "id") val playlistId: String,
-    val title: String,
-    val description: String,
-    val thumbnailUrl: String,
-    val pageToken: String) {
+    @PrimaryKey @ColumnInfo(name = "id")
+    val playlistId: String,
+    val title: String?,
+    val description: String?,
+    val thumbnailUrl: String?,
+    val pageToken: String?) {
         override fun toString() = playlistId
 }

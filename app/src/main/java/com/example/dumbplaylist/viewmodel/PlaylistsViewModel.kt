@@ -25,7 +25,7 @@ class PlaylistsViewModel(private val repository: PlaylistRepository) : ViewModel
 
 
     // 여기서 playlists 관련 함수들 ========================
-    fun searchPlaylists(searchQuery: String, pageToken: String) {
+    fun searchPlaylists(searchQuery: String, pageToken: String = "") {
         launchDataLoad {
             repository.tryUpdatePlaylistsCache(searchQuery, pageToken)
         }
@@ -37,7 +37,7 @@ class PlaylistsViewModel(private val repository: PlaylistRepository) : ViewModel
     }
 
     // PlaylistItems 관련 함수들 ========================
-    fun fetchPlaylistItems(playlistId: String, pageToken: String) {
+    fun fetchPlaylistItems(playlistId: String, pageToken: String = "") {
         launchDataLoad {
             repository.tryUpdatePlayItemsCache(playlistId, pageToken)
         }

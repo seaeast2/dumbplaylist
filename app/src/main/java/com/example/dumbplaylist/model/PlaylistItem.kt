@@ -8,10 +8,10 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "playlistItems")
 data class PlaylistItem(
     @PrimaryKey val id: String,
-    val title: String,
-    val description: String,
-    val publishedAt: String,
-    val thumbnailUrl: String,
-    val pageToken: String) {
+    val title: String?,
+    val description: String?,
+    val publishedAt: String?,
+    val thumbnailUrl: String?,
+    val pageToken: String?) {
     override fun toString() = id
 }
