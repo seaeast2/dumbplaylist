@@ -27,7 +27,8 @@ class PlaylistItemsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // 1. Fragment binding
-        val binding = VideoListFragmentBinding.inflate(inflater, container, false)
+        val binding =
+            VideoListFragmentBinding.inflate(inflater, container, false)
         // 2. context 가 이미 존재 하면 그냥 리턴
         context ?: return binding.root
         // 3. RecyclerView Adapter 생성

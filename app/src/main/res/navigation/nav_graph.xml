@@ -29,5 +29,9 @@
         android:id="@+id/youtubePlayerFragment"
         android:name="com.example.dumbplaylist.ui.YoutubePlayerFragment"
         android:label="youtube_player_fragment"
-        tools:layout="@layout/youtube_player_fragment" />
+        tools:layout="@layout/youtube_player_fragment" >
+        <argument
+            android:name="videoId"
+            app:argType="string" />
+    </fragment>
 </navigation>
