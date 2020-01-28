@@ -18,20 +18,8 @@
         android:name="com.example.dumbplaylist.ui.PlaylistItemsFragment"
         android:label="video_list_fragment"
         tools:layout="@layout/video_list_fragment" >
-        <action
-            android:id="@+id/action_videoListFragment_to_youtubePlayerFragment"
-            app:destination="@id/youtubePlayerFragment" />
         <argument
             android:name="playlistId"
-            app:argType="string" />
-    </fragment>
-    <fragment
-        android:id="@+id/youtubePlayerFragment"
-        android:name="com.example.dumbplaylist.ui.YoutubePlayerFragment"
-        android:label="youtube_player_fragment"
-        tools:layout="@layout/youtube_player_fragment" >
-        <argument
-            android:name="videoId"
             app:argType="string" />
     </fragment>
 </navigation>

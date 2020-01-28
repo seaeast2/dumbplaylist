@@ -1,7 +1,10 @@
 package com.example.dumbplaylist.ui
 
+import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.view.*
+import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.observe
@@ -9,32 +12,43 @@ import androidx.navigation.fragment.navArgs
 import com.example.dumbplaylist.R
 import com.example.dumbplaylist.adapter.VideoListAdapter
 import com.example.dumbplaylist.databinding.VideoListFragmentBinding
+import com.example.dumbplaylist.util.FullScreenHelper
 import com.example.dumbplaylist.util.Injector
 import com.example.dumbplaylist.viewmodel.PlaylistsViewModel
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.YouTubePlayerFullScreenListener
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.utils.loadOrCueVideo
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
 
 class PlaylistItemsFragment : Fragment() {
     // Recieve argument through navagation.
     private val args: PlaylistItemsFragmentArgs by navArgs()
-
 
     // ViewModel 은 공유한다.
     private val viewModel: PlaylistsViewModel by viewModels {
         Injector.providePlaylistViewModelFactory(requireContext())
     }
 
+    private val fullScreenHelper: FullScreenHelper by lazy {
+        FullScreenHelper(requireActivity())
+    }
+
+    private lateinit var fragmentBinding: VideoListFragmentBinding
+    private lateinit var youTubePlayerView: YouTubePlayerView
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         // 1. Fragment binding
-        val binding =
-            VideoListFragmentBinding.inflate(inflater, container, false)
+        fragmentBinding = VideoListFragmentBinding.inflate(inflater, container, false)
         // 2. context 가 이미 존재 하면 그냥 리턴
-        context ?: return binding.root
+        context ?: return fragmentBinding.root
         // 3. RecyclerView Adapter 생성
         val adapter = VideoListAdapter()
         // 4. binding 과 recyclerview adapter 연결
-        binding.videolistRcview.adapter = adapter
+        fragmentBinding.videolistRcview.adapter = adapter
         // 5. ViewModel 과 RecyclerView Adapter 를 연결하여 감시하도록 함
         subscribeUi(adapter)
         // 6. 메뉴 활성화
@@ -43,7 +57,14 @@ class PlaylistItemsFragment : Fragment() {
         viewModel.clearPlaylistItems()
         // 8. args 를통해 받은 playlistId로 PlaylistItem fetch
         viewModel.fetchPlaylistItems(args.playlistId)
-        return binding.root
+
+        // 9. get observe youtube player instance
+        youTubePlayerView = fragmentBinding.youtubePlayerView
+
+        // 10. set videoId to youtube player
+        initYoutubePlayerView()
+
+        return fragmentBinding.root
     }
 
     // Menu ====================================
@@ -69,6 +90,141 @@ class PlaylistItemsFragment : Fragment() {
         viewModel.playlistItems.observe(viewLifecycleOwner) {
             adapter.submitList(it)
         }
+    }
+
+    // Youtube player initialize functions ====================================
+    private fun initYoutubePlayerView() {
+        initPlayerMenu()
+
+        // The player will automatically release itself when the activity is destroyed.
+        // The player will automatically pause when the activity is stopped
+        // If you don't add YouTubePlayerView as a lifecycle observer, you will have to release it manually.
+        lifecycle.addObserver(youTubePlayerView)
+
+        youTubePlayerView.addYouTubePlayerListener(object : AbstractYouTubePlayerListener() {
+            override fun onReady(youTubePlayer: YouTubePlayer) {
+                youTubePlayer.loadOrCueVideo(lifecycle, args.videoId, 0f)
+
+                addFullScreenListenerToPlayer()
+                setPlayNextVideoButtonClickListener(youTubePlayer)
+            }
+        })
+    }
+
+    private fun initPlayerMenu() {
+        youTubePlayerView.getPlayerUiController().showMenuButton(true)
+            .getMenu()?.
+                addItem(
+                    com.pierfrancescosoffritti.androidyoutubeplayer.core.ui.menu.MenuItem("menu item1",
+                        R.drawable.ic_android_black_24dp,
+                        View.OnClickListener { view: View? ->
+                            Toast.makeText(requireContext(), "item1 clicked", Toast.LENGTH_SHORT)
+                                .show()
+                        })
+                )?.
+                addItem(
+                    com.pierfrancescosoffritti.androidyoutubeplayer.core.ui.menu.MenuItem("menu item2",
+                        R.drawable.ic_mood_black_24dp,
+                        View.OnClickListener { view: View? ->
+                            Toast.makeText(requireContext(), "item2 clicked", Toast.LENGTH_SHORT)
+                                .show()
+                        })
+                )?.
+                addItem(
+                    com.pierfrancescosoffritti.androidyoutubeplayer.core.ui.menu.MenuItem(
+                        "menu item no icon",
+                        null,
+                        View.OnClickListener { view: View? ->
+                            Toast.makeText(
+                                requireContext(),
+                                "item no icon clicked",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        })
+                )
+    }
+
+    private fun initYoutubePlayerView() {
+        initPlayerMenu()
+
+        // The player will automatically release itself when the activity is destroyed.
+        // The player will automatically pause when the activity is stopped
+        // If you don't add YouTubePlayerView as a lifecycle observer, you will have to release it manually.
+        lifecycle.addObserver(youTubePlayerView)
+
+        youTubePlayerView.addYouTubePlayerListener(object : AbstractYouTubePlayerListener() {
+            override fun onReady(youTubePlayer: YouTubePlayer) {
+                youTubePlayer.loadOrCueVideo(lifecycle, args.videoId, 0f)
+
+                addFullScreenListenerToPlayer()
+                setPlayNextVideoButtonClickListener(youTubePlayer)
+            }
+        })
+    }
+
+    private fun addFullScreenListenerToPlayer() {
+        youTubePlayerView.addFullScreenListener(object: YouTubePlayerFullScreenListener {
+            override fun onYouTubePlayerEnterFullScreen() {
+                // 1. 화면 가로로 변경
+                activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+                // 2. 가로화면에 맞추어 UI 변경
+                fullScreenHelper.enterFullScreen()
+                // 3. 사용자 버튼 추가
+                addCustomActionsToPlayer()
+            }
+
+            override fun onYouTubePlayerExitFullScreen() {
+                // 1. 화면 세로로 변경
+                activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+                // 2. 세로 화면에 맞추어 UI 변경
+                fullScreenHelper.exitFullScreen()
+                // 3. 사용자 버튼 감추기
+                removeCustomActionsFromPlayer()
+            }
+        })
+    }
+
+    private fun setPlayNextVideoButtonClickListener(youTubePlayer: YouTubePlayer) {
+//        val playNextVideoButton: Button =
+//            findViewById<Button>(R.id.next_video_button)
+
+//        playNextVideoButton.setOnClickListener { view: View? ->
+//            youTubePlayer.loadOrCueVideo(
+//                lifecycle,
+//                VideoIdsProvider.getNextVideoId(),
+//                0f
+//            )
+//        }
+    }
+
+    /**
+     * This method adds a new custom action to the player.
+     * Custom actions are shown next to the Play/Pause button in the middle of the player.
+     */
+    private fun addCustomActionsToPlayer() {
+        val customAction1Icon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_fast_rewind_white_24dp)
+        val customAction2Icon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_fast_forward_white_24dp)
+
+        customAction1Icon?.let {
+            youTubePlayerView.getPlayerUiController().setCustomAction1(it,
+                View.OnClickListener { view: View? ->
+                    Toast.makeText(requireContext(),"custom action1 clicked",Toast.LENGTH_SHORT).show()
+                }
+            )
+        }
+
+        customAction2Icon?.let {
+            youTubePlayerView.getPlayerUiController().setCustomAction2(it,
+                View.OnClickListener { view: View? ->
+                    Toast.makeText(requireContext(), "custom action2 clicked", Toast.LENGTH_SHORT).show()
+                }
+            )
+        }
+    }
+
+    private fun removeCustomActionsFromPlayer() {
+        youTubePlayerView.getPlayerUiController().showCustomAction1(false)
+        youTubePlayerView.getPlayerUiController().showCustomAction2(false)
     }
 }
 

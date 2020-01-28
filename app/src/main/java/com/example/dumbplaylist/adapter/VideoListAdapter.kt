@@ -3,18 +3,12 @@ package com.example.dumbplaylist.adapter
 
 import android.content.Context
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import androidx.navigation.findNavController
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.example.dumbplaylist.R
 import com.example.dumbplaylist.databinding.ListItemVideolistBinding
 import com.example.dumbplaylist.model.PlaylistItem
-import com.example.dumbplaylist.ui.PlaylistItemsFragmentArgs
-import com.example.dumbplaylist.ui.PlaylistItemsFragmentDirections
-import com.example.dumbplaylist.ui.YoutubePlayerFragmentArgs
 
 class VideoListAdapter: ListAdapter<PlaylistItem, RecyclerView.ViewHolder>(PlayItemDiffCallback()) {
 
@@ -43,20 +37,20 @@ class VideoListAdapter: ListAdapter<PlaylistItem, RecyclerView.ViewHolder>(PlayI
         RecyclerView.ViewHolder(binding.root) {
 
         init {
-            binding.setClickListener {view ->
-                binding.videolist?.let {playlistItem ->
-                    navigateToPlayerView(view, playlistItem.id)
-                }
-            }
+//            binding.setClickListener {view ->
+//                binding.videolist?.let {playlistItem ->
+//                    navigateToPlayerView(view, playlistItem.id)
+//                }
+//            }
         }
 
         // 화면 이동
-        private fun navigateToPlayerView(view: View, videoId: String) {
-            // SafeArgs 를 통해 이동
-            val direction =
-                PlaylistItemsFragmentDirections.actionVideoListFragmentToYoutubePlayerFragment(videoId)
-            view.findNavController().navigate(direction)
-        }
+//        private fun navigateToPlayerView(view: View, videoId: String) {
+//            // SafeArgs 를 통해 이동
+//            val direction =
+//                PlaylistItemsFragmentDirections.actionVideoListFragmentToYoutubePlayerFragment(videoId)
+//            view.findNavController().navigate(direction)
+//        }
 
         fun bind(item: PlaylistItem) {
             binding.apply {

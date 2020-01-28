@@ -11,6 +11,14 @@
         android:layout_height="match_parent"
         tools:context=".ui.PlaylistItemsFragment">
 
+        <com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
+            android:id="@+id/youtube_player_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:videoId="S0Q4gqBUs7c"
+            app:autoPlay="true"
+            app:showFullScreenButton="false" />
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
