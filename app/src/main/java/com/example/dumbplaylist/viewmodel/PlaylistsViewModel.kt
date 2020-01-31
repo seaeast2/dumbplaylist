@@ -90,7 +90,6 @@ class PlaylistsViewModel(private val repository: PlaylistRepository) : ViewModel
         }
     }
 
-
     // Coroutine 호출 헬퍼 함수
     private fun launchDataLoad(block: suspend () -> Unit): Job {
         return viewModelScope.launch {
