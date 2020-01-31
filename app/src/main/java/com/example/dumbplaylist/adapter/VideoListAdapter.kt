@@ -10,7 +10,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.dumbplaylist.databinding.ListItemVideolistBinding
 import com.example.dumbplaylist.model.PlaylistItem
 
-class VideoListAdapter: ListAdapter<PlaylistItem, RecyclerView.ViewHolder>(PlayItemDiffCallback()) {
+class VideoListAdapter:
+    ListAdapter<PlaylistItem, RecyclerView.ViewHolder>(PlayItemDiffCallback()) {
 
     // ViewHolder 생성
     // ViewHolder 가 필요할 때마다 하나씩 생성한다.
@@ -24,8 +25,8 @@ class VideoListAdapter: ListAdapter<PlaylistItem, RecyclerView.ViewHolder>(PlayI
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         // submitList 를 통해 내부적으로 list 를 들고 있음.
         // 필요한 position 을 자동 계산하여 여기서 callback 으로 불러 주는것임.
-        val item = getItem(position)
-        (holder as VideoListViewHolder).bind(item)
+        val item : PlaylistItem? = getItem(position)
+        (holder as VideoListViewHolder).bind(item) // bind() 에서 view의 binding 과 데이터를 연결
     }
 
     /*fun updateList(list: List<String>) {
@@ -52,7 +53,7 @@ class VideoListAdapter: ListAdapter<PlaylistItem, RecyclerView.ViewHolder>(PlayI
 //            view.findNavController().navigate(direction)
 //        }
 
-        fun bind(item: PlaylistItem) {
+        fun bind(item: PlaylistItem?) {
             binding.apply {
                 videolist = item
                 executePendingBindings()
@@ -60,9 +61,6 @@ class VideoListAdapter: ListAdapter<PlaylistItem, RecyclerView.ViewHolder>(PlayI
         }
     }
 }
-
-
-
 
 private class PlayItemDiffCallback : DiffUtil.ItemCallback<PlaylistItem>() {
     // 자료구조에 id 가 있으면 id 로 비교 하는 코드로 교환 가능

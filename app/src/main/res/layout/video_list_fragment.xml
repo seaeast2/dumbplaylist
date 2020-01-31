@@ -15,9 +15,8 @@
             android:id="@+id/youtube_player_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:videoId="S0Q4gqBUs7c"
-            app:autoPlay="true"
-            app:showFullScreenButton="false" />
+            app:autoPlay="false"
+            app:showFullScreenButton="true" />
 
         <TextView
             android:layout_width="match_parent"
@@ -30,7 +29,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            tools:context=".MainActivity"
             tools:listitem="@layout/list_item_playlist" />
 
     </LinearLayout>

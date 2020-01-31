@@ -10,11 +10,13 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.observe
 import androidx.navigation.fragment.navArgs
 import com.example.dumbplaylist.R
+import com.example.dumbplaylist.adapter.PlaylistItemsAdapter
 import com.example.dumbplaylist.adapter.VideoListAdapter
 import com.example.dumbplaylist.databinding.VideoListFragmentBinding
 import com.example.dumbplaylist.util.FullScreenHelper
 import com.example.dumbplaylist.util.Injector
 import com.example.dumbplaylist.viewmodel.PlaylistsViewModel
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.PlayerConstants
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.YouTubePlayerFullScreenListener
@@ -37,6 +39,8 @@ class PlaylistItemsFragment : Fragment() {
     private lateinit var fragmentBinding: VideoListFragmentBinding
     private lateinit var youTubePlayerView: YouTubePlayerView
 
+    private var isPagedPlaylistItem: Boolean = true
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -46,11 +50,14 @@ class PlaylistItemsFragment : Fragment() {
         // 2. context 가 이미 존재 하면 그냥 리턴
         context ?: return fragmentBinding.root
         // 3. RecyclerView Adapter 생성
-        val adapter = VideoListAdapter()
+        val adapter = if (isPagedPlaylistItem) PlaylistItemsAdapter() else VideoListAdapter()
         // 4. binding 과 recyclerview adapter 연결
         fragmentBinding.videolistRcview.adapter = adapter
         // 5. ViewModel 과 RecyclerView Adapter 를 연결하여 감시하도록 함
-        subscribeUi(adapter)
+        if (isPagedPlaylistItem)
+            subscribeUiPaged(adapter as PlaylistItemsAdapter)
+        else
+            subscribeUi(adapter as VideoListAdapter)
         // 6. 메뉴 활성화
         setHasOptionsMenu(true)
         // 7. PlaylistItems db 를 초기화
@@ -61,7 +68,7 @@ class PlaylistItemsFragment : Fragment() {
         // 9. get observe youtube player instance
         youTubePlayerView = fragmentBinding.youtubePlayerView
 
-        // 10. set videoId to youtube player
+        // 10. youtube player ui initialize
         initYoutubePlayerView()
 
         return fragmentBinding.root
@@ -89,24 +96,58 @@ class PlaylistItemsFragment : Fragment() {
     fun subscribeUi(adapter: VideoListAdapter) {
         viewModel.playlistItems.observe(viewLifecycleOwner) {
             adapter.submitList(it)
+            addYoutubeListener()
+        }
+    }
+
+    fun subscribeUiPaged(adapter: PlaylistItemsAdapter) {
+        viewModel.playlistItemsPaged.observe(viewLifecycleOwner) {
+            adapter.submitList(it)
+            addYoutubeListener()
         }
     }
 
     // Youtube player initialize functions ====================================
     private fun initYoutubePlayerView() {
         initPlayerMenu()
-
         // The player will automatically release itself when the activity is destroyed.
         // The player will automatically pause when the activity is stopped
         // If you don't add YouTubePlayerView as a lifecycle observer, you will have to release it manually.
         lifecycle.addObserver(youTubePlayerView)
+        addFullScreenListenerToPlayer()
+    }
 
+    private fun addYoutubeListener() {
         youTubePlayerView.addYouTubePlayerListener(object : AbstractYouTubePlayerListener() {
             override fun onReady(youTubePlayer: YouTubePlayer) {
-                youTubePlayer.loadOrCueVideo(lifecycle, args.videoId, 0f)
+                if (viewModel.doesRunFullScreen) {
+                    viewModel.doesRunFullScreen = false
+                    viewModel.getCurVideo(isPagedPlaylistItem)?.let {
+                        youTubePlayer.loadOrCueVideo(lifecycle, it, viewModel.curSecond)
+                    }
+                }
+                else {
+                    viewModel.getCurVideo(isPagedPlaylistItem)?.let {
+                        youTubePlayer.loadOrCueVideo(lifecycle, it, 0f)
+                    }
+                }
+                //setPlayNextVideoButtonClickListener(youTubePlayer)
+            }
 
-                addFullScreenListenerToPlayer()
-                setPlayNextVideoButtonClickListener(youTubePlayer)
+            override fun onCurrentSecond(youTubePlayer: YouTubePlayer, second: Float) {
+                // backup second for fullscreen change
+                viewModel.curSecond = second
+                super.onCurrentSecond(youTubePlayer, second)
+            }
+
+            override fun onStateChange(youTubePlayer: YouTubePlayer, state: PlayerConstants.PlayerState) {
+                if (state == PlayerConstants.PlayerState.ENDED) {
+                    viewModel.getNextVideo(isPagedPlaylistItem)?.let {
+                        youTubePlayer.loadOrCueVideo(lifecycle, it, 0f)
+                    }
+                }
+
+                super.onStateChange(youTubePlayer, state)
             }
         })
     }
@@ -116,50 +157,23 @@ class PlaylistItemsFragment : Fragment() {
             .getMenu()?.
                 addItem(
                     com.pierfrancescosoffritti.androidyoutubeplayer.core.ui.menu.MenuItem("menu item1",
-                        R.drawable.ic_android_black_24dp,
-                        View.OnClickListener { view: View? ->
-                            Toast.makeText(requireContext(), "item1 clicked", Toast.LENGTH_SHORT)
-                                .show()
+                        R.drawable.ic_android_black_24dp, View.OnClickListener { view: View? ->
+                            Toast.makeText(requireContext(), "item1 clicked", Toast.LENGTH_SHORT).show()
                         })
                 )?.
                 addItem(
                     com.pierfrancescosoffritti.androidyoutubeplayer.core.ui.menu.MenuItem("menu item2",
-                        R.drawable.ic_mood_black_24dp,
-                        View.OnClickListener { view: View? ->
-                            Toast.makeText(requireContext(), "item2 clicked", Toast.LENGTH_SHORT)
-                                .show()
+                        R.drawable.ic_mood_black_24dp, View.OnClickListener { view: View? ->
+                            Toast.makeText(requireContext(), "item2 clicked", Toast.LENGTH_SHORT).show()
                         })
                 )?.
                 addItem(
                     com.pierfrancescosoffritti.androidyoutubeplayer.core.ui.menu.MenuItem(
-                        "menu item no icon",
-                        null,
+                        "menu item no icon",null,
                         View.OnClickListener { view: View? ->
-                            Toast.makeText(
-                                requireContext(),
-                                "item no icon clicked",
-                                Toast.LENGTH_SHORT
-                            ).show()
+                            Toast.makeText(requireContext(),"item no icon clicked",Toast.LENGTH_SHORT).show()
                         })
                 )
-    }
-
-    private fun initYoutubePlayerView() {
-        initPlayerMenu()
-
-        // The player will automatically release itself when the activity is destroyed.
-        // The player will automatically pause when the activity is stopped
-        // If you don't add YouTubePlayerView as a lifecycle observer, you will have to release it manually.
-        lifecycle.addObserver(youTubePlayerView)
-
-        youTubePlayerView.addYouTubePlayerListener(object : AbstractYouTubePlayerListener() {
-            override fun onReady(youTubePlayer: YouTubePlayer) {
-                youTubePlayer.loadOrCueVideo(lifecycle, args.videoId, 0f)
-
-                addFullScreenListenerToPlayer()
-                setPlayNextVideoButtonClickListener(youTubePlayer)
-            }
-        })
     }
 
     private fun addFullScreenListenerToPlayer() {
@@ -171,6 +185,7 @@ class PlaylistItemsFragment : Fragment() {
                 fullScreenHelper.enterFullScreen()
                 // 3. 사용자 버튼 추가
                 addCustomActionsToPlayer()
+                viewModel.doesRunFullScreen = true
             }
 
             override fun onYouTubePlayerExitFullScreen() {
@@ -180,6 +195,7 @@ class PlaylistItemsFragment : Fragment() {
                 fullScreenHelper.exitFullScreen()
                 // 3. 사용자 버튼 감추기
                 removeCustomActionsFromPlayer()
+                viewModel.doesRunFullScreen = true
             }
         })
     }
