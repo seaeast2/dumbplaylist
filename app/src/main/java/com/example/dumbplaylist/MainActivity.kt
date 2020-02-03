@@ -12,7 +12,7 @@ class MainActivity : AppCompatActivity() {
         // After Navigation
         setContentView<MainActivityBinding>(this, R.layout.main_activity)
 
-        /* Before Navigation
+        /* Before applying Navigation
         setContentView(R.layout.main_activity)
         if (savedInstanceState == null) { //Bundle 은 최초 실행시에만 null 임
             supportFragmentManager.beginTransaction()

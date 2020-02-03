@@ -23,7 +23,6 @@
             android:layout_height="wrap_content"
             android:text="Video lIst fragment"
             android:textSize="30sp"/>
-
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/videolist_rcview"
             android:layout_width="match_parent"
