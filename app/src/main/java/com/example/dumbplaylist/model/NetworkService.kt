@@ -12,6 +12,8 @@ import retrofit2.http.Query
 //val youtTube: YouTube
 
 class NetworkService {
+
+
     private val retrofit = Retrofit.Builder()
         .baseUrl("https://www.googleapis.com/")
         .client(OkHttpClient())
@@ -54,15 +56,12 @@ class NetworkService {
 }
 
 interface YoutubeService {
-    // 검색
+    // Search
     @GET("youtube/v3/search?part=snippet&type=playlist&key=AIzaSyDeiMcA8WswiJJu6IyUYit3Zjg7vmo7U9A")
     suspend fun fetchSearchResult(@Query("q")searchTerm: String,
                                   @Query("pageToken")pageToken: String): PlaylistsSearchResult
 
-    @GET("youtube/v3/search?part=snippet&type=playlist&key=AIzaSyDeiMcA8WswiJJu6IyUYit3Zjg7vmo7U9A&q=twice")
-    suspend fun fetchTest(): PlaylistsSearchResult
-
-    // PlaylistItems
+    // fetch playlist items
     @GET("youtube/v3/playlistItems?part=snippet&key=AIzaSyDeiMcA8WswiJJu6IyUYit3Zjg7vmo7U9A")
     suspend fun fetchPlaylistItems(@Query("playlistId")playlistId: String,
                                    @Query("pageToken")pageToken: String): PlaylistItemsList
