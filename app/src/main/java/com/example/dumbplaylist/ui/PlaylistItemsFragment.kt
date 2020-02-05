@@ -10,7 +10,6 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.observe
 import androidx.navigation.fragment.navArgs
 import com.example.dumbplaylist.R
-import com.example.dumbplaylist.adapter.PlaylistItemsAdapter
 import com.example.dumbplaylist.adapter.VideoListAdapter
 import com.example.dumbplaylist.databinding.VideoListFragmentBinding
 import com.example.dumbplaylist.util.FullScreenHelper
@@ -50,14 +49,11 @@ class PlaylistItemsFragment : Fragment() {
         // 2. context 가 이미 존재 하면 그냥 리턴
         context ?: return fragmentBinding.root
         // 3. RecyclerView Adapter 생성
-        val adapter = if (isPagedPlaylistItem) PlaylistItemsAdapter() else VideoListAdapter()
+        val adapter = VideoListAdapter()
         // 4. binding 과 recyclerview adapter 연결
         fragmentBinding.videolistRcview.adapter = adapter
         // 5. ViewModel 과 RecyclerView Adapter 를 연결하여 감시하도록 함
-        if (isPagedPlaylistItem)
-            subscribeUiPaged(adapter as PlaylistItemsAdapter)
-        else
-            subscribeUi(adapter as VideoListAdapter)
+        subscribeUi(adapter)
         // 6. 메뉴 활성화
         setHasOptionsMenu(true)
         // 7. PlaylistItems db 를 초기화
@@ -95,13 +91,6 @@ class PlaylistItemsFragment : Fragment() {
 
     fun subscribeUi(adapter: VideoListAdapter) {
         viewModel.playlistItems.observe(viewLifecycleOwner) {
-            adapter.submitList(it)
-            addYoutubeListener()
-        }
-    }
-
-    fun subscribeUiPaged(adapter: PlaylistItemsAdapter) {
-        viewModel.playlistItemsPaged.observe(viewLifecycleOwner) {
             adapter.submitList(it)
             addYoutubeListener()
         }

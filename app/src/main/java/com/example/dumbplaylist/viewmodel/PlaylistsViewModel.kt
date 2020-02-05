@@ -14,13 +14,11 @@ class PlaylistsViewModel(private val repository: PlaylistRepository) : ViewModel
     // playlist 와 playlistItem 의 참조를 연결함
     val playlists = repository.playlists // LiveData<List<Playlist>>
     val playlistItems = repository.playlistItems // LiveData<List<PlaylistItem>>
-    val playlistItemsPaged = repository.playlistItemsPaged // LiveData<PagedList<PlaylistItem>>
 
     // video control values
     private var curVideoPos: Int = 0
     var doesRunFullScreen = false
     var curSecond:Float = 0f
-
 
     // Spiner 를 위한 변수
     private var mSpiner = MutableLiveData<Boolean>(false)
@@ -56,38 +54,17 @@ class PlaylistsViewModel(private val repository: PlaylistRepository) : ViewModel
         curSecond = 0f
     }
 
-    fun getCurVideo(isPaged: Boolean) : String? = if (isPaged)
-        playlistItemsPaged.value?.get(curVideoPos)?.id
-    else
-        playlistItems.value?.get(curVideoPos)?.id
+    fun getCurVideo(isPaged: Boolean) : String? = playlistItems.value?.get(curVideoPos)?.id
 
     fun getNextVideo(isPaged: Boolean): String? {
         curSecond = 0f
 
-        if (isPaged) {
-            return if (curVideoPos < playlistItemsPaged.value?.size ?: 0) {
-                playlistItemsPaged.value?.get(curVideoPos)?.id.apply {
-                    curVideoPos++
-                }
-            } else {
-                resetVideo()
-                playlistItemsPaged.value?.get(curVideoPos)?.id.apply {
-                    curVideoPos++
-                }
-            }
-        }
-        else {
-            return if (curVideoPos < playlistItems.value?.size ?: 0) {
-                playlistItemsPaged.value?.get(curVideoPos)?.id.apply {
-                    curVideoPos++
-                }
-            } else {
-                resetVideo()
-                playlistItems.value?.get(curVideoPos)?.id.apply {
-                    curVideoPos++
-                }
-            }
-        }
+        if (curVideoPos < playlistItems.value?.size ?: 0)
+            curVideoPos++
+        else
+            resetVideo()
+
+        return playlistItems.value?.get(curVideoPos)?.id
     }
 
     // Coroutine 호출 헬퍼 함수

@@ -1,7 +1,5 @@
 package com.example.dumbplaylist.model
 
-import androidx.paging.toLiveData
-
 
 // Repository 에 있어야 할 기능은?
 class PlaylistRepository private constructor(
@@ -12,8 +10,6 @@ class PlaylistRepository private constructor(
     // playlist, playlist item Dao 접근 인터페이스
     val playlists = playlistDao.getPlaylists()
     val playlistItems = playlistItemDao.getPlaylistItems()
-    // Paging 적용
-    val playlistItemsPaged = playlistItemDao.getPlaylistItemsPaged().toLiveData(pageSize = 20)
 
     // Playlist 관련 함수 ================================================
     private fun shouldUpdatePlaylistsCache(): Boolean {
