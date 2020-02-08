@@ -6,9 +6,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 class PlaylistsViewModel(private val repository: PlaylistRepository) : ViewModel() {
-    //private val GOOGLE_YOUTUBE_API_KEY: String = "AIzaSyDeiMcA8WswiJJu6IyUYit3Zjg7vmo7U9A"
-
-    // LiveDatas
+    // LiveData
     val playlists = repository.playlists
     val playlistItems = repository.playlistItems
 
@@ -16,70 +14,57 @@ class PlaylistsViewModel(private val repository: PlaylistRepository) : ViewModel
     private var currentPlayInfo = PlayInfo(0, 0f, false)
     val curPlayInfo = currentPlayInfo
 
-
-    // Spiner 를 위한 변수
+    // laoding Spiner
     private var mSpiner = MutableLiveData<Boolean>(false)
-    // Snackbar 를 위한 문자열
+    // error massge popup Snackbar
     private var mSnackbarMsg = MutableLiveData<String?>()
 
 
     // playlists fetch functions ========================
-    fun searchPlaylists(searchQuery: String, pageToken: String = "") {
+    fun searchPlaylists(searchQuery: String, pageToken: String? = null) {
         launchDataLoad {
             repository.tryUpdatePlaylistsCache(searchQuery, pageToken)
         }
     }
-    fun clearPlaylists() {
-        launchDataLoad {
-            repository.clearPlaylists()
-        }
-    }
     fun loadMorePlaylists() {
-        if (repository.playlistInfo.totalResult == 0)
-            return
-
-        if (playlistItems.value?.size?:0 < repository.playlistInfo.totalResult) {
-            searchPlaylists(repository.playlistInfo.id, repository.playlistInfo.nextPageToken)
+        val playlistsInfo = repository.getPlaylistsInfo()
+        playlistsInfo?.let {
+            searchPlaylists(it.searchQuery, it.pageToken)
         }
-    }
-    fun resetPlaylistsInfo() {
-        repository.playlistInfo = PlaylistsInfo("", 0, 0, "")
     }
 
     // PlaylistItems fetch functions ========================
     fun fetchPlaylistItems(playlistId: String, pageToken: String? = null) {
-        var test = 10
-        if (test < 20)
-            test = 20
-
         launchDataLoad {
             repository.tryUpdatePlayItemsCache(playlistId, pageToken)
         }
     }
-    fun clearPlaylistItems() {
-        launchDataLoad {
-            repository.clearPlaylistItems()
-        }
-    }
     fun loadMorePlaylistItem() {
-        if (repository.playlistItemInfo.totalResult == 0)
-            return
-
-        if (playlistItems.value?.size?:0 < repository.playlistItemInfo.totalResult) {
-            fetchPlaylistItems(repository.playlistItemInfo.id, repository.playlistItemInfo.nextPageToken)
+        val playlistItemsInfo = repository.getPlaylistItemsInfo()
+        playlistItemsInfo?.let {
+            fetchPlaylistItems(it.playlistId, it.pageToken)
         }
-    }
-    fun resetPlaylistItemsInfo() {
-        repository.playlistItemInfo = PlaylistsInfo("", 0, 0, "")
     }
 
     // Youtube player handle functions =====================
-    fun getCurVideoId() : String? = playlistItems.value?.get(currentPlayInfo.videoIndex)?.id
+    fun getCurVideoId() : String? {
+        if (repository.getPlaylistItemsSize() == 0)
+            return null
+
+        return playlistItems.value?.get(currentPlayInfo.videoIndex)?.id
+    }
 
     fun getNextVideoId(): String? {
+        // check if play position is at the end of list.
+        if ((currentPlayInfo.videoIndex+1 == repository.getPlaylistItemsSize()) &&
+            (repository.getPlaylistItemsInfo()?.pageToken != null)) {
+            loadMorePlaylistItem()
+            return null
+        }
+
         currentPlayInfo.videoSec = 0f
 
-        if (currentPlayInfo.videoIndex < playlistItems.value?.size ?: 0)
+        if (currentPlayInfo.videoIndex < repository.getPlaylistItemsSize())
             currentPlayInfo.videoIndex++
         else
             currentPlayInfo.reset()
@@ -87,7 +72,7 @@ class PlaylistsViewModel(private val repository: PlaylistRepository) : ViewModel
         return playlistItems.value?.get(currentPlayInfo.videoIndex)?.id
     }
 
-    // Coroutine 호출 헬퍼 함수
+    // Coroutine helper
     private fun launchDataLoad(block: suspend () -> Unit): Job {
         return viewModelScope.launch {
             try {

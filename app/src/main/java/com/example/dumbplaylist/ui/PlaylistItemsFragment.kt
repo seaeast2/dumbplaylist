@@ -37,7 +37,9 @@ class PlaylistItemsFragment : Fragment() {
     }
 
     private lateinit var fragmentBinding: VideoListFragmentBinding
-    private lateinit var youTubePlayerView: YouTubePlayerView
+    private lateinit var mYouTubePlayerView: YouTubePlayerView
+    private var mYouTubePlayer: YouTubePlayer? = null
+    private var mPlayerState: PlayerConstants.PlayerState = PlayerConstants.PlayerState.UNKNOWN
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -58,7 +60,7 @@ class PlaylistItemsFragment : Fragment() {
 
                 // 더 아래로 스크롤 할수 있는지 검사 후 스크롤 불가면 데이터 추가 로딩
                 if (!recyclerView.canScrollVertically(1)) {
-                    viewModel.loadMorePlaylistItem()
+                    //viewModel.loadMorePlaylistItem()
                 }
             }
         })
@@ -68,13 +70,14 @@ class PlaylistItemsFragment : Fragment() {
         // 6. 메뉴 활성화
         setHasOptionsMenu(true)
         // 7. PlaylistItems db 를 초기화
-        viewModel.clearPlaylistItems()
-        viewModel.resetPlaylistItemsInfo()
+        //viewModel.clearPlaylistItems()
+        //viewModel.resetPlaylistItemsInfo()
         // 8. args 를통해 받은 playlistId로 PlaylistItem fetch
+        //if (args.playlistId == viewModel.playlistItemInfo.id)
         viewModel.fetchPlaylistItems(args.playlistId)
 
         // 9. get observe youtube player instance
-        youTubePlayerView = fragmentBinding.youtubePlayerView
+        mYouTubePlayerView = fragmentBinding.youtubePlayerView
 
         // 10. youtube player ui initialize
         initYoutubePlayerView()
@@ -91,6 +94,7 @@ class PlaylistItemsFragment : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when(item.itemId) {
             R.id.add_dummy_menu -> {
+                viewModel.loadMorePlaylistItem()
                 true
             }
             R.id.del_dummy_menu -> {
@@ -104,6 +108,12 @@ class PlaylistItemsFragment : Fragment() {
     fun subscribeUi(adapter: VideoListAdapter) {
         viewModel.playlistItems.observe(viewLifecycleOwner) {
             adapter.submitList(it)
+
+            if (mPlayerState == PlayerConstants.PlayerState.ENDED) {
+                viewModel.getCurVideoId()?.let {
+                    mYouTubePlayer?.loadOrCueVideo(lifecycle, it, viewModel.curPlayInfo.videoSec)
+                }
+            }
         }
     }
 
@@ -114,15 +124,16 @@ class PlaylistItemsFragment : Fragment() {
         // The player will automatically release itself when the activity is destroyed.
         // The player will automatically pause when the activity is stopped
         // If you don't add YouTubePlayerView as a lifecycle observer, you will have to release it manually.
-        lifecycle.addObserver(youTubePlayerView)
+        lifecycle.addObserver(mYouTubePlayerView)
         addFullScreenListenerToPlayer()
-
     }
 
     private fun addYoutubeListener() {
-        youTubePlayerView.addYouTubePlayerListener(object : AbstractYouTubePlayerListener() {
+        mYouTubePlayerView.addYouTubePlayerListener(object : AbstractYouTubePlayerListener() {
             override fun onReady(youTubePlayer: YouTubePlayer) {
+                mYouTubePlayer = youTubePlayer
                 if (viewModel.curPlayInfo.isFullScreen) {
+                    // continue play when user enters fullscreen mode
                     viewModel.curPlayInfo.isFullScreen = false
                     viewModel.getCurVideoId()?.let {
                         youTubePlayer.loadOrCueVideo(lifecycle, it, viewModel.curPlayInfo.videoSec)
@@ -145,6 +156,8 @@ class PlaylistItemsFragment : Fragment() {
             override fun onStateChange(youTubePlayer: YouTubePlayer, state: PlayerConstants.PlayerState) {
                 super.onStateChange(youTubePlayer, state)
 
+                mPlayerState = state
+
                 if (state == PlayerConstants.PlayerState.ENDED) {
                     viewModel.getNextVideoId()?.let {
                         youTubePlayer.loadOrCueVideo(lifecycle, it, 0f)
@@ -155,7 +168,7 @@ class PlaylistItemsFragment : Fragment() {
     }
 
     private fun initPlayerMenu() {
-        youTubePlayerView.getPlayerUiController().showMenuButton(true)
+        mYouTubePlayerView.getPlayerUiController().showMenuButton(true)
             .getMenu()?.
                 addItem(
                     com.pierfrancescosoffritti.androidyoutubeplayer.core.ui.menu.MenuItem("menu item1",
@@ -179,7 +192,7 @@ class PlaylistItemsFragment : Fragment() {
     }
 
     private fun addFullScreenListenerToPlayer() {
-        youTubePlayerView.addFullScreenListener(object: YouTubePlayerFullScreenListener {
+        mYouTubePlayerView.addFullScreenListener(object: YouTubePlayerFullScreenListener {
             override fun onYouTubePlayerEnterFullScreen() {
                 // 1. 화면 가로로 변경
                 activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
@@ -224,7 +237,7 @@ class PlaylistItemsFragment : Fragment() {
         val customAction2Icon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_fast_forward_white_24dp)
 
         customAction1Icon?.let {
-            youTubePlayerView.getPlayerUiController().setCustomAction1(it,
+            mYouTubePlayerView.getPlayerUiController().setCustomAction1(it,
                 View.OnClickListener { view: View? ->
                     Toast.makeText(requireContext(),"custom action1 clicked",Toast.LENGTH_SHORT).show()
                 }
@@ -232,7 +245,7 @@ class PlaylistItemsFragment : Fragment() {
         }
 
         customAction2Icon?.let {
-            youTubePlayerView.getPlayerUiController().setCustomAction2(it,
+            mYouTubePlayerView.getPlayerUiController().setCustomAction2(it,
                 View.OnClickListener { view: View? ->
                     Toast.makeText(requireContext(), "custom action2 clicked", Toast.LENGTH_SHORT).show()
                 }
@@ -241,8 +254,8 @@ class PlaylistItemsFragment : Fragment() {
     }
 
     private fun removeCustomActionsFromPlayer() {
-        youTubePlayerView.getPlayerUiController().showCustomAction1(false)
-        youTubePlayerView.getPlayerUiController().showCustomAction2(false)
+        mYouTubePlayerView.getPlayerUiController().showCustomAction1(false)
+        mYouTubePlayerView.getPlayerUiController().showCustomAction2(false)
     }
 }
 

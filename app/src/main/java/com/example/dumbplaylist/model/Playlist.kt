@@ -9,8 +9,11 @@ import androidx.room.ColumnInfo
 data class Playlist(
     @PrimaryKey @ColumnInfo(name = "id")
     val playlistId: String,
+    val index : Int,
+    val searchQuery: String,
+    val pageToken: String?,
     val title: String?,
     val description: String?,
     val thumbnailUrl: String?) {
         override fun toString() = playlistId
-}
+    }

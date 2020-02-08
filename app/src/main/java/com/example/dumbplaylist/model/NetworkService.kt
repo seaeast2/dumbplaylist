@@ -8,7 +8,6 @@ import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Query
 
-data class PlaylistsInfo(val id: String, val totalResult:Int, val resultsPerPage:Int, val nextPageToken:String)
 
 //val youtTube: YouTube
 class NetworkService {
@@ -20,48 +19,58 @@ class NetworkService {
 
     private val youtubeService = retrofit.create(YoutubeService::class.java)
 
-    suspend fun fetchPlaylistsSearchResult(searchQuery: String, pageToken: String):
-            Pair<List<Playlist>, PlaylistsInfo> = withContext(Dispatchers.Default) {
+    suspend fun fetchPlaylistsSearchResult(searchQuery: String, pageToken: String?, totalLoadedItems: Int): List<Playlist>? =
+        withContext(Dispatchers.Default) {
 
-        var result: List<Playlist> = emptyList()
+        var result: List<Playlist>? = null
         var searchResult: PlaylistsSearchResult? = null
 
         try {
             searchResult = youtubeService.fetchSearchResult(searchQuery, pageToken)
+
+            result = List<Playlist>(searchResult.items.size) {
+                Playlist(
+                    searchResult.items[it].id.playlistId,
+                    totalLoadedItems + it,
+                    searchQuery,
+                    searchResult.nextPageToken,
+                    searchResult.items[it].snippet.title,
+                    searchResult.items[it].snippet.description,
+                    searchResult.items[it].snippet.thumbnails?.default?.url)
+            }
         } catch (e : Exception) {
             print(e)
-            return@withContext Pair<List<Playlist>, PlaylistsInfo>(listOf(Playlist("error", e.toString(), "", "")),
-                PlaylistsInfo("", 0, 0, ""))
+            return@withContext null
         }
-
-        result = List<Playlist>(searchResult!!.pageInfo.resultsPerPage) {
-            Playlist(
-                searchResult.items[it].id.playlistId,
-                searchResult.items[it].snippet.title,
-                searchResult.items[it].snippet.description,
-                searchResult.items[it].snippet.thumbnails?.default?.url)
-        }
-
         // save playlist meta info to query next page
-        Pair(result, PlaylistsInfo(searchQuery, searchResult.pageInfo.totalResults,
-            searchResult.pageInfo.resultsPerPage, searchResult.nextPageToken?:""))
+        result
     }
 
-    suspend fun fetchPlaylistItems(playlistId: String, pageToken: String?):
-            Pair<List<PlaylistItem>, PlaylistsInfo> = withContext(Dispatchers.Default) {
-        val requestResult = youtubeService.fetchPlaylistItems(playlistId, pageToken)
-        val result = List<PlaylistItem>(requestResult.pageInfo.resultsPerPage) {
-            PlaylistItem(
-                requestResult.items[it].snippet.resourceId.videoId,
-                requestResult.items[it].snippet.title,
-                requestResult.items[it].snippet.description,
-                requestResult.items[it].snippet.publishedAt,
-                requestResult.items[it].snippet.thumbnails?.default?.url)
+    suspend fun fetchPlaylistItems(playlistId: String, pageToken: String?, totalLoadedItems: Int): List<PlaylistItem>? =
+        withContext(Dispatchers.Default) {
+        var result: List<PlaylistItem>? = null
+        var requestResult : PlaylistItemsList? = null
+
+        try {
+            requestResult = youtubeService.fetchPlaylistItems(playlistId, pageToken)
+
+            result = List<PlaylistItem>(requestResult.items.size) {
+                PlaylistItem(
+                    requestResult.items[it].snippet.resourceId.videoId,
+                    totalLoadedItems + it,
+                    playlistId,
+                    requestResult.nextPageToken,
+                    requestResult.items[it].snippet.title,
+                    requestResult.items[it].snippet.description,
+                    requestResult.items[it].snippet.thumbnails?.default?.url)
+            }
+        } catch (e: Exception) {
+            print(e)
+            return@withContext null
         }
 
         // save playlist meta info to query next page
-        Pair(result, PlaylistsInfo(playlistId, requestResult.pageInfo.totalResults,
-            requestResult.pageInfo.resultsPerPage, requestResult.nextPageToken?:""))
+        result
     }
 }
 
@@ -70,12 +79,12 @@ class NetworkService {
 // Key seaeast2 : AIzaSyBOm13DNySWTiLFdVL1oHOlK2RKJbOVRDo
 interface YoutubeService {
     // Search
-    @GET("youtube/v3/search?part=snippet&type=playlist&key=AIzaSyAdDix7i7a3an-gyXiquTV_14cIsr8-DZg&maxResults=50")
+    @GET("youtube/v3/search?part=snippet&type=playlist&key=AIzaSyBOm13DNySWTiLFdVL1oHOlK2RKJbOVRDo&maxResults=50")
     suspend fun fetchSearchResult(@Query("q")searchTerm: String,
-                                  @Query("pageToken")pageToken: String): PlaylistsSearchResult
+                                  @Query("pageToken")pageToken: String?): PlaylistsSearchResult
 
     // fetch playlist items
-    @GET("youtube/v3/playlistItems?part=snippet&key=AIzaSyAdDix7i7a3an-gyXiquTV_14cIsr8-DZg&maxResults=50")
+    @GET("youtube/v3/playlistItems?part=snippet&key=AIzaSyBOm13DNySWTiLFdVL1oHOlK2RKJbOVRDo&maxResults=50")
     suspend fun fetchPlaylistItems(@Query("playlistId")playlistId: String,
                                    @Query("pageToken")pageToken: String?): PlaylistItemsList
 }

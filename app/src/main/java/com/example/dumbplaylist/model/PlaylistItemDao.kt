@@ -9,8 +9,14 @@ import androidx.room.Query
 
 @Dao
 interface PlaylistItemDao {
-    @Query("SELECT * FROM playlistItems")
+    @Query("SELECT * FROM playlistItems ORDER BY playlistItems.`index` ASC")
     fun getPlaylistItems(): LiveData<List<PlaylistItem>>
+
+    @Query("SELECT * FROM playlistItems WHERE playlistItems.playlistId = :playlistId")
+    suspend fun hasSamePlaylistId(playlistId: String): List<PlaylistItem>
+
+    @Query("SELECT * FROM playlistItems WHERE playlistItems.pageToken = :pageToken")
+    suspend fun hasPageToken(pageToken: String): List<PlaylistItem>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(plants: List<PlaylistItem>)

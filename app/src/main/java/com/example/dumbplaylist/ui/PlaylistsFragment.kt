@@ -49,8 +49,8 @@ class PlaylistsFragment : Fragment() {
         setHasOptionsMenu(true)
 
         // TODO : 테스트용으로 삭제
-        viewModel.clearPlaylists()
-        viewModel.resetPlaylistsInfo()
+        //viewModel.clearPlaylists()
+        //viewModel.resetPlaylistsInfo()
         return binding.root
     }
 
@@ -80,8 +80,7 @@ class PlaylistsFragment : Fragment() {
     }
 
     fun updateData() {
-        viewModel.resetPlaylistsInfo()
-        viewModel.searchPlaylists("bts")
+        viewModel.searchPlaylists("twice")
     }
 
     companion object {
