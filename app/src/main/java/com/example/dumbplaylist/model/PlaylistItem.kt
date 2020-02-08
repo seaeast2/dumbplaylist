@@ -11,7 +11,6 @@ data class PlaylistItem (
     val title: String?,
     val description: String?,
     val publishedAt: String?,
-    val thumbnailUrl: String?,
-    val pageToken: String?) {
+    val thumbnailUrl: String?) {
     override fun toString() = id
 }

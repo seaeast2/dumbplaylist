@@ -22,7 +22,7 @@
             android:id="@+id/playlist_item_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="50sp"
+            android:textSize="20sp"
             android:text="@{playlist.title}"/>
 
     </LinearLayout>

@@ -7,6 +7,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.observe
+import androidx.recyclerview.widget.RecyclerView
 import com.example.dumbplaylist.R
 import com.example.dumbplaylist.adapter.PlaylistAdapter
 import com.example.dumbplaylist.databinding.PlaylistsFragmentBinding
@@ -31,6 +32,17 @@ class PlaylistsFragment : Fragment() {
         val adapter = PlaylistAdapter()
         // binding 을 사용해서 RecyclerView.Adapter 를 연결함
         binding.playlistsRcview.adapter = adapter
+        binding.playlistsRcview.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+
+                if (!recyclerView.canScrollVertically(1)) {
+                    viewModel.loadMorePlaylists()
+                }
+            }
+        })
+
+
         subscribeUi(adapter) // RecyclerView.Adapter 에 데이터 연결
 
         // Fragment용 메뉴활성화
@@ -38,6 +50,7 @@ class PlaylistsFragment : Fragment() {
 
         // TODO : 테스트용으로 삭제
         viewModel.clearPlaylists()
+        viewModel.resetPlaylistsInfo()
         return binding.root
     }
 
@@ -67,9 +80,8 @@ class PlaylistsFragment : Fragment() {
     }
 
     fun updateData() {
-        with(viewModel) {
-            viewModel.searchPlaylists("bts")
-        }
+        viewModel.resetPlaylistsInfo()
+        viewModel.searchPlaylists("bts")
     }
 
     companion object {

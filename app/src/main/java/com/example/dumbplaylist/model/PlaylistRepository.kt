@@ -1,15 +1,18 @@
 package com.example.dumbplaylist.model
 
 
-// Repository 에 있어야 할 기능은?
 class PlaylistRepository private constructor(
     private val playlistDao: PlaylistDao,
     private val playlistItemDao: PlaylistItemDao,
     private val youtubeService: NetworkService
 ) {
-    // playlist, playlist item Dao 접근 인터페이스
+    // playlists
     val playlists = playlistDao.getPlaylists()
+    var playlistInfo : PlaylistsInfo = PlaylistsInfo("", 0, 0, "")
+
+    // playlist items
     val playlistItems = playlistItemDao.getPlaylistItems()
+    var playlistItemInfo : PlaylistsInfo = PlaylistsInfo("", 0, 0, "")
 
     // Playlist 관련 함수 ================================================
     private fun shouldUpdatePlaylistsCache(): Boolean {
@@ -22,8 +25,9 @@ class PlaylistRepository private constructor(
     }
 
     private suspend fun fetchPlaylistsSearchResult(searchQuery: String, pageToken: String) {
-        val playlists = youtubeService.fetchPlaylistsSearchResult(searchQuery, pageToken)
-        playlistDao.insertAll(playlists) // Database 에 캐쉬로 저장함.
+        val result = youtubeService.fetchPlaylistsSearchResult(searchQuery, pageToken)
+        playlistInfo = result.second
+        playlistDao.insertAll(result.first) // Database 에 캐쉬로 저장함.
     }
 
     suspend fun clearPlaylists() = playlistDao.deleteAll()
@@ -33,13 +37,14 @@ class PlaylistRepository private constructor(
         // TODO : suspending function, so you can e.g. check the status of the database here
         return true
     }
-    suspend fun tryUpdatePlayItemsCache(playlistId: String, pageToken: String) {
+    suspend fun tryUpdatePlayItemsCache(playlistId: String, pageToken: String?) {
         if (shouldUpdatePlayItemsCache())
             fetchPlaylistItems(playlistId, pageToken)
     }
-    private suspend fun fetchPlaylistItems(playlistId: String, pageToken: String) {
-        val playItems = youtubeService.fetchPlaylistItems(playlistId, pageToken)
-        playlistItemDao.insertAll(playItems)
+    private suspend fun fetchPlaylistItems(playlistId: String, pageToken: String?) {
+        val result = youtubeService.fetchPlaylistItems(playlistId, pageToken)
+        playlistItemInfo = result.second
+        playlistItemDao.insertAll(result.first)
     }
 
     suspend fun clearPlaylistItems() = playlistItemDao.deleteAll()
@@ -60,3 +65,4 @@ class PlaylistRepository private constructor(
             }
     }
 }
+

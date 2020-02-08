@@ -1,31 +1,29 @@
 package com.example.dumbplaylist.viewmodel
 
 import androidx.lifecycle.*
-import com.example.dumbplaylist.model.AppDatabase
-import com.example.dumbplaylist.model.Playlist
-import com.example.dumbplaylist.model.PlaylistItem
-import com.example.dumbplaylist.model.PlaylistRepository
+import com.example.dumbplaylist.model.*
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 class PlaylistsViewModel(private val repository: PlaylistRepository) : ViewModel() {
     //private val GOOGLE_YOUTUBE_API_KEY: String = "AIzaSyDeiMcA8WswiJJu6IyUYit3Zjg7vmo7U9A"
 
-    // playlist 와 playlistItem 의 참조를 연결함
-    val playlists = repository.playlists // LiveData<List<Playlist>>
-    val playlistItems = repository.playlistItems // LiveData<List<PlaylistItem>>
+    // LiveDatas
+    val playlists = repository.playlists
+    val playlistItems = repository.playlistItems
 
     // video control values
-    private var curVideoPos: Int = 0
-    var doesRunFullScreen = false
-    var curSecond:Float = 0f
+    private var currentPlayInfo = PlayInfo(0, 0f, false)
+    val curPlayInfo = currentPlayInfo
+
 
     // Spiner 를 위한 변수
     private var mSpiner = MutableLiveData<Boolean>(false)
     // Snackbar 를 위한 문자열
     private var mSnackbarMsg = MutableLiveData<String?>()
 
-    // 여기서 playlists 관련 함수들 ========================
+
+    // playlists fetch functions ========================
     fun searchPlaylists(searchQuery: String, pageToken: String = "") {
         launchDataLoad {
             repository.tryUpdatePlaylistsCache(searchQuery, pageToken)
@@ -36,9 +34,24 @@ class PlaylistsViewModel(private val repository: PlaylistRepository) : ViewModel
             repository.clearPlaylists()
         }
     }
+    fun loadMorePlaylists() {
+        if (repository.playlistInfo.totalResult == 0)
+            return
 
-    // PlaylistItems 관련 함수들 ========================
-    fun fetchPlaylistItems(playlistId: String, pageToken: String = "") {
+        if (playlistItems.value?.size?:0 < repository.playlistInfo.totalResult) {
+            searchPlaylists(repository.playlistInfo.id, repository.playlistInfo.nextPageToken)
+        }
+    }
+    fun resetPlaylistsInfo() {
+        repository.playlistInfo = PlaylistsInfo("", 0, 0, "")
+    }
+
+    // PlaylistItems fetch functions ========================
+    fun fetchPlaylistItems(playlistId: String, pageToken: String? = null) {
+        var test = 10
+        if (test < 20)
+            test = 20
+
         launchDataLoad {
             repository.tryUpdatePlayItemsCache(playlistId, pageToken)
         }
@@ -48,23 +61,30 @@ class PlaylistsViewModel(private val repository: PlaylistRepository) : ViewModel
             repository.clearPlaylistItems()
         }
     }
+    fun loadMorePlaylistItem() {
+        if (repository.playlistItemInfo.totalResult == 0)
+            return
 
-    fun resetVideo() {
-        curVideoPos = 0
-        curSecond = 0f
+        if (playlistItems.value?.size?:0 < repository.playlistItemInfo.totalResult) {
+            fetchPlaylistItems(repository.playlistItemInfo.id, repository.playlistItemInfo.nextPageToken)
+        }
+    }
+    fun resetPlaylistItemsInfo() {
+        repository.playlistItemInfo = PlaylistsInfo("", 0, 0, "")
     }
 
-    fun getCurVideo(isPaged: Boolean) : String? = playlistItems.value?.get(curVideoPos)?.id
+    // Youtube player handle functions =====================
+    fun getCurVideoId() : String? = playlistItems.value?.get(currentPlayInfo.videoIndex)?.id
 
-    fun getNextVideo(isPaged: Boolean): String? {
-        curSecond = 0f
+    fun getNextVideoId(): String? {
+        currentPlayInfo.videoSec = 0f
 
-        if (curVideoPos < playlistItems.value?.size ?: 0)
-            curVideoPos++
+        if (currentPlayInfo.videoIndex < playlistItems.value?.size ?: 0)
+            currentPlayInfo.videoIndex++
         else
-            resetVideo()
+            currentPlayInfo.reset()
 
-        return playlistItems.value?.get(curVideoPos)?.id
+        return playlistItems.value?.get(currentPlayInfo.videoIndex)?.id
     }
 
     // Coroutine 호출 헬퍼 함수
@@ -79,6 +99,16 @@ class PlaylistsViewModel(private val repository: PlaylistRepository) : ViewModel
                 mSpiner.value = false
             }
         }
+    }
+}
+
+data class PlayInfo (
+    var videoIndex: Int,
+    var videoSec: Float,
+    var isFullScreen:Boolean) {
+    fun reset() {
+        videoIndex = 0
+        videoSec = 0f
     }
 }
 
