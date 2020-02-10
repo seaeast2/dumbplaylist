@@ -7,9 +7,9 @@ import androidx.room.ColumnInfo
 // Playlist 에 대한 정보
 @Entity(tableName = "playlists")
 data class Playlist(
-    @PrimaryKey @ColumnInfo(name = "id")
-    val playlistId: String,
+    @PrimaryKey
     val index : Int,
+    val playlistId: String,
     val searchQuery: String,
     val pageToken: String?,
     val title: String?,

@@ -5,7 +5,7 @@
 
     <data>
         <variable
-            name="videolist"
+            name="playlistItem"
             type="com.example.dumbplaylist.model.PlaylistItem" />
         <variable
             name="clickListener"
@@ -23,7 +23,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="20sp"
-            android:text="@{videolist.title}"/>
+            android:text="@{playlistItem.title}"/>
 
     </LinearLayout>
 </layout>

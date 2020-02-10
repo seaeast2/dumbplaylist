@@ -7,8 +7,8 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "playlistItems")
 data class PlaylistItem (
     @PrimaryKey
-    val id: String,
     val index: Int,
+    val id: String,
     val playlistId: String,
     val pageToken: String?,
     val title: String?,

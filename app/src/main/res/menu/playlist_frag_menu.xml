@@ -12,4 +12,9 @@
         android:title="Dummy"
         app:showAsAction="ifRoom" />
 
+    <item
+        android:id="@+id/action_search"
+        android:title="검색"
+        app:actionViewClass="androidx.appcompat.widget.SearchView"
+        app:showAsAction="ifRoom" />
 </menu>

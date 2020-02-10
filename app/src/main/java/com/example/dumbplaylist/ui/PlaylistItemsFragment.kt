@@ -4,6 +4,7 @@ import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.view.*
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -50,7 +51,10 @@ class PlaylistItemsFragment : Fragment() {
         // 2. context 가 이미 존재 하면 그냥 리턴
         context ?: return fragmentBinding.root
         // 3. RecyclerView Adapter 생성
-        val adapter = VideoListAdapter()
+        val adapter = VideoListAdapter { videoId ->
+            viewModel.setCurVideoId(videoId)
+            mYouTubePlayer?.loadOrCueVideo(lifecycle, videoId, 0f)
+        }
         // 4.1 binding 과 recyclerview adapter 연결
         fragmentBinding.videolistRcview.adapter = adapter
         // 4.2 무한 스크롤을 위해 ScrollListener 등록
@@ -60,7 +64,7 @@ class PlaylistItemsFragment : Fragment() {
 
                 // 더 아래로 스크롤 할수 있는지 검사 후 스크롤 불가면 데이터 추가 로딩
                 if (!recyclerView.canScrollVertically(1)) {
-                    //viewModel.loadMorePlaylistItem()
+                    viewModel.loadMorePlaylistItem()
                 }
             }
         })
@@ -68,7 +72,8 @@ class PlaylistItemsFragment : Fragment() {
         // 5. ViewModel 과 RecyclerView Adapter 를 연결하여 감시하도록 함
         subscribeUi(adapter)
         // 6. 메뉴 활성화
-        setHasOptionsMenu(true)
+        //setHasOptionsMenu(true)
+        (activity as AppCompatActivity).supportActionBar?.hide()
         // 7. PlaylistItems db 를 초기화
         //viewModel.clearPlaylistItems()
         //viewModel.resetPlaylistItemsInfo()

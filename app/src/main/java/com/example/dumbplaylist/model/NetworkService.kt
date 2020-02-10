@@ -30,8 +30,8 @@ class NetworkService {
 
             result = List<Playlist>(searchResult.items.size) {
                 Playlist(
-                    searchResult.items[it].id.playlistId,
                     totalLoadedItems + it,
+                    searchResult.items[it].id.playlistId,
                     searchQuery,
                     searchResult.nextPageToken,
                     searchResult.items[it].snippet.title,
@@ -56,8 +56,8 @@ class NetworkService {
 
             result = List<PlaylistItem>(requestResult.items.size) {
                 PlaylistItem(
-                    requestResult.items[it].snippet.resourceId.videoId,
                     totalLoadedItems + it,
+                    requestResult.items[it].snippet.resourceId.videoId,
                     playlistId,
                     requestResult.nextPageToken,
                     requestResult.items[it].snippet.title,

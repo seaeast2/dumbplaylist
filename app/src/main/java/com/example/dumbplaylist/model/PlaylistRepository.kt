@@ -12,29 +12,36 @@ class PlaylistRepository private constructor(
     // LiveData
     val playlists = playlistDao.getPlaylists()
     val playlistItems = playlistItemDao.getPlaylistItems()
+
     // get Size
     fun getPlaylistsSize(): Int = playlists.value?.size?:0
     fun getPlaylistItemsSize(): Int = playlistItems.value?.size?:0
     // get Info
-    fun getPlaylistsInfo() = playlists.value?.last()
-    fun getPlaylistItemsInfo() = playlistItems.value?.last()
+    fun getPlaylistsInfo() = if (playlists.value?.isEmpty() != false) null else playlists.value?.last()
+    fun getPlaylistItemsInfo() = if (playlistItems.value?.isEmpty() != false) null else playlistItems.value?.last()
+
 
     // Playlist related functions ================================================
     private suspend fun shouldUpdatePlaylistsCache(searchQuery: String, pageToken: String?): Boolean {
-        // 이미 저장된 데이터가 있을 경우
         if (getPlaylistsSize() != 0) {
             try {
                 if (playlistDao.hasSameSearchQuery(searchQuery).isNotEmpty()) {
                     if (pageToken == null)
                         return false
-                    // 이미 해당 page를 가지고 있는 경우
-                    if (playlistDao.hasPageToken(pageToken).isNotEmpty())
+                    if (playlistDao.hasPageToken(pageToken).isNotEmpty()) // in case we already have requested page
                         return false
+
+                    // ----> goto return true
+                }
+                else {
+                    // this is new query and we need to clear cache db.
+                    playlistDao.deleteAll()
                 }
             } catch (e : Exception) {
                 print(e)
             }
         }
+
         return true
     }
     suspend fun tryUpdatePlaylistsCache(searchQuery: String, pageToken: String?) {
@@ -52,17 +59,21 @@ class PlaylistRepository private constructor(
 
     // Play item related functions ================================================
     private suspend fun shouldUpdatePlayItemsCache(playlistId: String, pageToken: String?): Boolean {
-        // 이미 저장된 데이터가 있을 경우
         if (getPlaylistItemsSize() != 0) {
-            if (playlistItemDao.hasSamePlaylistId(playlistId).isNotEmpty()) {
-                try {
+            try {
+                if (playlistItemDao.hasSamePlaylistId(playlistId).isNotEmpty()) {
                     if (pageToken == null)
                         return false
                     if (playlistItemDao.hasPageToken(pageToken).isNotEmpty())
                         return false
-                } catch (e : Exception) {
-                    print(e)
+
+                    // ----> goto return true
                 }
+                else {
+                    playlistItemDao.deleteAll()
+                }
+            } catch (e : Exception) {
+                print(e)
             }
         }
 

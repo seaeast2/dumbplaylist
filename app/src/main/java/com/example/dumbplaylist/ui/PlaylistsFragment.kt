@@ -2,6 +2,7 @@ package com.example.dumbplaylist.ui
 
 import android.os.Bundle
 import android.view.*
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModel
@@ -48,9 +49,6 @@ class PlaylistsFragment : Fragment() {
         // Fragment용 메뉴활성화
         setHasOptionsMenu(true)
 
-        // TODO : 테스트용으로 삭제
-        //viewModel.clearPlaylists()
-        //viewModel.resetPlaylistsInfo()
         return binding.root
     }
 
@@ -84,7 +82,7 @@ class PlaylistsFragment : Fragment() {
     }
 
     companion object {
-        private val TAG = "PlaylistFragment"
+        private val TAG = "PlaylistsFragment"
     }
 }
 

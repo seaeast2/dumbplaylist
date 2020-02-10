@@ -47,13 +47,19 @@ class PlaylistsViewModel(private val repository: PlaylistRepository) : ViewModel
     }
 
     // Youtube player handle functions =====================
+    fun setCurVideoId(videoId: String) {
+        // find index with videoId
+        currentPlayInfo.reset()
+        currentPlayInfo.videoIndex = playlistItems.value?.find{
+            it.id == videoId
+        }?.index?:1
+    }
     fun getCurVideoId() : String? {
         if (repository.getPlaylistItemsSize() == 0)
             return null
 
         return playlistItems.value?.get(currentPlayInfo.videoIndex)?.id
     }
-
     fun getNextVideoId(): String? {
         // check if play position is at the end of list.
         if ((currentPlayInfo.videoIndex+1 == repository.getPlaylistItemsSize()) &&
@@ -90,7 +96,8 @@ class PlaylistsViewModel(private val repository: PlaylistRepository) : ViewModel
 data class PlayInfo (
     var videoIndex: Int,
     var videoSec: Float,
-    var isFullScreen:Boolean) {
+    var isFullScreen:Boolean)
+{
     fun reset() {
         videoIndex = 0
         videoSec = 0f

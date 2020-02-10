@@ -12,10 +12,10 @@ interface PlaylistItemDao {
     @Query("SELECT * FROM playlistItems ORDER BY playlistItems.`index` ASC")
     fun getPlaylistItems(): LiveData<List<PlaylistItem>>
 
-    @Query("SELECT * FROM playlistItems WHERE playlistItems.playlistId = :playlistId")
+    @Query("SELECT * FROM playlistItems WHERE playlistId = :playlistId")
     suspend fun hasSamePlaylistId(playlistId: String): List<PlaylistItem>
 
-    @Query("SELECT * FROM playlistItems WHERE playlistItems.pageToken = :pageToken")
+    @Query("SELECT * FROM playlistItems WHERE pageToken = :pageToken")
     suspend fun hasPageToken(pageToken: String): List<PlaylistItem>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)

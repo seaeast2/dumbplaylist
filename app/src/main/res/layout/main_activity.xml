@@ -5,11 +5,30 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <FrameLayout
+    <LinearLayout
         android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:orientation="vertical"
         tools:context=".MainActivity">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/my_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/colorPrimary"
+            android:elevation="4dp"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
+
+            <androidx.appcompat.widget.SearchView
+                android:visibility="gone"
+                android:id="@+id/search_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:defaultQueryHint="검색어를 입력하세요" />
+
+        </androidx.appcompat.widget.Toolbar>
 
         <fragment
             android:id="@+id/nav_host_fragment"
@@ -24,6 +43,6 @@
             app:defaultNavHost="true"
             app:navGraph="@navigation/nav_graph"/>
 
-    </FrameLayout>
+    </LinearLayout>
 </layout>
 
