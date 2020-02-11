@@ -3,18 +3,20 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/add_dummy_menu"
-        android:title="Update"
-        app:showAsAction="ifRoom" />
-
-    <item
-        android:id="@+id/del_dummy_menu"
-        android:title="Dummy"
-        app:showAsAction="ifRoom" />
-
-    <item
         android:id="@+id/action_search"
         android:title="검색"
         app:actionViewClass="androidx.appcompat.widget.SearchView"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="always" />
+
+<!--    <item-->
+<!--        android:id="@+id/add_dummy_menu"-->
+<!--        android:title="Update"-->
+<!--        app:showAsAction="ifRoom" />-->
+
+<!--    <item-->
+<!--        android:id="@+id/del_dummy_menu"-->
+<!--        android:title="Dummy"-->
+<!--        app:showAsAction="ifRoom" />-->
+
+
 </menu>

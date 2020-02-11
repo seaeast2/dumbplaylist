@@ -65,13 +65,13 @@ class PlaylistsFragment : Fragment() {
     // 메뉴 선택 처리
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when(item.itemId) {
-            R.id.add_dummy_menu -> {
-                updateData()
-                true
-            }
-            R.id.del_dummy_menu -> {
-                true
-            }
+//            R.id.add_dummy_menu -> {
+//                updateData()
+//                true
+//            }
+//            R.id.del_dummy_menu -> {
+//                true
+//            }
 
             else -> super.onOptionsItemSelected(item)
         }
