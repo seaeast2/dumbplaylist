@@ -1,5 +1,8 @@
 package com.example.dumbplaylist
 
+import android.app.SearchManager
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
@@ -31,33 +34,50 @@ class MainActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true) // back button
         supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_nav_drawer_menu_24dp)
 
-
-        mBinding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener{
-            override fun onQueryTextSubmit(query: String?): Boolean {
-                // 서치뷰의 내용으로 검색을 수행할 때 호출 됨
-                //Log.d(TAG, "onQueryTextSubmit: " + query);
-                query?.let {
-                    viewModel.searchPlaylists(query)
-                }
-                return true;
+        if (Intent.ACTION_SEARCH == intent.action) {
+            intent.getStringExtra(SearchManager.QUERY)?.also {query ->
+                doMySearch(query)
             }
+        }
 
-            override fun onQueryTextChange(newText: String?): Boolean {
-                // 서치뷰의 글자가 변경될 때마다 호출 됨
-                Log.d("MainActivity", "onQueryTextChange: " + newText);
-                return true;
-            }
-        })
 
-        // 서치뷰가 열린 상태로
-        mBinding.searchView.setIconified(true   );
-
-        // 쿼리 힌트
-        mBinding.searchView.setQueryHint("이것은 힌트입니다");
+//        mBinding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener{
+//            override fun onQueryTextSubmit(query: String?): Boolean {
+//                // 서치뷰의 내용으로 검색을 수행할 때 호출 됨
+//                //Log.d(TAG, "onQueryTextSubmit: " + query);
+//                query?.let {
+//                    viewModel.searchPlaylists(query)
+//                }
+//                return true;
+//            }
+//
+//            override fun onQueryTextChange(newText: String?): Boolean {
+//                // 서치뷰의 글자가 변경될 때마다 호출 됨
+//                Log.d("MainActivity", "onQueryTextChange: " + newText);
+//                return true;
+//            }
+//        })
+//
+//        // 서치뷰가 열린 상태로
+//        mBinding.searchView.setIconified(true   );
+//
+//        // 쿼리 힌트
+//        mBinding.searchView.setQueryHint("이것은 힌트입니다");
     }
 
-//    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-//
+    fun doMySearch(query: String) {
+
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        // Get the SearchView and set the searchable configuration
+        val searchManager = getSystemService(Context.SEARCH_SERVICE) as SearchManager
+        mBinding.searchView.apply {
+            setSearchableInfo(searchManager.getSearchableInfo(componentName))
+            setIconifiedByDefault(false)
+        }
+
+
 //        menuInflater.inflate(R.menu.playlist_frag_menu, menu)
 //        val searchItem = menu.findItem(R.id.action_search)
 //        val searchView = searchItem.actionView as SearchView
@@ -72,8 +92,8 @@ class MainActivity : AppCompatActivity() {
 //                return true
 //            }
 //        })
-//        return true
-//    }
+        return true
+    }
 
     companion object {
         private val TAG = "MainActivity"
