@@ -38,6 +38,10 @@ class NetworkService {
                     searchResult.items[it].snippet.description,
                     searchResult.items[it].snippet.thumbnails?.default?.url)
             }
+
+            result.forEach {
+                print("${it.idx} : ${it.playlistId} \n")
+            }
         } catch (e : Exception) {
             print(e)
             return@withContext null

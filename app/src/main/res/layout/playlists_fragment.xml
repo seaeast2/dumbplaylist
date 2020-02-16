@@ -11,13 +11,25 @@
         android:layout_height="match_parent"
         tools:context=".ui.PlaylistsFragment">
 
-
-
-        <TextView
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/input_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Playlists Fragment"
-            android:textSize="30sp" />
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:focusedByDefault="false"
+            android:layout_marginTop="8dp">
+            <EditText
+                android:id="@+id/input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Search here"
+                android:imeOptions="actionSearch"
+                android:inputType="textNoSuggestions"
+                tools:text="twice"
+                android:text="twice"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/playlists_rcview"

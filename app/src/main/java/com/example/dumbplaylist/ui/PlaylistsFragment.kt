@@ -2,6 +2,7 @@ package com.example.dumbplaylist.ui
 
 import android.os.Bundle
 import android.view.*
+import android.view.inputmethod.EditorInfo
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -23,17 +24,18 @@ class PlaylistsFragment : Fragment() {
     private val viewModel: PlaylistsViewModel by viewModels {
         Injector.providePlaylistViewModelFactory(requireContext())
     }
+    private lateinit var mBinding: PlaylistsFragmentBinding
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle? ): View {
-        val binding = PlaylistsFragmentBinding.inflate(inflater, container, false)
-        context ?: return binding.root
+        mBinding = PlaylistsFragmentBinding.inflate(inflater, container, false)
+        context ?: return mBinding.root
 
         val adapter = PlaylistAdapter()
         // binding 을 사용해서 RecyclerView.Adapter 를 연결함
-        binding.playlistsRcview.adapter = adapter
-        binding.playlistsRcview.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+        mBinding.playlistsRcview.adapter = adapter
+        mBinding.playlistsRcview.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
 
@@ -43,13 +45,44 @@ class PlaylistsFragment : Fragment() {
             }
         })
 
-
         subscribeUi(adapter) // RecyclerView.Adapter 에 데이터 연결
+        initSearch()
 
         // Fragment용 메뉴활성화
         setHasOptionsMenu(true)
 
-        return binding.root
+        return mBinding.root
+    }
+
+    //
+    private fun initSearch() {
+        mBinding.input.setOnEditorActionListener { _, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_GO) {
+                updatedSearchFromInput()
+                true
+            } else {
+                false
+            }
+        }
+
+        mBinding.input.setOnKeyListener { _, keyCode, event ->
+            if (event.action == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER) {
+                updatedSearchFromInput()
+                true
+            }
+            else {
+                false
+            }
+        }
+    }
+
+    private fun updatedSearchFromInput() {
+        mBinding.input.text.trim().toString().let {
+            if (it.isNotEmpty()) {
+                viewModel.searchPlaylists(it)
+                //mBinding.playlistsRcview.scrollToPosition(0)
+            }
+        }
     }
 
     private fun subscribeUi(adapter: PlaylistAdapter) {

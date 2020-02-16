@@ -1,8 +1,5 @@
 package com.example.dumbplaylist.model
 
-import androidx.lifecycle.Transformations
-import androidx.lifecycle.switchMap
-
 
 class PlaylistRepository private constructor(
     private val playlistDao: PlaylistDao,
@@ -23,25 +20,23 @@ class PlaylistRepository private constructor(
 
     // Playlist related functions ================================================
     private suspend fun shouldUpdatePlaylistsCache(searchQuery: String, pageToken: String?): Boolean {
-        if (getPlaylistsSize() != 0) {
-            try {
-                if (playlistDao.hasSameSearchQuery(searchQuery).isNotEmpty()) {
-                    if (pageToken == null)
-                        return false
-                    if (playlistDao.hasPageToken(pageToken).isNotEmpty()) // in case we already have requested page
-                        return false
-
-                    // ----> goto return true
+        try {
+            if (getPlaylistsSize() != 0) {
+                val lastItem = getPlaylistsInfo()
+                lastItem?.let {
+                    if (it.searchQuery == searchQuery) {
+                        if (pageToken == null)
+                            return@shouldUpdatePlaylistsCache false
+                        // ----> goto return true
+                    } else {
+                        // this is new query and we need to clear cache db.
+                        playlistDao.deleteAll()
+                    }
                 }
-                else {
-                    // this is new query and we need to clear cache db.
-                    playlistDao.deleteAll()
-                }
-            } catch (e : Exception) {
-                print(e)
             }
+        } catch (e : Exception) {
+            print(e)
         }
-
         return true
     }
     suspend fun tryUpdatePlaylistsCache(searchQuery: String, pageToken: String?) {
@@ -49,8 +44,9 @@ class PlaylistRepository private constructor(
             fetchPlaylistsSearchResult(searchQuery, pageToken)
     }
     private suspend fun fetchPlaylistsSearchResult(searchQuery: String, pageToken: String?) {
+        val itemCount = playlistDao.getItemCount()
         val result =
-            youtubeService.fetchPlaylistsSearchResult(searchQuery, pageToken, getPlaylistsSize())
+            youtubeService.fetchPlaylistsSearchResult(searchQuery, pageToken, itemCount)
         result?.let {
             playlistDao.insertAll(it)
         }
@@ -61,16 +57,15 @@ class PlaylistRepository private constructor(
     private suspend fun shouldUpdatePlayItemsCache(playlistId: String, pageToken: String?): Boolean {
         if (getPlaylistItemsSize() != 0) {
             try {
-                if (playlistItemDao.hasSamePlaylistId(playlistId).isNotEmpty()) {
-                    if (pageToken == null)
-                        return false
-                    if (playlistItemDao.hasPageToken(pageToken).isNotEmpty())
-                        return false
-
-                    // ----> goto return true
-                }
-                else {
-                    playlistItemDao.deleteAll()
+                val lastItem = getPlaylistItemsInfo()
+                lastItem?.let {
+                    if (it.playlistId == playlistId) {
+                        if (pageToken == null)
+                            return@shouldUpdatePlayItemsCache false
+                        // ----> goto return true
+                    }
+                    else
+                        playlistItemDao.deleteAll()
                 }
             } catch (e : Exception) {
                 print(e)
@@ -85,7 +80,7 @@ class PlaylistRepository private constructor(
     }
     private suspend fun fetchPlaylistItems(playlistId: String, pageToken: String?) {
         val result =
-            youtubeService.fetchPlaylistItems(playlistId, pageToken, getPlaylistItemsSize())
+            youtubeService.fetchPlaylistItems(playlistId, pageToken, playlistItemDao.getItemCount())
         result?.let {
             playlistItemDao.insertAll(it)
         }

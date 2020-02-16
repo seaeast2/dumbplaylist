@@ -8,7 +8,7 @@ import androidx.room.ColumnInfo
 @Entity(tableName = "playlists")
 data class Playlist(
     @PrimaryKey
-    val index : Int,
+    val idx : Int,
     val playlistId: String,
     val searchQuery: String,
     val pageToken: String?,
