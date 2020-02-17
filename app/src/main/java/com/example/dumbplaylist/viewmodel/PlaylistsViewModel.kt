@@ -52,7 +52,7 @@ class PlaylistsViewModel(private val repository: PlaylistRepository) : ViewModel
         currentPlayInfo.reset()
         currentPlayInfo.videoIndex = playlistItems.value?.find{
             it.id == videoId
-        }?.index?:1
+        }?.idx?:1
     }
     fun getCurVideoId() : String? {
         if (repository.getPlaylistItemsSize() == 0)

@@ -8,15 +8,30 @@
 <!--        app:actionViewClass="androidx.appcompat.widget.SearchView"-->
 <!--        app:showAsAction="always" />-->
 
-    <item
-        android:id="@+id/add_dummy_menu"
-        android:title="Update"
-        app:showAsAction="ifRoom" />
+<!--    <item-->
+<!--        android:id="@+id/add_dummy_menu"-->
+<!--        android:title="Update"-->
+<!--        app:showAsAction="ifRoom" />-->
+
+<!--    <item-->
+<!--        android:id="@+id/del_dummy_menu"-->
+<!--        android:title="Dummy"-->
+<!--        app:showAsAction="ifRoom" />-->
+
 
     <item
-        android:id="@+id/del_dummy_menu"
-        android:title="Dummy"
-        app:showAsAction="ifRoom" />
-
-
+        android:id="@+id/search"
+        android:icon="@drawable/ic_search_24px"
+        android:contentDescription="Search"
+        android:title="Search" />
+    <item
+        android:id="@+id/Play"
+        android:icon="@drawable/ic_playlist_play_24px"
+        android:contentDescription="Play"
+        android:title="Play" />
+    <item
+        android:id="@+id/form"
+        android:icon="@drawable/ic_playlist_add_24px"
+        android:contentDescription="Save"
+        android:title="Save" />
 </menu>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/saved_nav"
+    app:startDestination="@id/savedPlaylistFragment">
+
+    <fragment
+        android:id="@+id/savedPlaylistFragment"
+        android:name="com.example.dumbplaylist.ui.SavedPlaylistFragment"
+        android:label="fragment_saved_playlist"
+        tools:layout="@layout/fragment_saved_playlist" >
+        <action
+            android:id="@+id/action_savedPlaylistFragment_to_playingFragment"
+            app:destination="@id/playingFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/playingFragment"
+        android:name="com.example.dumbplaylist.ui.PlayingFragment"
+        android:label="fragment_playing"
+        tools:layout="@layout/fragment_playing" >
+        <argument
+            android:name="playlistId"
+            app:argType="string" />
+    </fragment>
+</navigation>

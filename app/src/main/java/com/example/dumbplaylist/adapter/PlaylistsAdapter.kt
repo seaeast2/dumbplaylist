@@ -10,13 +10,14 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.dumbplaylist.databinding.ListItemPlaylistBinding
 import com.example.dumbplaylist.model.Playlist
-import com.example.dumbplaylist.ui.PlaylistsFragmentDirections
+import com.example.dumbplaylist.ui.SearchedPlaylistsFragmentDirections
 
-class PlaylistAdapter: ListAdapter<Playlist, RecyclerView.ViewHolder>(PlaylistDiffCallback()) {
+
+class PlaylistAdapter: ListAdapter<Playlist, RecyclerView.ViewHolder>(SearchedListCallback()) {
     // 뷰홀더 생성
     // 뷰홀더가 필요할 때마다 이걸 호출해서 뷰홀더를 생성한다.
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        return PlaylistViewHolder(ListItemPlaylistBinding.inflate(
+        return SearchListViewHolder(ListItemPlaylistBinding.inflate(
             LayoutInflater.from(viewGroup.context), viewGroup, false), viewGroup.context)
     }
 
@@ -33,41 +34,19 @@ class PlaylistAdapter: ListAdapter<Playlist, RecyclerView.ViewHolder>(PlaylistDi
 
     // ViewHolder 가 실제적인 item 껍데기를 가지고 있음.
     // 화면 출력에 필요한 양만큼 생성된다.
-    class PlaylistViewHolder(private val binding: ListItemPlaylistBinding,
-                             private val context: Context) :
-        RecyclerView.ViewHolder(binding.root) {
-
-        init {
-            // Click 이벤트는 이곳에서 구현
-            binding.setClickListener {view ->
-                binding.playlist?.let {playlist ->
-                    navigateToVideoList(view, playlist.playlistId)
-                }
-            }
-        }
-
-        private fun navigateToVideoList(view: View, playlistId: String) {
+    class SearchListViewHolder(binding: ListItemPlaylistBinding, context: Context) 
+        : PlaylistViewHolder(binding, context) {
+        override fun navigateToVideoList(view: View, playlistId: String) {
             // ID 를 통해 이동
-            //view.findNavController().
-            // navigate(R.id.action_playlistsFragment_to_videoListFragment)
-
             // SafeArgs 를 통해 이동
-            val direction = PlaylistsFragmentDirections.
-                actionPlaylistsFragmentToVideoListFragment(playlistId)
+            val direction = SearchedPlaylistsFragmentDirections.
+                actionSearchedPlaylistsFragmentToPlayingFragment (playlistId)
             view.findNavController().navigate(direction)
-        }
-
-        // 데이터를 ViewHolder 에 채워 넣음.
-        fun bind(item : Playlist) {
-            binding.apply {
-                playlist = item
-                executePendingBindings()
-            }
         }
     }
 }
 
-private class PlaylistDiffCallback : DiffUtil.ItemCallback<Playlist>() {
+private class SearchedListCallback : DiffUtil.ItemCallback<Playlist>() {
     // 자료구조에 id 가 있으면 id 로 비교 하는 코드로 교환 가능
     override fun areItemsTheSame(oldItem: Playlist, newItem: Playlist): Boolean {
         return oldItem.playlistId == newItem.playlistId

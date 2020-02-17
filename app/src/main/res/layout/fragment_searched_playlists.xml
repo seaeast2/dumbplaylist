@@ -9,7 +9,7 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".ui.PlaylistsFragment">
+        tools:context=".ui.SearchedPlaylistsFragment">
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/input_layout"
@@ -23,20 +23,21 @@
                 android:id="@+id/input"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:textSize="20dp"
                 android:hint="Search here"
                 android:imeOptions="actionSearch"
                 android:inputType="textNoSuggestions"
-                tools:text="twice"
-                android:text="twice"/>
+                />
         </com.google.android.material.textfield.TextInputLayout>
 
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/playlists_rcview"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="1"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            tools:context=".MainActivity"
+            tools:context=".ui.SearchedPlaylistsFragment"
             tools:listitem="@layout/list_item_playlist" />
 
     </LinearLayout>

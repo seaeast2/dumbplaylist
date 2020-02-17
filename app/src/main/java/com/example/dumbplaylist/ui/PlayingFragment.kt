@@ -13,7 +13,7 @@ import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.RecyclerView
 import com.example.dumbplaylist.R
 import com.example.dumbplaylist.adapter.VideoListAdapter
-import com.example.dumbplaylist.databinding.VideoListFragmentBinding
+import com.example.dumbplaylist.databinding.FragmentPlayingBinding
 import com.example.dumbplaylist.util.FullScreenHelper
 import com.example.dumbplaylist.util.Injector
 import com.example.dumbplaylist.viewmodel.PlaylistsViewModel
@@ -24,9 +24,9 @@ import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.You
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.utils.loadOrCueVideo
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
 
-class PlaylistItemsFragment : Fragment() {
+class PlayingFragment : Fragment() {
     // Recieve argument through navagation.
-    private val args: PlaylistItemsFragmentArgs by navArgs()
+    private val args: PlayingFragmentArgs by navArgs()
 
     // ViewModel 은 공유한다.
     private val viewModel: PlaylistsViewModel by viewModels {
@@ -37,7 +37,7 @@ class PlaylistItemsFragment : Fragment() {
         FullScreenHelper(requireActivity())
     }
 
-    private lateinit var fragmentBinding: VideoListFragmentBinding
+    private lateinit var fragmentBinding: FragmentPlayingBinding
     private lateinit var mYouTubePlayerView: YouTubePlayerView
     private var mYouTubePlayer: YouTubePlayer? = null
     private var mPlayerState: PlayerConstants.PlayerState = PlayerConstants.PlayerState.UNKNOWN
@@ -47,7 +47,7 @@ class PlaylistItemsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // 1. Fragment binding
-        fragmentBinding = VideoListFragmentBinding.inflate(inflater, container, false)
+        fragmentBinding = FragmentPlayingBinding.inflate(inflater, container, false)
         // 2. context 가 이미 존재 하면 그냥 리턴
         context ?: return fragmentBinding.root
         // 3. RecyclerView Adapter 생성
