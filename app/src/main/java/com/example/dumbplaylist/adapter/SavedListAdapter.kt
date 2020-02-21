@@ -1,19 +1,37 @@
 package com.example.dumbplaylist.adapter
 
+import android.content.Context
+import android.text.Layout
+import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.example.dumbplaylist.databinding.ListItemPlaylistBinding
 import com.example.dumbplaylist.model.Playlist
 
 class SavedListAdapter : ListAdapter<Playlist, RecyclerView.ViewHolder>(SavedListDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        return SavedListViewHolder(
+            ListItemPlaylistBinding.inflate(
+                LayoutInflater.from(parent.context),
+                parent, false),
+            parent.context)
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        val item = getItem(position)
+        (holder as SavedListViewHolder).bind(item)
+    }
+
+    class SavedListViewHolder(binding: ListItemPlaylistBinding, context: Context)
+        : PlaylistViewHolder(binding, context) {
+
+        override fun navigateToVideoList(view: View, playlistId: String) {
+
+        }
     }
 }
 

@@ -14,11 +14,13 @@ import com.example.dumbplaylist.ui.SearchedPlaylistsFragmentDirections
 
 
 class PlaylistAdapter: ListAdapter<Playlist, RecyclerView.ViewHolder>(SearchedListCallback()) {
-    // 뷰홀더 생성
-    // 뷰홀더가 필요할 때마다 이걸 호출해서 뷰홀더를 생성한다.
+    // 뷰홀더가 필요할 때마다 호출해서 뷰홀더를 생성한다.
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        return SearchListViewHolder(ListItemPlaylistBinding.inflate(
-            LayoutInflater.from(viewGroup.context), viewGroup, false), viewGroup.context)
+        return SearchListViewHolder(
+            ListItemPlaylistBinding.inflate(
+                LayoutInflater.from(viewGroup.context),
+                viewGroup, false),
+            viewGroup.context)
     }
 
     // position 에 해당하는 데이터를 가져다 viewholder 에 들어 있는 item 에 업데이트

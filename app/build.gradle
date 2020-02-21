@@ -96,9 +96,13 @@ dependencies {
     // Multidex
     implementation 'com.android.support:multidex:1.0.3'
 
+    // Dagger2
+    implementation 'com.google.dagger:dagger:2.23.2'
+    kapt 'com.google.dagger:dagger-compiler:2.23.2'
+    implementation "com.google.dagger:dagger-android-support:2.23.2"
+    kapt "com.google.dagger:dagger-android-processor:2.23.2"
+
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
-
-
 }
