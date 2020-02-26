@@ -39,16 +39,18 @@ fun BottomNavigationView.setupWithNavController(
     containerId: Int,
     intent: Intent
 ): LiveData<NavController> {
-
     // Map of tags
-    val graphIdToTagMap = SparseArray<String>()
+    val graphIdToTagMap = SparseArray<String>() // SparseArray : key 가 int 인 HashMap 비슷한 자료구조. 적은 개수에서 속도가 빠름
     // Result. Mutable live data with the selected controlled
     val selectedNavController = MutableLiveData<NavController>()
 
     var firstFragmentGraphId = 0
 
+
+    // BottomNavigationView 에서 선택된 navHostFragment 를 붙임.
     // First create a NavHostFragment for each NavGraph ID
     navGraphIds.forEachIndexed { index, navGraphId ->
+        // Get string like bottomNavigation#1,2,3, ...
         val fragmentTag = getFragmentTag(index)
 
         // Find or create the Navigation host fragment
@@ -181,8 +183,7 @@ private fun BottomNavigationView.setupDeepLinks(
 
 private fun BottomNavigationView.setupItemReselected(
     graphIdToTagMap: SparseArray<String>,
-    fragmentManager: FragmentManager
-) {
+    fragmentManager: FragmentManager) {
     setOnNavigationItemReselectedListener { item ->
         val newlySelectedItemTag = graphIdToTagMap[item.itemId]
         val selectedFragment = fragmentManager.findFragmentByTag(newlySelectedItemTag)
@@ -222,11 +223,12 @@ private fun attachNavHostFragment(
 
 private fun obtainNavHostFragment(
     fragmentManager: FragmentManager,
-    fragmentTag: String,
+    fragmentTag: String, // bottom
     navGraphId: Int,
     containerId: Int
 ): NavHostFragment {
     // If the Nav Host fragment exists, return it
+    // fragmentTag : bottomNavigation#1,2,3
     val existingFragment = fragmentManager.findFragmentByTag(fragmentTag) as NavHostFragment?
     existingFragment?.let { return it }
 

@@ -5,11 +5,13 @@ import android.text.Layout
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.dumbplaylist.databinding.ListItemPlaylistBinding
 import com.example.dumbplaylist.model.Playlist
+import com.example.dumbplaylist.ui.SavedPlaylistFragmentDirections
 
 class SavedListAdapter : ListAdapter<Playlist, RecyclerView.ViewHolder>(SavedListDiffCallback()) {
 
@@ -30,7 +32,9 @@ class SavedListAdapter : ListAdapter<Playlist, RecyclerView.ViewHolder>(SavedLis
         : PlaylistViewHolder(binding, context) {
 
         override fun navigateToVideoList(view: View, playlistId: String) {
-
+            // Move with SafeArg
+            val direction = SavedPlaylistFragmentDirections.actionSavedPlaylistFragmentToPlayingFragment(playlistId)
+            view.findNavController().navigate(direction)
         }
     }
 }

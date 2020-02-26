@@ -79,7 +79,8 @@ class PlayingFragment : Fragment() {
         //viewModel.resetPlaylistItemsInfo()
         // 8. args 를통해 받은 playlistId로 PlaylistItem fetch
         //if (args.playlistId == viewModel.playlistItemInfo.id)
-        viewModel.fetchPlaylistItems(args.playlistId)
+        if (args.playlistId != "")
+            viewModel.fetchPlaylistItems(args.playlistId)
 
         // 9. get observe youtube player instance
         mYouTubePlayerView = fragmentBinding.youtubePlayerView
