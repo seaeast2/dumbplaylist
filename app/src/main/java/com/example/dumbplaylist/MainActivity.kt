@@ -9,7 +9,6 @@ import androidx.lifecycle.observe
 import androidx.navigation.NavController
 import androidx.navigation.ui.setupActionBarWithNavController
 import com.example.dumbplaylist.databinding.MainActivityBinding
-import com.example.dumbplaylist.util.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class MainActivity : AppCompatActivity() {
@@ -41,20 +40,9 @@ class MainActivity : AppCompatActivity() {
      */
     private fun setupBottomNavigationBar() {
         val bottomNavigationView = mBinding.bottomNav
-        val navGraphIds = listOf(R.navigation.search_nav, R.navigation.saved_nav)
+        bottomNavigationView.setOnNavigationItemReselectedListener {
 
-        val controller = bottomNavigationView.setupWithNavController(
-            navGraphIds,
-            supportFragmentManager,
-            R.id.nav_host_container,
-            intent
-        )
-
-//        controller.observe(this) { navController ->
-//            setupActionBarWithNavController(navController)
-//        }
-
-        mCurrentNavController = controller
+        }
     }
 
     override fun onSupportNavigateUp(): Boolean {
