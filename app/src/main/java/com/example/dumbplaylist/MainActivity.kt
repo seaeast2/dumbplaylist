@@ -39,10 +39,10 @@ class MainActivity : AppCompatActivity() {
      * Called on first creation and when restoring state.
      */
     private fun setupBottomNavigationBar() {
-        val bottomNavigationView = mBinding.bottomNav
-        bottomNavigationView.setOnNavigationItemReselectedListener {
-
-        }
+//        val bottomNavigationView = mBinding.bottomNav
+//        bottomNavigationView.setOnNavigationItemReselectedListener {
+//
+//        }
     }
 
     override fun onSupportNavigateUp(): Boolean {
