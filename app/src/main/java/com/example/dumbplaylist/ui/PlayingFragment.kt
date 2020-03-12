@@ -78,9 +78,9 @@ class PlayingFragment : Fragment() {
         //viewModel.clearPlaylistItems()
         //viewModel.resetPlaylistItemsInfo()
         // 8. args 를통해 받은 playlistId로 PlaylistItem fetch
-        //if (args.playlistId == viewModel.playlistItemInfo.id)
-        if (args.playlistId != "")
+        if (args.playlistId != "none") {
             viewModel.fetchPlaylistItems(args.playlistId)
+        }
 
         // 9. get observe youtube player instance
         mYouTubePlayerView = fragmentBinding.youtubePlayerView
@@ -201,7 +201,7 @@ class PlayingFragment : Fragment() {
         mYouTubePlayerView.addFullScreenListener(object: YouTubePlayerFullScreenListener {
             override fun onYouTubePlayerEnterFullScreen() {
                 // 1. 화면 가로로 변경
-                activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+                //activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
                 // 2. 가로화면에 맞추어 UI 변경
                 fullScreenHelper.enterFullScreen()
                 // 3. 사용자 버튼 추가
@@ -211,7 +211,7 @@ class PlayingFragment : Fragment() {
 
             override fun onYouTubePlayerExitFullScreen() {
                 // 1. 화면 세로로 변경
-                activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+                //activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
                 // 2. 세로 화면에 맞추어 UI 변경
                 fullScreenHelper.exitFullScreen()
                 // 3. 사용자 버튼 감추기

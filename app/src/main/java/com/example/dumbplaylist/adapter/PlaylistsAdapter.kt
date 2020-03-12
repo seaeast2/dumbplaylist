@@ -16,7 +16,7 @@ import com.example.dumbplaylist.ui.SearchedPlaylistsFragmentDirections
 class PlaylistAdapter: ListAdapter<Playlist, RecyclerView.ViewHolder>(SearchedListCallback()) {
     // 뷰홀더가 필요할 때마다 호출해서 뷰홀더를 생성한다.
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        return SearchListViewHolder(
+        return PlaylistViewHolder(
             ListItemPlaylistBinding.inflate(
                 LayoutInflater.from(viewGroup.context),
                 viewGroup, false),
@@ -36,14 +36,33 @@ class PlaylistAdapter: ListAdapter<Playlist, RecyclerView.ViewHolder>(SearchedLi
 
     // ViewHolder 가 실제적인 item 껍데기를 가지고 있음.
     // 화면 출력에 필요한 양만큼 생성된다.
-    class SearchListViewHolder(binding: ListItemPlaylistBinding, context: Context) 
-        : PlaylistViewHolder(binding, context) {
-        override fun navigateToVideoList(view: View, playlistId: String) {
+    class PlaylistViewHolder(private val binding: ListItemPlaylistBinding,
+                             private val context: Context)
+        : RecyclerView.ViewHolder(binding.root) {
+
+        init {
+            // Click 이벤트는 이곳에서 구현
+            binding.setClickListener {view ->
+                binding.playlist?.let {playlist ->
+                    navigateToVideoList(view, playlist.playlistId)
+                }
+            }
+        }
+
+        fun navigateToVideoList(view: View, playlistId: String) {
             // ID 를 통해 이동
             // SafeArgs 를 통해 이동
             val direction = SearchedPlaylistsFragmentDirections.
                 actionSearchedPlaylistsFragmentToPlayingFragment (playlistId)
             view.findNavController().navigate(direction)
+        }
+
+        // 데이터를 ViewHolder 에 채워 넣음.
+        fun bind(item : Playlist) {
+            binding.apply {
+                playlist = item
+                executePendingBindings()
+            }
         }
     }
 }

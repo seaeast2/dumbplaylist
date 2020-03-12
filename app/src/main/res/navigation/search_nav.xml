@@ -3,26 +3,40 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/search"
-    app:startDestination="@+id/searchedPlaylistsFragment">
+    app:startDestination="@+id/search">
 
     <fragment
-        android:id="@+id/searchedPlaylistsFragment"
+        android:id="@+id/search"
         android:name="com.example.dumbplaylist.ui.SearchedPlaylistsFragment"
         android:label="Search"
         tools:layout="@layout/fragment_searched_playlists">
         <action
             android:id="@+id/action_searchedPlaylistsFragment_to_playingFragment"
-            app:destination="@id/playingFragment" />
+            app:destination="@id/playing" />
     </fragment>
 
     <fragment
-        android:id="@+id/playingFragment"
+        android:id="@+id/playing"
         android:name="com.example.dumbplaylist.ui.PlayingFragment"
         android:label="Playing"
         tools:layout="@layout/fragment_playing" >
         <argument
             android:name="playlistId"
-            app:argType="string" />
+            app:argType="string"
+            android:defaultValue="none"/>
+        <action
+            android:id="@+id/action_playingFragment_to_savedPlaylistFragment2"
+            app:destination="@id/saved" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/saved"
+        android:name="com.example.dumbplaylist.ui.SavedPlaylistFragment"
+        android:label="SavedPlaylistFragment"
+        tools:layout="@layout/fragment_saved_playlist">
+        <action
+            android:id="@+id/action_savedPlaylistFragment2_to_playingFragment"
+            app:destination="@id/playing" />
     </fragment>
 
 

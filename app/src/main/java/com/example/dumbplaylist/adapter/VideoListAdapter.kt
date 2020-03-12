@@ -9,11 +9,16 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.dumbplaylist.databinding.ListItemVideolistBinding
 import com.example.dumbplaylist.model.PlaylistItem
 
-class VideoListAdapter(private val playSelectedVideo: (videoId:String)->Unit) : ListAdapter<PlaylistItem, RecyclerView.ViewHolder>(PlayItemDiffCallback()) {
+class VideoListAdapter(private val playSelectedVideo: (videoId:String)->Unit) :
+    ListAdapter<PlaylistItem, RecyclerView.ViewHolder>(PlayItemDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return VideoListViewHolder(
-            ListItemVideolistBinding.inflate(LayoutInflater.from(parent.context), parent, false), playSelectedVideo)
+            ListItemVideolistBinding.inflate(
+                LayoutInflater.from(parent.context),
+                parent,
+                false),
+            playSelectedVideo)
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
@@ -27,7 +32,6 @@ class VideoListAdapter(private val playSelectedVideo: (videoId:String)->Unit) : 
     }*/
 
     class VideoListViewHolder(private val binding: ListItemVideolistBinding, func: (videoId:String)->Unit) : RecyclerView.ViewHolder(binding.root) {
-
         init {
             binding.setClickListener {view ->
                 binding.playlistItem?.let {
@@ -35,14 +39,6 @@ class VideoListAdapter(private val playSelectedVideo: (videoId:String)->Unit) : 
                 }
             }
         }
-
-        // 화면 이동
-//        private fun navigateToPlayerView(view: View, videoId: String) {
-//            // SafeArgs 를 통해 이동
-//            val direction =
-//                PlaylistItemsFragmentDirections.actionVideoListFragmentToYoutubePlayerFragment(videoId)
-//            view.findNavController().navigate(direction)
-//        }
 
         fun bind(item: PlaylistItem?) {
             binding.apply {

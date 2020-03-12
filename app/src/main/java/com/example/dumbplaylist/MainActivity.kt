@@ -7,7 +7,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.observe
 import androidx.navigation.NavController
+import androidx.navigation.findNavController
 import androidx.navigation.ui.setupActionBarWithNavController
+import androidx.navigation.ui.setupWithNavController
 import com.example.dumbplaylist.databinding.MainActivityBinding
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
@@ -20,6 +22,7 @@ class MainActivity : AppCompatActivity() {
         // After Navigation
         mBinding = setContentView<MainActivityBinding>(this, R.layout.main_activity)
 
+        // 최초 실행
         if (savedInstanceState == null) {
             setupBottomNavigationBar()
         } // Else, need to wait for onRestoreInstanceState
@@ -39,10 +42,9 @@ class MainActivity : AppCompatActivity() {
      * Called on first creation and when restoring state.
      */
     private fun setupBottomNavigationBar() {
-//        val bottomNavigationView = mBinding.bottomNav
-//        bottomNavigationView.setOnNavigationItemReselectedListener {
-//
-//        }
+        val navController = findNavController(R.id.nav_host_fragment)
+        mBinding.bottomNav.setupWithNavController(navController)
+
     }
 
     override fun onSupportNavigateUp(): Boolean {
