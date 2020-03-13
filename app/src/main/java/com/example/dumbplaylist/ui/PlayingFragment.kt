@@ -17,6 +17,7 @@ import com.example.dumbplaylist.databinding.FragmentPlayingBinding
 import com.example.dumbplaylist.util.FullScreenHelper
 import com.example.dumbplaylist.util.Injector
 import com.example.dumbplaylist.viewmodel.PlaylistsViewModel
+import com.google.android.material.snackbar.Snackbar
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.PlayerConstants
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener
@@ -87,6 +88,12 @@ class PlayingFragment : Fragment() {
 
         // 10. youtube player ui initialize
         initYoutubePlayerView()
+
+        // 11. set up add list button click listener
+        fragmentBinding.addList.setOnClickListener {view ->
+            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                .setAction("Action", null).show()
+        }
 
         return fragmentBinding.root
     }
