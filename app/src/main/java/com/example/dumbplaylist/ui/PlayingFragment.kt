@@ -8,9 +8,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProviders
 import androidx.lifecycle.observe
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.RecyclerView
+import com.example.dumbplaylist.MainActivity
 import com.example.dumbplaylist.R
 import com.example.dumbplaylist.adapter.VideoListAdapter
 import com.example.dumbplaylist.databinding.FragmentPlayingBinding
@@ -24,15 +26,17 @@ import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.Abs
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.YouTubePlayerFullScreenListener
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.utils.loadOrCueVideo
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
+import java.lang.Exception
 
 class PlayingFragment : Fragment() {
     // Recieve argument through navagation.
     private val args: PlayingFragmentArgs by navArgs()
 
     // ViewModel 은 공유한다.
-    private val viewModel: PlaylistsViewModel by viewModels {
-        Injector.providePlaylistViewModelFactory(requireContext())
-    }
+//    private val viewModel: PlaylistsViewModel by viewModels {
+//        Injector.providePlaylistViewModelFactory(requireContext())
+//    }
+    private lateinit var viewModel: PlaylistsViewModel
 
     private val fullScreenHelper: FullScreenHelper by lazy {
         FullScreenHelper(requireActivity())
@@ -51,6 +55,9 @@ class PlayingFragment : Fragment() {
         fragmentBinding = FragmentPlayingBinding.inflate(inflater, container, false)
         // 2. context 가 이미 존재 하면 그냥 리턴
         context ?: return fragmentBinding.root
+
+        viewModel = (activity as MainActivity).viewModel
+
         // 3. RecyclerView Adapter 생성
         val adapter = VideoListAdapter { videoId ->
             viewModel.setCurVideoId(videoId)
@@ -82,6 +89,8 @@ class PlayingFragment : Fragment() {
         if (args.playlistId != "none") {
             viewModel.fetchPlaylistItems(args.playlistId)
         }
+
+        Toast.makeText(requireContext(), viewModel.curPlaylistId, Toast.LENGTH_SHORT).show()
 
         // 9. get observe youtube player instance
         mYouTubePlayerView = fragmentBinding.youtubePlayerView

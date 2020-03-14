@@ -1,8 +1,10 @@
 package com.example.dumbplaylist
 
 import android.os.Bundle
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil.setContentView
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.observe
@@ -11,17 +13,26 @@ import androidx.navigation.findNavController
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.dumbplaylist.databinding.MainActivityBinding
+import com.example.dumbplaylist.util.Injector
+import com.example.dumbplaylist.viewmodel.PlaylistsViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class MainActivity : AppCompatActivity() {
     private lateinit var mBinding : MainActivityBinding
     private var mCurrentNavController: LiveData<NavController>? = null
 
+    // viewModel 은 observe 되기 전에 항상 생성되어 있어야 함.
+    // 그래서 class 생성시 초기화 되도록 property delegation 으로 처리
+    val viewModel: PlaylistsViewModel by viewModels {
+        Injector.providePlaylistViewModelFactory(this)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         // After Navigation
         mBinding = setContentView<MainActivityBinding>(this, R.layout.main_activity)
 
+        //viewModel.initializer = true
         // 최초 실행
         if (savedInstanceState == null) {
             setupBottomNavigationBar()

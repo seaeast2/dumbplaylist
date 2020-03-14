@@ -8,8 +8,8 @@ import androidx.room.PrimaryKey
 data class PlaylistItem (
     @PrimaryKey
     val idx: Int,
-    val id: String,
-    val playlistId: String,
+    val id: String, // video item id
+    val playlistId: String, // playlist id
     val pageToken: String?,
     val title: String?,
     val description: String?,

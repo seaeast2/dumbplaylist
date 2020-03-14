@@ -9,20 +9,23 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.observe
 import androidx.recyclerview.widget.RecyclerView
+import com.example.dumbplaylist.MainActivity
 import com.example.dumbplaylist.R
 import com.example.dumbplaylist.adapter.PlaylistAdapter
 import com.example.dumbplaylist.databinding.FragmentSearchedPlaylistsBinding
 import com.example.dumbplaylist.model.PlaylistRepository
 import com.example.dumbplaylist.util.Injector
 import com.example.dumbplaylist.viewmodel.PlaylistsViewModel
+import java.lang.Exception
 
 
 class SearchedPlaylistsFragment : Fragment() {
     // viewModel 은 observe 되기 전에 항상 생성되어 있어야 함.
     // 그래서 class 생성시 초기화 되도록 property delegation 으로 처리
-    private val viewModel: PlaylistsViewModel by viewModels {
-        Injector.providePlaylistViewModelFactory(requireContext())
-    }
+//    private val viewModel: PlaylistsViewModel by viewModels {
+//        Injector.providePlaylistViewModelFactory(requireContext())
+//    }
+    private lateinit var viewModel: PlaylistsViewModel
     private lateinit var mBinding: FragmentSearchedPlaylistsBinding
 
     override fun onCreateView(
@@ -30,6 +33,10 @@ class SearchedPlaylistsFragment : Fragment() {
         savedInstanceState: Bundle? ): View {
         mBinding = FragmentSearchedPlaylistsBinding.inflate(inflater, container, false)
         context ?: return mBinding.root
+
+        viewModel = (activity as MainActivity).viewModel
+
+        viewModel.curPlaylistId = "From Search Fragment"
 
         val adapter = PlaylistAdapter()
         // binding 을 사용해서 RecyclerView.Adapter 를 연결함
@@ -109,10 +116,6 @@ class SearchedPlaylistsFragment : Fragment() {
         }
     }
 
-    fun updateData() {
-        viewModel.searchPlaylists("twice")
-    }
-
     companion object {
         private val TAG = "PlaylistsFragment"
     }
@@ -128,3 +131,4 @@ class MyPlaylistViewModelFactory(
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>) = PlaylistsViewModel(repository) as T
 }
+

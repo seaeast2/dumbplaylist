@@ -38,8 +38,7 @@ private object DefaultViewModelProvider: ViewModelFactoryProvider {
 
 private object Lock
 
-@Volatile private var currentInjector: ViewModelFactoryProvider =
-    DefaultViewModelProvider
+@Volatile private var currentInjector: ViewModelFactoryProvider = DefaultViewModelProvider
 
 // Code for unit test
 //@VisibleForTesting
