@@ -19,9 +19,7 @@ class SavedPlaylistFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-
+        // shared ViewModel
         viewModel = (activity as MainActivity).viewModel
-
-        viewModel.curPlaylistId = "From Saved Fragment"
     }
 }

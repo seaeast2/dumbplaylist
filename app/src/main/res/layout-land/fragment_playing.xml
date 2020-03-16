@@ -27,6 +27,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
+                android:visibility="invisible"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 tools:listitem="@layout/list_item_playlist" />
         </LinearLayout>
@@ -37,6 +38,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|end"
             android:layout_margin="16dp"
+            android:visibility="invisible"
             app:srcCompat="@drawable/ic_add_24px" />
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>

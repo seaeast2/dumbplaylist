@@ -21,9 +21,10 @@
         android:label="Playing"
         tools:layout="@layout/fragment_playing" >
         <argument
-            android:name="playlistId"
-            app:argType="string"
-            android:defaultValue="none"/>
+            android:name="selectedPlaylist"
+            app:argType="com.example.dumbplaylist.adapter.SelectedPlaylist"
+            android:defaultValue="@null"
+            app:nullable="true" />
         <action
             android:id="@+id/action_playingFragment_to_savedPlaylistFragment2"
             app:destination="@id/saved" />

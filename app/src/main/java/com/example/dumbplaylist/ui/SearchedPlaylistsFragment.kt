@@ -34,11 +34,10 @@ class SearchedPlaylistsFragment : Fragment() {
         mBinding = FragmentSearchedPlaylistsBinding.inflate(inflater, container, false)
         context ?: return mBinding.root
 
+        // shared ViewModel
         viewModel = (activity as MainActivity).viewModel
 
-        viewModel.curPlaylistId = "From Search Fragment"
-
-        val adapter = PlaylistAdapter()
+        val adapter = PlaylistAdapter(PlaylistAdapter.FragmentType.SEARCH)
         // binding 을 사용해서 RecyclerView.Adapter 를 연결함
         mBinding.playlistsRcview.adapter = adapter
         mBinding.playlistsRcview.addOnScrollListener(object : RecyclerView.OnScrollListener() {

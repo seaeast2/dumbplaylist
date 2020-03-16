@@ -1,7 +1,9 @@
 package com.example.dumbplaylist.ui
 
 import android.content.pm.ActivityInfo
+import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
+import android.preference.PreferenceManager
 import android.view.*
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -14,8 +16,10 @@ import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.RecyclerView
 import com.example.dumbplaylist.MainActivity
 import com.example.dumbplaylist.R
+import com.example.dumbplaylist.adapter.SelectedPlaylist
 import com.example.dumbplaylist.adapter.VideoListAdapter
 import com.example.dumbplaylist.databinding.FragmentPlayingBinding
+import com.example.dumbplaylist.model.Playlist
 import com.example.dumbplaylist.util.FullScreenHelper
 import com.example.dumbplaylist.util.Injector
 import com.example.dumbplaylist.viewmodel.PlaylistsViewModel
@@ -32,12 +36,7 @@ class PlayingFragment : Fragment() {
     // Recieve argument through navagation.
     private val args: PlayingFragmentArgs by navArgs()
 
-    // ViewModel 은 공유한다.
-//    private val viewModel: PlaylistsViewModel by viewModels {
-//        Injector.providePlaylistViewModelFactory(requireContext())
-//    }
     private lateinit var viewModel: PlaylistsViewModel
-
     private val fullScreenHelper: FullScreenHelper by lazy {
         FullScreenHelper(requireActivity())
     }
@@ -47,10 +46,7 @@ class PlayingFragment : Fragment() {
     private var mYouTubePlayer: YouTubePlayer? = null
     private var mPlayerState: PlayerConstants.PlayerState = PlayerConstants.PlayerState.UNKNOWN
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+    override fun onCreateView( inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // 1. Fragment binding
         fragmentBinding = FragmentPlayingBinding.inflate(inflater, container, false)
         // 2. context 가 이미 존재 하면 그냥 리턴
@@ -82,15 +78,22 @@ class PlayingFragment : Fragment() {
         // 6. 메뉴 활성화
         //setHasOptionsMenu(true)
         (activity as AppCompatActivity).supportActionBar?.hide()
+
         // 7. PlaylistItems db 를 초기화
         //viewModel.clearPlaylistItems()
         //viewModel.resetPlaylistItemsInfo()
-        // 8. args 를통해 받은 playlistId로 PlaylistItem fetch
-        if (args.playlistId != "none") {
-            viewModel.fetchPlaylistItems(args.playlistId)
-        }
 
-        Toast.makeText(requireContext(), viewModel.curPlaylistId, Toast.LENGTH_SHORT).show()
+        // 8. args 를통해 받은 playlistId로 PlaylistItem fetch
+        if (args.selectedPlaylist != null) { // playlist 가 있으면 fetching 하고, SharePreference 에 저장
+            viewModel.selectedPlaylist = args.selectedPlaylist // set current playlist
+            viewModel.selectedPlaylist?.let {
+                viewModel.fetchPlaylistItems(it.playlistId)
+            }
+        }
+        else {
+            // playlist 가 null 이면 SharedPreference 읽어옴
+        }
+        //Toast.makeText(requireContext(), viewModel.curPlaylistId, Toast.LENGTH_SHORT).show()
 
         // 9. get observe youtube player instance
         mYouTubePlayerView = fragmentBinding.youtubePlayerView
@@ -99,7 +102,7 @@ class PlayingFragment : Fragment() {
         initYoutubePlayerView()
 
         // 11. set up add list button click listener
-        fragmentBinding.addList.setOnClickListener {view ->
+        fragmentBinding.fab.setOnClickListener {view ->
             Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                 .setAction("Action", null).show()
         }
@@ -278,6 +281,19 @@ class PlayingFragment : Fragment() {
     private fun removeCustomActionsFromPlayer() {
         mYouTubePlayerView.getPlayerUiController().showCustomAction1(false)
         mYouTubePlayerView.getPlayerUiController().showCustomAction2(false)
+    }
+
+    private fun saveSelectedPlaylist() {
+        //val preferences = PreferenceManager
+    }
+
+    private fun restoreSelectedPlaylist() : SelectedPlaylist? {
+        return null
+    }
+
+    // FloatingActionButton Callback
+    interface FabCallback {
+        fun add(playlist: Playlist?)
     }
 }
 

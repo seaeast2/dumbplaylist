@@ -32,7 +32,6 @@ class MainActivity : AppCompatActivity() {
         // After Navigation
         mBinding = setContentView<MainActivityBinding>(this, R.layout.main_activity)
 
-        //viewModel.initializer = true
         // 최초 실행
         if (savedInstanceState == null) {
             setupBottomNavigationBar()

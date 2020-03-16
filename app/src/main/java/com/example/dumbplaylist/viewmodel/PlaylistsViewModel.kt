@@ -1,13 +1,12 @@
 package com.example.dumbplaylist.viewmodel
 
 import androidx.lifecycle.*
+import com.example.dumbplaylist.adapter.SelectedPlaylist
 import com.example.dumbplaylist.model.*
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 class PlaylistsViewModel(private val repository: PlaylistRepository) : ViewModel() {
-    var initializer : Boolean = false
-
     // LiveData
     val playlists = repository.playlists
     val playlistItems = repository.playlistItems
@@ -21,7 +20,7 @@ class PlaylistsViewModel(private val repository: PlaylistRepository) : ViewModel
     // error massge popup Snackbar
     private var mSnackbarMsg = MutableLiveData<String?>()
 
-    var curPlaylistId: String = ""
+    var selectedPlaylist: SelectedPlaylist? = null
 
     // playlists fetch functions ========================
     fun searchPlaylists(searchQuery: String, pageToken: String? = null) {
@@ -38,7 +37,6 @@ class PlaylistsViewModel(private val repository: PlaylistRepository) : ViewModel
 
     // PlaylistItems fetch functions ========================
     fun fetchPlaylistItems(playlistId: String, pageToken: String? = null) {
-        curPlaylistId = playlistId
         launchDataLoad {
             repository.tryUpdatePlayItemsCache(playlistId, pageToken)
         }
