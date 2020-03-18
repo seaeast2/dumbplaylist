@@ -9,7 +9,7 @@ data class PlaylistItem (
     @PrimaryKey
     val idx: Int,
     val id: String, // video item id
-    val playlistId: String, // playlist id
+    val playlistId: String, // parent playlist id
     val pageToken: String?,
     val title: String?,
     val description: String?,

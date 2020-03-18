@@ -1,12 +1,9 @@
 package com.example.dumbplaylist.adapter
 
-import android.content.Context
-import android.os.Parcel
 import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.navigation.NavDirections
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter

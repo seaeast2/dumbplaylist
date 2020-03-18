@@ -5,6 +5,7 @@ import com.example.dumbplaylist.model.AppDatabase
 import com.example.dumbplaylist.model.NetworkService
 import com.example.dumbplaylist.model.PlaylistRepository
 import com.example.dumbplaylist.ui.MyPlaylistViewModelFactory
+import kotlinx.coroutines.flow.combineTransform
 
 interface ViewModelFactoryProvider {
     fun providePlaylistViewModelFactory(context: Context): MyPlaylistViewModelFactory
@@ -18,14 +19,19 @@ val Injector: ViewModelFactoryProvider
 private object DefaultViewModelProvider: ViewModelFactoryProvider {
     // Get repository
     private fun getRepository(context: Context) =
-        PlaylistRepository.getInstance(playlistDao(context),
-            playlistItemDao(context), networkService())
+        PlaylistRepository.getInstance(
+            playlistDao(context),
+            playlistItemDao(context),
+            savedPlaylistDao(context),
+            networkService())
 
     // Get playlist, playlist item Dao object
     private fun playlistDao(context: Context) =
         AppDatabase.getInstance(context.applicationContext).playlistDao()
     private fun playlistItemDao(context: Context) =
         AppDatabase.getInstance(context.applicationContext).playlistItemDao()
+    private fun savedPlaylistDao(context: Context) =
+        AppDatabase.getInstance(context.applicationContext).savedPlaylistDao()
     private fun networkService() = NetworkService()
 
 

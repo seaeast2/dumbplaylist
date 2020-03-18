@@ -93,16 +93,17 @@ class PlaylistsViewModel(private val repository: PlaylistRepository) : ViewModel
             }
         }
     }
-}
 
-data class PlayInfo (
-    var videoIndex: Int,
-    var videoSec: Float,
-    var isFullScreen:Boolean)
-{
-    fun reset() {
-        videoIndex = 0
-        videoSec = 0f
+    data class PlayInfo (
+        var videoIndex: Int,
+        var videoSec: Float,
+        var isFullScreen: Boolean) {
+        fun reset() {
+            videoIndex = 0
+            videoSec = 0f
+        }
     }
 }
+
+
 

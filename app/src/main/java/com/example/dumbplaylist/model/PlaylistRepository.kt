@@ -4,11 +4,13 @@ package com.example.dumbplaylist.model
 class PlaylistRepository private constructor(
     private val playlistDao: PlaylistDao,
     private val playlistItemDao: PlaylistItemDao,
+    private val savedPlaylistDao: SavedPlaylistDao,
     private val youtubeService: NetworkService
 ) {
     // LiveData
     val playlists = playlistDao.getPlaylists()
     val playlistItems = playlistItemDao.getPlaylistItems()
+    val savedPlaylist = savedPlaylistDao.getSavedPlaylist()
 
     // get Size
     fun getPlaylistsSize(): Int = playlists.value?.size?:0
@@ -95,10 +97,14 @@ class PlaylistRepository private constructor(
 
         fun getInstance(playlistDao: PlaylistDao,
                         playlistItemDao: PlaylistItemDao,
+                        savedPlaylistDao: SavedPlaylistDao,
                         youtubeService: NetworkService) =
             instance ?: synchronized(this) {
-                instance ?: PlaylistRepository(playlistDao,
-                    playlistItemDao, youtubeService).also {
+                instance ?: PlaylistRepository(
+                    playlistDao,
+                    playlistItemDao,
+                    savedPlaylistDao,
+                    youtubeService).also {
                     instance = it
                 }
             }

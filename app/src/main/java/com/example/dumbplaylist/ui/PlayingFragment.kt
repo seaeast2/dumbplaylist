@@ -1,5 +1,6 @@
 package com.example.dumbplaylist.ui
 
+import android.content.Context
 import android.content.pm.ActivityInfo
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
@@ -89,9 +90,11 @@ class PlayingFragment : Fragment() {
             viewModel.selectedPlaylist?.let {
                 viewModel.fetchPlaylistItems(it.playlistId)
             }
+            saveSelectedPlaylist()
         }
         else {
             // playlist 가 null 이면 SharedPreference 읽어옴
+            viewModel.selectedPlaylist = restoreSelectedPlaylist()
         }
         //Toast.makeText(requireContext(), viewModel.curPlaylistId, Toast.LENGTH_SHORT).show()
 
@@ -284,11 +287,27 @@ class PlayingFragment : Fragment() {
     }
 
     private fun saveSelectedPlaylist() {
-        //val preferences = PreferenceManager
+        val sharedPref = activity?.getPreferences(Context.MODE_PRIVATE) ?: return
+        with(sharedPref.edit()) {
+            putString("playlistId", viewModel.selectedPlaylist?.playlistId)
+            putString("title", viewModel.selectedPlaylist?.title)
+            putString("description", viewModel.selectedPlaylist?.description)
+            putString("thumbnailUrl", viewModel.selectedPlaylist?.thumbnailUrl)
+            commit()
+        }
     }
 
     private fun restoreSelectedPlaylist() : SelectedPlaylist? {
-        return null
+        val sharedPref = activity?.getPreferences(Context.MODE_PRIVATE) ?: return null
+
+        if (sharedPref.getString("playlistId", null) == null)
+            return null
+
+        return SelectedPlaylist(
+            sharedPref.getString("playlistId", null)?:"",
+            sharedPref.getString("title", null)?:"",
+            sharedPref.getString("description", null)?:"",
+            sharedPref.getString("thumbnailUrl",null)?:"")
     }
 
     // FloatingActionButton Callback
