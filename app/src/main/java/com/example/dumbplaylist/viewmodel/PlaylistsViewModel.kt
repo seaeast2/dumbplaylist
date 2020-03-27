@@ -48,6 +48,11 @@ class PlaylistsViewModel(private val repository: PlaylistRepository) : ViewModel
         }
     }
 
+    // Saved Playlist functions ============================
+    fun addSavedPlaylist() {
+
+    }
+
     // Youtube player handle functions =====================
     fun setCurVideoId(videoId: String) {
         // find index with videoId
