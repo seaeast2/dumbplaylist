@@ -20,7 +20,7 @@ class PlaylistRepository private constructor(
     fun getPlaylistItemsInfo() = if (playlistItems.value?.isEmpty() != false) null else playlistItems.value?.last()
 
 
-    // Playlist related functions ================================================
+    // Playlists related functions ================================================
     private suspend fun shouldUpdatePlaylistsCache(searchQuery: String, pageToken: String?): Boolean {
         try {
             if (getPlaylistsSize() != 0) {
@@ -55,7 +55,7 @@ class PlaylistRepository private constructor(
     }
     suspend fun clearPlaylists() = playlistDao.deleteAll()
 
-    // Play item related functions ================================================
+    // Playlist item related functions ================================================
     private suspend fun shouldUpdatePlayItemsCache(playlistId: String, pageToken: String?): Boolean {
         if (getPlaylistItemsSize() != 0) {
             try {
@@ -89,6 +89,11 @@ class PlaylistRepository private constructor(
     }
 
     suspend fun clearPlaylistItems() = playlistItemDao.deleteAll()
+
+    // saved playlist related functions ================================================
+    suspend fun addSavedPlaylist(savedPlaylist: SavedPlaylist) {
+        //savedPlaylistDao.
+    }
 
     // Singleton ================================================
     companion object {

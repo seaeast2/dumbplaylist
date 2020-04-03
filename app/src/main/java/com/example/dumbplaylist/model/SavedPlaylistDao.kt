@@ -3,6 +3,7 @@ package com.example.dumbplaylist.model
 import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Delete
+import androidx.room.Insert
 import androidx.room.Query
 
 @Dao
@@ -13,8 +14,9 @@ interface SavedPlaylistDao {
     @Query("SELECT COUNT(savedplaylist.idx) FROM savedplaylist")
     suspend fun getItemCount(): Int
 
-    @Delete(entity = SavedPlaylist::class)
-    suspend fun deleteSavedPlaylist(vararg savedPlaylists: IndexAndPlaylistId)
-}
+    @Delete
+    suspend fun deleteSavedPlaylist(savedPlaylist: SavedPlaylist)
 
-data class IndexAndPlaylistId(val idx: Int, val playlistId: String)
+    @Insert
+    suspend fun insertSavedPlaylist(savedPlaylist: SavedPlaylist)
+}

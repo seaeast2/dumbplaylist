@@ -24,7 +24,7 @@ class PlaylistsViewModel(private val repository: PlaylistRepository) : ViewModel
 
     // playlists fetch functions ========================
     fun searchPlaylists(searchQuery: String, pageToken: String? = null) {
-        launchDataLoad {
+        launchDataUpdate {
             repository.tryUpdatePlaylistsCache(searchQuery, pageToken)
         }
     }
@@ -37,7 +37,7 @@ class PlaylistsViewModel(private val repository: PlaylistRepository) : ViewModel
 
     // PlaylistItems fetch functions ========================
     fun fetchPlaylistItems(playlistId: String, pageToken: String? = null) {
-        launchDataLoad {
+        launchDataUpdate {
             repository.tryUpdatePlayItemsCache(playlistId, pageToken)
         }
     }
@@ -49,8 +49,11 @@ class PlaylistsViewModel(private val repository: PlaylistRepository) : ViewModel
     }
 
     // Saved Playlist functions ============================
-    fun addSavedPlaylist() {
-
+    // TODO : need to fill up code.
+    fun addSavedPlaylist(selectedPlaylist: SelectedPlaylist) {
+        launchDataUpdate {
+            //repository.
+        }
     }
 
     // Youtube player handle functions =====================
@@ -86,7 +89,7 @@ class PlaylistsViewModel(private val repository: PlaylistRepository) : ViewModel
     }
 
     // Coroutine helper
-    private fun launchDataLoad(block: suspend () -> Unit): Job {
+    private fun launchDataUpdate(block: suspend () -> Unit): Job {
         return viewModelScope.launch {
             try {
                 mSpiner.value = true

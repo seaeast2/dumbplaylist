@@ -8,6 +8,7 @@ import android.preference.PreferenceManager
 import android.view.*
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -54,79 +55,75 @@ class PlayingFragment : Fragment() {
         mViewModel = (activity as MainActivity).viewModel
 
         // Fragment binding
-        fragmentBinding =
-            DataBindingUtil.inflate<FragmentPlayingBinding>(inflater,
-                R.layout.fragment_playing, container, false).apply {
-                viewModel = mViewModel
-                fabCallback = object : FabCallback {
-                    override fun add(selectedPlaylist: SelectedPlaylist?) {
-                        selectedPlaylist?.let {
-                            // hide fab
-                            //hideFab()
-                            mViewModel.addSavedPlaylist()
+        fragmentBinding = DataBindingUtil.inflate<FragmentPlayingBinding>(inflater,
+                R.layout.fragment_playing, container, false
+        ).apply {
+            viewModel = mViewModel
+            lifecycleOwner = viewLifecycleOwner // In case binding has LiveData, lifeCycleOwner is mandatory.
+
+            fabCallback = object : FabCallback {
+                override fun add(selectedPlaylist: SelectedPlaylist?) {
+                    selectedPlaylist?.let {playlist ->
+                        fab?.let {
+                            hideFab(it)
+                            mViewModel.addSavedPlaylist(playlist)
                             Snackbar.make(root, "Add playlist to saved list", Snackbar.LENGTH_LONG).show()
                         }
                     }
                 }
             }
+        }
 
-        // context 가 이미 존재 하면 그냥 리턴
         context ?: return fragmentBinding.root
 
-        // RecyclerView Adapter 생성
         val adapter = VideoListAdapter { videoId ->
             mViewModel.setCurVideoId(videoId)
             mYouTubePlayer?.loadOrCueVideo(lifecycle, videoId, 0f)
         }
-        // 4.1 binding 과 recyclerview adapter 연결
-        fragmentBinding.videolistRcview.adapter = adapter
-        // 4.2 무한 스크롤을 위해 ScrollListener 등록
-        fragmentBinding.videolistRcview.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                super.onScrolled(recyclerView, dx, dy)
 
-                // 더 아래로 스크롤 할수 있는지 검사 후 스크롤 불가면 데이터 추가 로딩
-                if (!recyclerView.canScrollVertically(1)) {
-                    mViewModel.loadMorePlaylistItem()
+        // set up recyclerview
+        fragmentBinding.videolistRcview?.let {
+            it.adapter = adapter
+
+            // 4.2 무한 스크롤을 위해 ScrollListener 등록
+            it.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                    super.onScrolled(recyclerView, dx, dy)
+
+                    // 더 아래로 스크롤 할수 있는지 검사 후 스크롤 불가면 데이터 추가 로딩
+                    if (!recyclerView.canScrollVertically(1)) {
+                        mViewModel.loadMorePlaylistItem()
+                    }
                 }
-            }
-        })
+            })
+        }
 
-        // 5. ViewModel 과 RecyclerView Adapter 를 연결하여 감시하도록 함
+        // observing playlist item and update recyclerview when new items are added.
         subscribeUi(adapter)
-        // 6. 메뉴 활성화
-        //setHasOptionsMenu(true)
+
+        // hide action bar
         (activity as AppCompatActivity).supportActionBar?.hide()
 
-        // 7. PlaylistItems db 를 초기화
-        //viewModel.clearPlaylistItems()
-        //viewModel.resetPlaylistItemsInfo()
-
-        // 8. args 를통해 받은 playlistId로 PlaylistItem fetch
-        if (args.selectedPlaylist != null) { // playlist 가 있으면 fetching 하고, SharePreference 에 저장
-            mViewModel.selectedPlaylist = args.selectedPlaylist // set current playlist
+        // fetch selected playlist items from youtube api.
+        mViewModel.selectedPlaylist = args.selectedPlaylist
+        if (mViewModel.selectedPlaylist != null) { // we have new playlist
             mViewModel.selectedPlaylist?.let {
                 mViewModel.fetchPlaylistItems(it.playlistId)
+                saveSelectedPlaylist()
             }
-            saveSelectedPlaylist()
         }
         else {
-            // playlist 가 null 이면 SharedPreference 읽어옴
+            // if we don't have new playlist, restore old playlist
             mViewModel.selectedPlaylist = restoreSelectedPlaylist()
         }
-        //Toast.makeText(requireContext(), viewModel.curPlaylistId, Toast.LENGTH_SHORT).show()
 
-        // 9. get observe youtube player instance
+        // TODO : if we already have selected playlist in saved list, hide fab.
+
+        // get observe youtube player instance
         mYouTubePlayerView = fragmentBinding.youtubePlayerView
 
-        // 10. youtube player ui initialize
+        // youtube player ui initialization
         initYoutubePlayerView()
-
-        // 11. set up add list button click listener
-        fragmentBinding.fab.setOnClickListener {view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show()
-        }
 
         return fragmentBinding.root
     }
@@ -328,7 +325,14 @@ class PlayingFragment : Fragment() {
             sharedPref.getString("thumbnailUrl",null)?:"")
     }
 
+    // FloatingActionButtons anchored to AppBarLayouts have their visibility controlled by the scroll position.
+    // We want to turn this behavior off to hide the FAB when it is clicked.
+    //
+    // This is adapted from Chris Banes' Stack Overflow answer: https://stackoverflow.com/a/41442923
     private fun hideFab(fab: FloatingActionButton) {
+        val params = fab.layoutParams as CoordinatorLayout.LayoutParams
+        val behavior = params.behavior as FloatingActionButton.Behavior
+        behavior.isAutoHideEnabled = false
         fab.hide()
     }
 

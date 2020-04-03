@@ -31,7 +31,8 @@ class VideoListAdapter(private val playSelectedVideo: (videoId:String)->Unit) :
         notifyDataSetChanged() // 데이터가 갱신될 때마다 리스트 전체를 갱신해 주어야 함.
     }*/
 
-    class VideoListViewHolder(private val binding: ListItemVideolistBinding, func: (videoId:String)->Unit) : RecyclerView.ViewHolder(binding.root) {
+    class VideoListViewHolder(private val binding: ListItemVideolistBinding,
+                              func: (videoId:String)->Unit) : RecyclerView.ViewHolder(binding.root) {
         init {
             binding.setClickListener {view ->
                 binding.playlistItem?.let {
