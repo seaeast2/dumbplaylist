@@ -49,10 +49,9 @@ class PlaylistsViewModel(private val repository: PlaylistRepository) : ViewModel
     }
 
     // Saved Playlist functions ============================
-    // TODO : need to fill up code.
     fun addSavedPlaylist(selectedPlaylist: SelectedPlaylist) {
         launchDataUpdate {
-            //repository.
+            repository.addSavedPlaylist(SavedPlaylist(selectedPlaylist.playlistId, selectedPlaylist.title, selectedPlaylist.thumbnailUrl))
         }
     }
 

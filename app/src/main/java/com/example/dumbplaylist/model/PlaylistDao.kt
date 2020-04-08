@@ -6,7 +6,7 @@ import androidx.room.*
 @Dao
 interface PlaylistDao {
     @Query("SELECT * FROM playlists ORDER BY playlists.idx ASC")
-    fun getPlaylists(): LiveData<List<Playlist>>
+    fun getAll(): LiveData<List<Playlist>>
 
 //    @Query("SELECT * FROM playlists WHERE playlists.searchQuery = :searchQuery")
 //    fun hasSameSearchQuery(searchQuery: String): List<Playlist>

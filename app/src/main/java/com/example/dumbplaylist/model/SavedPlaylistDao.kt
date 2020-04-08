@@ -8,10 +8,13 @@ import androidx.room.Query
 
 @Dao
 interface SavedPlaylistDao {
-    @Query("SELECT * FROM savedplaylist ORDER BY savedplaylist.idx ASC")
-    fun getSavedPlaylist(): LiveData<List<SavedPlaylist>>
+    @Query("SELECT * FROM savedplaylist")
+    fun getAll(): LiveData<List<SavedPlaylist>>
 
-    @Query("SELECT COUNT(savedplaylist.idx) FROM savedplaylist")
+    @Query("SELECT COUNT(savedplaylist.playlistId) FROM savedplaylist WHERE savedplaylist.playlistId = :playlistId")
+    fun findByPlaylistId(playlistId: String): Int
+
+    @Query("SELECT COUNT(savedplaylist.playlistId) FROM savedplaylist")
     suspend fun getItemCount(): Int
 
     @Delete

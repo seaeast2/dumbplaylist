@@ -8,9 +8,9 @@ class PlaylistRepository private constructor(
     private val youtubeService: NetworkService
 ) {
     // LiveData
-    val playlists = playlistDao.getPlaylists()
-    val playlistItems = playlistItemDao.getPlaylistItems()
-    val savedPlaylist = savedPlaylistDao.getSavedPlaylist()
+    val playlists = playlistDao.getAll()
+    val playlistItems = playlistItemDao.getAll()
+    val savedPlaylist = savedPlaylistDao.getAll()
 
     // get Size
     fun getPlaylistsSize(): Int = playlists.value?.size?:0
@@ -92,7 +92,9 @@ class PlaylistRepository private constructor(
 
     // saved playlist related functions ================================================
     suspend fun addSavedPlaylist(savedPlaylist: SavedPlaylist) {
-        //savedPlaylistDao.
+        if (savedPlaylistDao.findByPlaylistId(savedPlaylist.playlistId) == 0) {
+            savedPlaylistDao.insertSavedPlaylist(savedPlaylist)
+        }
     }
 
     // Singleton ================================================
