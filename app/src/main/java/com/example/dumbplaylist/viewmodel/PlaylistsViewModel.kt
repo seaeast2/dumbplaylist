@@ -10,6 +10,7 @@ class PlaylistsViewModel(private val repository: PlaylistRepository) : ViewModel
     // LiveData
     val playlists = repository.playlists
     val playlistItems = repository.playlistItems
+    val savedlists = repository.savedPlaylists
 
     // video control values
     private var currentPlayInfo = PlayInfo(0, 0f, false)
@@ -52,6 +53,15 @@ class PlaylistsViewModel(private val repository: PlaylistRepository) : ViewModel
     fun addSavedPlaylist(selectedPlaylist: SelectedPlaylist) {
         launchDataUpdate {
             repository.addSavedPlaylist(SavedPlaylist(selectedPlaylist.playlistId, selectedPlaylist.title, selectedPlaylist.thumbnailUrl))
+        }
+    }
+
+    fun removeSavedPlaylist(position: Int) {
+        val playlist = savedlists.value?.get(position)
+        launchDataUpdate {
+            playlist?.let {
+                repository.removeSavedPlaylist(it)
+            }
         }
     }
 

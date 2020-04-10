@@ -12,7 +12,7 @@ interface SavedPlaylistDao {
     fun getAll(): LiveData<List<SavedPlaylist>>
 
     @Query("SELECT COUNT(savedplaylist.playlistId) FROM savedplaylist WHERE savedplaylist.playlistId = :playlistId")
-    fun findByPlaylistId(playlistId: String): Int
+    suspend fun findByPlaylistId(playlistId: String): Int
 
     @Query("SELECT COUNT(savedplaylist.playlistId) FROM savedplaylist")
     suspend fun getItemCount(): Int

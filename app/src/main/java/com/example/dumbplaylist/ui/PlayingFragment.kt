@@ -41,11 +41,11 @@ class PlayingFragment : Fragment() {
     private val args: PlayingFragmentArgs by navArgs()
 
     private lateinit var mViewModel: PlaylistsViewModel
-    private val fullScreenHelper: FullScreenHelper by lazy {
+    private val mFullScreenHelper: FullScreenHelper by lazy {
         FullScreenHelper(requireActivity())
     }
 
-    private lateinit var fragmentBinding: FragmentPlayingBinding
+    private lateinit var mFragmentBinding: FragmentPlayingBinding
     private lateinit var mYouTubePlayerView: YouTubePlayerView
     private var mYouTubePlayer: YouTubePlayer? = null
     private var mPlayerState: PlayerConstants.PlayerState = PlayerConstants.PlayerState.UNKNOWN
@@ -55,7 +55,7 @@ class PlayingFragment : Fragment() {
         mViewModel = (activity as MainActivity).viewModel
 
         // Fragment binding
-        fragmentBinding = DataBindingUtil.inflate<FragmentPlayingBinding>(inflater,
+        mFragmentBinding = DataBindingUtil.inflate<FragmentPlayingBinding>(inflater,
                 R.layout.fragment_playing, container, false
         ).apply {
             viewModel = mViewModel
@@ -74,15 +74,36 @@ class PlayingFragment : Fragment() {
             }
         }
 
-        context ?: return fragmentBinding.root
+        context ?: return mFragmentBinding.root
 
         val adapter = VideoListAdapter { videoId ->
             mViewModel.setCurVideoId(videoId)
             mYouTubePlayer?.loadOrCueVideo(lifecycle, videoId, 0f)
         }
 
+        initRecyclerView(adapter)
+
+        initActionBar()
+
+        initSelectedPlaylist(args.selectedPlaylist)
+
+        // youtube player ui initialization
+        initYoutubePlayerView()
+
+        // observing playlist item and update recyclerview when new items are added.
+        subscribeUi(adapter)
+
+        return mFragmentBinding.root
+    }
+
+    private fun initActionBar() {
+        // hide action bar
+        (activity as AppCompatActivity).supportActionBar?.hide()
+    }
+
+    private fun initRecyclerView(adapter: VideoListAdapter) {
         // set up recyclerview
-        fragmentBinding.videolistRcview?.let {
+        mFragmentBinding.videolistRcview?.let {
             it.adapter = adapter
 
             // 4.2 무한 스크롤을 위해 ScrollListener 등록
@@ -97,15 +118,11 @@ class PlayingFragment : Fragment() {
                 }
             })
         }
+    }
 
-        // observing playlist item and update recyclerview when new items are added.
-        subscribeUi(adapter)
-
-        // hide action bar
-        (activity as AppCompatActivity).supportActionBar?.hide()
-
+    private fun initSelectedPlaylist(selectedPlaylist: SelectedPlaylist?) {
         // fetch selected playlist items from youtube api.
-        mViewModel.selectedPlaylist = args.selectedPlaylist
+        mViewModel.selectedPlaylist = selectedPlaylist
         if (mViewModel.selectedPlaylist != null) { // we have new playlist
             mViewModel.selectedPlaylist?.let {
                 mViewModel.fetchPlaylistItems(it.playlistId)
@@ -116,16 +133,6 @@ class PlayingFragment : Fragment() {
             // if we don't have new playlist, restore old playlist
             mViewModel.selectedPlaylist = restoreSelectedPlaylist()
         }
-
-        // TODO : if we already have selected playlist in saved list, hide fab.
-
-        // get observe youtube player instance
-        mYouTubePlayerView = fragmentBinding.youtubePlayerView
-
-        // youtube player ui initialization
-        initYoutubePlayerView()
-
-        return fragmentBinding.root
     }
 
     // Menu ====================================
@@ -162,6 +169,9 @@ class PlayingFragment : Fragment() {
 
     // Youtube player initialize functions ====================================
     private fun initYoutubePlayerView() {
+        // get observe youtube player instance
+        mYouTubePlayerView = mFragmentBinding.youtubePlayerView
+
         initPlayerMenu()
         addYoutubeListener()
         // The player will automatically release itself when the activity is destroyed.
@@ -240,7 +250,7 @@ class PlayingFragment : Fragment() {
                 // 1. 화면 가로로 변경
                 //activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
                 // 2. 가로화면에 맞추어 UI 변경
-                fullScreenHelper.enterFullScreen()
+                mFullScreenHelper.enterFullScreen()
                 // 3. 사용자 버튼 추가
                 addCustomActionsToPlayer()
                 mViewModel.curPlayInfo.isFullScreen = true
@@ -250,7 +260,7 @@ class PlayingFragment : Fragment() {
                 // 1. 화면 세로로 변경
                 //activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
                 // 2. 세로 화면에 맞추어 UI 변경
-                fullScreenHelper.exitFullScreen()
+                mFullScreenHelper.exitFullScreen()
                 // 3. 사용자 버튼 감추기
                 removeCustomActionsFromPlayer()
                 mViewModel.curPlayInfo.isFullScreen = true

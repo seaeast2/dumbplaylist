@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.*
 import android.view.inputmethod.EditorInfo
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.observe
@@ -14,54 +13,50 @@ import com.example.dumbplaylist.R
 import com.example.dumbplaylist.adapter.PlaylistAdapter
 import com.example.dumbplaylist.databinding.FragmentSearchedPlaylistsBinding
 import com.example.dumbplaylist.model.PlaylistRepository
-import com.example.dumbplaylist.util.Injector
 import com.example.dumbplaylist.viewmodel.PlaylistsViewModel
-import java.lang.Exception
 
 
 class SearchedPlaylistsFragment : Fragment() {
-    // viewModel 은 observe 되기 전에 항상 생성되어 있어야 함.
-    // 그래서 class 생성시 초기화 되도록 property delegation 으로 처리
-//    private val viewModel: PlaylistsViewModel by viewModels {
-//        Injector.providePlaylistViewModelFactory(requireContext())
-//    }
-    private lateinit var viewModel: PlaylistsViewModel
-    private lateinit var mBinding: FragmentSearchedPlaylistsBinding
+    private lateinit var mViewModel: PlaylistsViewModel
+    private lateinit var mFragmentBinding: FragmentSearchedPlaylistsBinding
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle? ): View {
-        mBinding = FragmentSearchedPlaylistsBinding.inflate(inflater, container, false)
-        context ?: return mBinding.root
+        mFragmentBinding = FragmentSearchedPlaylistsBinding.inflate(inflater, container, false)
+        context ?: return mFragmentBinding.root
 
         // shared ViewModel
-        viewModel = (activity as MainActivity).viewModel
+        mViewModel = (activity as MainActivity).viewModel
 
         val adapter = PlaylistAdapter(PlaylistAdapter.FragmentType.SEARCH)
-        // binding 을 사용해서 RecyclerView.Adapter 를 연결함
-        mBinding.playlistsRcview.adapter = adapter
-        mBinding.playlistsRcview.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                super.onScrolled(recyclerView, dx, dy)
-
-                if (!recyclerView.canScrollVertically(1)) {
-                    viewModel.loadMorePlaylists()
-                }
-            }
-        })
-
+        initRecyclerView(adapter)
         subscribeUi(adapter) // RecyclerView.Adapter 에 데이터 연결
+
         initSearch()
 
         // Fragment용 메뉴활성화
         setHasOptionsMenu(true)
-
-        return mBinding.root
+        return mFragmentBinding.root
     }
 
-    //
+    private fun initRecyclerView(adapter: PlaylistAdapter) {
+        // binding 을 사용해서 RecyclerView.Adapter 를 연결함
+        mFragmentBinding.playlistsRcview.adapter = adapter
+        // Set auto loading at lower bounding
+        mFragmentBinding.playlistsRcview.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+
+                if (!recyclerView.canScrollVertically(1)) {
+                    mViewModel.loadMorePlaylists()
+                }
+            }
+        })
+    }
+
     private fun initSearch() {
-        mBinding.input.setOnEditorActionListener { _, actionId, _ ->
+        mFragmentBinding.input.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_GO) {
                 updatedSearchFromInput()
                 true
@@ -70,7 +65,7 @@ class SearchedPlaylistsFragment : Fragment() {
             }
         }
 
-        mBinding.input.setOnKeyListener { _, keyCode, event ->
+        mFragmentBinding.input.setOnKeyListener { _, keyCode, event ->
             if (event.action == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER) {
                 updatedSearchFromInput()
                 true
@@ -82,16 +77,16 @@ class SearchedPlaylistsFragment : Fragment() {
     }
 
     private fun updatedSearchFromInput() {
-        mBinding.input.text.trim().toString().let {
+        mFragmentBinding.input.text.trim().toString().let {
             if (it.isNotEmpty()) {
-                viewModel.searchPlaylists(it)
-                //mBinding.playlistsRcview.scrollToPosition(0)
+                mViewModel.searchPlaylists(it)
+                //mFragmentBinding.playlistsRcview.scrollToPosition(0)
             }
         }
     }
 
     private fun subscribeUi(adapter: PlaylistAdapter) {
-        viewModel.playlists.observe(viewLifecycleOwner) {playlists ->
+        mViewModel.playlists.observe(viewLifecycleOwner) {playlists ->
             adapter.submitList(playlists)
         }
     }

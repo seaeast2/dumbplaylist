@@ -10,7 +10,7 @@ class PlaylistRepository private constructor(
     // LiveData
     val playlists = playlistDao.getAll()
     val playlistItems = playlistItemDao.getAll()
-    val savedPlaylist = savedPlaylistDao.getAll()
+    val savedPlaylists = savedPlaylistDao.getAll()
 
     // get Size
     fun getPlaylistsSize(): Int = playlists.value?.size?:0
@@ -95,6 +95,10 @@ class PlaylistRepository private constructor(
         if (savedPlaylistDao.findByPlaylistId(savedPlaylist.playlistId) == 0) {
             savedPlaylistDao.insertSavedPlaylist(savedPlaylist)
         }
+    }
+
+    suspend fun removeSavedPlaylist(savedPlaylist: SavedPlaylist) {
+        savedPlaylistDao.deleteSavedPlaylist(savedPlaylist)
     }
 
     // Singleton ================================================

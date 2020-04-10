@@ -10,12 +10,14 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.dumbplaylist.databinding.ListItemPlaylistBinding
 import com.example.dumbplaylist.model.Playlist
+import com.example.dumbplaylist.model.SavedPlaylist
 import com.example.dumbplaylist.ui.SavedPlaylistFragmentDirections
 import com.example.dumbplaylist.ui.SearchedPlaylistsFragmentDirections
 import kotlinx.android.parcel.Parcelize
 
 
-class PlaylistAdapter(val fragType: FragmentType): ListAdapter<Playlist, RecyclerView.ViewHolder>(SearchedListCallback()) {
+class PlaylistAdapter(private val fragType: FragmentType):
+    ListAdapter<Playlist, RecyclerView.ViewHolder>(SearchedListCallback()) {
 
     // 뷰홀더가 필요할 때마다 호출해서 뷰홀더를 생성한다.
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -31,16 +33,19 @@ class PlaylistAdapter(val fragType: FragmentType): ListAdapter<Playlist, Recycle
         (holder as PlaylistViewHolder).bind(item)
     }
 
-    /*fun updateList(list: List<String>) {
-        submitList(list) //
+    fun submitSavedList(list: List<SavedPlaylist>) {
+        //submitList(list) //
+        val savedPlaylist: List<Playlist> = list.map {
+            Playlist(0, it.playlistId, "", null, it.title, null, it.thumbnailUrl)
+        }
+        submitList(savedPlaylist)
         notifyDataSetChanged() // 데이터가 갱신될 때마다 리스트 전체를 갱신해 주어야 함.
-    }*/
+    }
 
     // ViewHolder 가 실제적인 item 껍데기를 가지고 있음.
     // 화면 출력에 필요한 양만큼 생성된다.
-    class PlaylistViewHolder(
-        private val binding: ListItemPlaylistBinding,
-        private val fragType: FragmentType) : RecyclerView.ViewHolder(binding.root) {
+    class PlaylistViewHolder(private val binding: ListItemPlaylistBinding, private val fragType: FragmentType) :
+        RecyclerView.ViewHolder(binding.root) {
 
         init {
             // Click 이벤트는 이곳에서 구현
