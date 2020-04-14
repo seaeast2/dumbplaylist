@@ -23,6 +23,7 @@ import com.example.dumbplaylist.adapter.SelectedPlaylist
 import com.example.dumbplaylist.adapter.VideoListAdapter
 import com.example.dumbplaylist.databinding.FragmentPlayingBinding
 import com.example.dumbplaylist.model.Playlist
+import com.example.dumbplaylist.model.SavedPlaylist
 import com.example.dumbplaylist.util.FullScreenHelper
 import com.example.dumbplaylist.util.Injector
 import com.example.dumbplaylist.viewmodel.PlaylistsViewModel
@@ -135,6 +136,8 @@ class PlayingFragment : Fragment() {
         }
     }
 
+
+
     // Menu ====================================
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.playlist_frag_menu, menu)
@@ -155,7 +158,7 @@ class PlayingFragment : Fragment() {
         }
     }
 
-    fun subscribeUi(adapter: VideoListAdapter) {
+    private fun subscribeUi(adapter: VideoListAdapter) {
         mViewModel.playlistItems.observe(viewLifecycleOwner) {
             adapter.submitList(it)
 
@@ -163,6 +166,20 @@ class PlayingFragment : Fragment() {
                 mViewModel.getCurVideoId()?.let {
                     mYouTubePlayer?.loadOrCueVideo(lifecycle, it, mViewModel.curPlayInfo.videoSec)
                 }
+            }
+        }
+
+        mViewModel.savedlists.observe(viewLifecycleOwner) {
+            initFab(it)
+        }
+    }
+
+    private fun initFab(list : List<SavedPlaylist>) {
+        list.find { savedlist ->
+            savedlist.playlistId == mViewModel.selectedPlaylist?.playlistId
+        }?.let {
+            mFragmentBinding.fab?.let {fab ->
+                hideFab(fab)
             }
         }
     }
@@ -340,9 +357,14 @@ class PlayingFragment : Fragment() {
     //
     // This is adapted from Chris Banes' Stack Overflow answer: https://stackoverflow.com/a/41442923
     private fun hideFab(fab: FloatingActionButton) {
-        val params = fab.layoutParams as CoordinatorLayout.LayoutParams
-        val behavior = params.behavior as FloatingActionButton.Behavior
-        behavior.isAutoHideEnabled = false
+        fab.layoutParams?.let {param ->
+            val params = param as CoordinatorLayout.LayoutParams
+            params.behavior?.let {behavior ->
+                val behaviors = behavior as FloatingActionButton.Behavior
+                behaviors.isAutoHideEnabled = false
+            }
+        }
+
         fab.hide()
     }
 
