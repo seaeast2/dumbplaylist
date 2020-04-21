@@ -56,33 +56,33 @@ class SearchedPlaylistsFragment : Fragment() {
     }
 
     private fun initSearch() {
-        mFragmentBinding.input.setOnEditorActionListener { _, actionId, _ ->
-            if (actionId == EditorInfo.IME_ACTION_GO) {
-                updatedSearchFromInput()
-                true
-            } else {
-                false
-            }
-        }
-
-        mFragmentBinding.input.setOnKeyListener { _, keyCode, event ->
-            if (event.action == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER) {
-                updatedSearchFromInput()
-                true
-            }
-            else {
-                false
-            }
-        }
+//        mFragmentBinding.input.setOnEditorActionListener { _, actionId, _ ->
+//            if (actionId == EditorInfo.IME_ACTION_GO) {
+//                updatedSearchFromInput()
+//                true
+//            } else {
+//                false
+//            }
+//        }
+//
+//        mFragmentBinding.input.setOnKeyListener { _, keyCode, event ->
+//            if (event.action == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER) {
+//                updatedSearchFromInput()
+//                true
+//            }
+//            else {
+//                false
+//            }
+//        }
     }
 
     private fun updatedSearchFromInput() {
-        mFragmentBinding.input.text.trim().toString().let {
-            if (it.isNotEmpty()) {
-                mViewModel.searchPlaylists(it)
-                //mFragmentBinding.playlistsRcview.scrollToPosition(0)
-            }
-        }
+//        mFragmentBinding.input.text.trim().toString().let {
+//            if (it.isNotEmpty()) {
+//                mViewModel.searchPlaylists(it)
+//                //mFragmentBinding.playlistsRcview.scrollToPosition(0)
+//            }
+//        }
     }
 
     private fun subscribeUi(adapter: PlaylistAdapter) {

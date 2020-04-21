@@ -1,8 +1,11 @@
 package com.example.dumbplaylist.model
 
+import android.widget.ImageView
+import androidx.databinding.BindingAdapter
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.ColumnInfo
+import com.bumptech.glide.Glide
 
 // Playlist 에 대한 정보
 @Entity(tableName = "playlists")
