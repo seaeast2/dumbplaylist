@@ -19,8 +19,7 @@ class NetworkService {
 
     private val youtubeService = retrofit.create(YoutubeService::class.java)
 
-    suspend fun fetchPlaylistsSearchResult(searchQuery: String, pageToken: String?, totalLoadedItems: Int): List<Playlist>? =
-        withContext(Dispatchers.Default) {
+    suspend fun fetchPlaylistsSearchResult(searchQuery: String, pageToken: String?, totalLoadedItems: Int): List<Playlist>?  {
 
         var result: List<Playlist>? = null
         var searchResult: PlaylistsSearchResult? = null
@@ -44,14 +43,13 @@ class NetworkService {
             }
         } catch (e : Exception) {
             print(e)
-            return@withContext null
+            return null
         }
         // save playlist meta info to query next page
-        result
+        return result
     }
 
-    suspend fun fetchPlaylistItems(playlistId: String, pageToken: String?, totalLoadedItems: Int): List<PlaylistItem>? =
-        withContext(Dispatchers.Default) {
+    suspend fun fetchPlaylistItems(playlistId: String, pageToken: String?, totalLoadedItems: Int): List<PlaylistItem>? {
         var result: List<PlaylistItem>? = null
         var requestResult : PlaylistItemsList? = null
 
@@ -70,11 +68,11 @@ class NetworkService {
             }
         } catch (e: Exception) {
             print(e)
-            return@withContext null
+            return null
         }
 
         // save playlist meta info to query next page
-        result
+        return result
     }
 }
 

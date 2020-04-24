@@ -1,9 +1,8 @@
 package com.example.dumbplaylist.ui
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
+import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.observe
@@ -37,9 +36,18 @@ class SavedPlaylistFragment : Fragment() {
         val adapter = PlaylistAdapter(PlaylistAdapter.FragmentType.SAVED)
         initRecyclerView(adapter)
         subscribeUi(adapter)
-
+        initActionBar()
         return mFragmentBinding.root
     }
+
+    private fun initActionBar() {
+        //setHasOptionsMenu(true)
+        (activity as AppCompatActivity).supportActionBar?.hide()
+    }
+
+//    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+//        inflater.inflate(R.menu.saved_list_menu, menu)
+//    }
 
     private fun initRecyclerView(adapter: PlaylistAdapter) {
         mFragmentBinding.savedList.adapter = adapter

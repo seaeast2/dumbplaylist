@@ -1,21 +1,19 @@
 package com.example.dumbplaylist
 
 import android.os.Bundle
+import android.view.Menu
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import androidx.databinding.DataBindingUtil.setContentView
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.Observer
-import androidx.lifecycle.observe
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
-import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.dumbplaylist.databinding.MainActivityBinding
 import com.example.dumbplaylist.util.Injector
 import com.example.dumbplaylist.viewmodel.PlaylistsViewModel
-import com.google.android.material.bottomnavigation.BottomNavigationView
+import java.util.zip.Inflater
 
 class MainActivity : AppCompatActivity() {
     private lateinit var mBinding : MainActivityBinding
@@ -36,6 +34,8 @@ class MainActivity : AppCompatActivity() {
         if (savedInstanceState == null) {
             setupBottomNavigationBar()
         } // Else, need to wait for onRestoreInstanceState
+
+        initToolBar()
     }
 
 
@@ -47,6 +47,10 @@ class MainActivity : AppCompatActivity() {
         setupBottomNavigationBar()
     }
 
+    private fun initToolBar() {
+        val toolBar = findViewById<Toolbar>(R.id.toolbar)
+        setSupportActionBar(toolBar)
+    }
 
     /**
      * Called on first creation and when restoring state.

@@ -8,11 +8,14 @@ interface PlaylistDao {
     @Query("SELECT * FROM playlists ORDER BY playlists.idx ASC")
     fun getAll(): LiveData<List<Playlist>>
 
-//    @Query("SELECT * FROM playlists WHERE playlists.searchQuery = :searchQuery")
-//    fun hasSameSearchQuery(searchQuery: String): List<Playlist>
-//
-//    @Query("SELECT * FROM playlists WHERE playlists.pageToken = :pageToken")
-//    fun hasPageToken(pageToken: String): List<Playlist>
+//    @Query("SELECT * FROM playlists ORDER BY playlists.idx DESC LIMIT 1")
+//    fun getLastItemNoneSuspend(): Playlist?
+
+    @Query("SELECT * FROM playlists ORDER BY playlists.idx DESC LIMIT 1")
+    suspend fun getLastItem(): Playlist?
+
+    @Query("SELECT COUNT(playlists.idx) FROM playlists")
+    fun getItemCountNoneSuspend(): Int
 
     @Query("SELECT COUNT(playlists.idx) FROM playlists")
     suspend fun getItemCount(): Int

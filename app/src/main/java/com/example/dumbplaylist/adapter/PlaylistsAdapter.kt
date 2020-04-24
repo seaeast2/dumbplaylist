@@ -36,7 +36,7 @@ class PlaylistAdapter(private val fragType: FragmentType):
     fun submitSavedList(list: List<SavedPlaylist>) {
         //submitList(list) //
         val savedPlaylist: List<Playlist> = list.map {
-            Playlist(0, it.playlistId, "", null, it.title, null, it.thumbnailUrl)
+            Playlist(0, it.playlistId, "", null, it.title, it.description, it.thumbnailUrl)
         }
         submitList(savedPlaylist)
         notifyDataSetChanged() // 데이터가 갱신될 때마다 리스트 전체를 갱신해 주어야 함.

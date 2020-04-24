@@ -123,15 +123,12 @@ class PlayingFragment : Fragment() {
 
     private fun initSelectedPlaylist(selectedPlaylist: SelectedPlaylist?) {
         // fetch selected playlist items from youtube api.
-        mViewModel.selectedPlaylist = selectedPlaylist
-        if (mViewModel.selectedPlaylist != null) { // we have new playlist
-            mViewModel.selectedPlaylist?.let {
-                mViewModel.fetchPlaylistItems(it.playlistId)
-                saveSelectedPlaylist()
-            }
+        selectedPlaylist?.let {
+            mViewModel.selectedPlaylist = it
+            mViewModel.fetchPlaylistItems(it.playlistId)
+            saveSelectedPlaylist()
         }
-        else {
-            // if we don't have new playlist, restore old playlist
+        if ( mViewModel.selectedPlaylist == null) {
             mViewModel.selectedPlaylist = restoreSelectedPlaylist()
         }
     }
@@ -139,9 +136,9 @@ class PlayingFragment : Fragment() {
 
 
     // Menu ====================================
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.playlist_frag_menu, menu)
-    }
+//    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+//        inflater.inflate(R.menu.playlist_frag_menu, menu)
+//    }
 
     // 메뉴 선택 처리
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -167,6 +164,13 @@ class PlayingFragment : Fragment() {
                     mYouTubePlayer?.loadOrCueVideo(lifecycle, it, mViewModel.curPlayInfo.videoSec)
                 }
             }
+            if (!it.isEmpty()) {
+                mViewModel.playlistItemInfo = PlaylistsViewModel.PlaylistItemInfo(it.size, it.last())
+            }
+            else {
+                mViewModel.playlistItemInfo = PlaylistsViewModel.PlaylistItemInfo()
+            }
+
         }
 
         mViewModel.savedlists.observe(viewLifecycleOwner) {

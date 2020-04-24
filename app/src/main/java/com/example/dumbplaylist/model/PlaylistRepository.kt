@@ -12,19 +12,20 @@ class PlaylistRepository private constructor(
     val playlistItems = playlistItemDao.getAll()
     val savedPlaylists = savedPlaylistDao.getAll()
 
-    // get Size
-    fun getPlaylistsSize(): Int = playlists.value?.size?:0
-    fun getPlaylistItemsSize(): Int = playlistItems.value?.size?:0
-    // get Info
-    fun getPlaylistsInfo() = if (playlists.value?.isEmpty() != false) null else playlists.value?.last()
-    fun getPlaylistItemsInfo() = if (playlistItems.value?.isEmpty() != false) null else playlistItems.value?.last()
+//    // get Size
+//    fun getPlaylistsSize(): Int = playlistDao.getItemCountNoneSuspend()
+//    fun getPlaylistItemsSize(): Int = playlistItemDao.getItemCountNoneSuspend()
+//
+//    // get Info
+//    suspend fun getLastItemOfPlaylist() = playlistDao.getLastItem()
+//    suspend fun getLastItemOfPlaylistItem() = playlistItemDao.getLastItem()
 
 
     // Playlists related functions ================================================
     private suspend fun shouldUpdatePlaylistsCache(searchQuery: String, pageToken: String?): Boolean {
         try {
-            if (getPlaylistsSize() != 0) {
-                val lastItem = getPlaylistsInfo()
+            if (playlistDao.getItemCount() != 0) {
+                val lastItem = playlistDao.getLastItem()
                 lastItem?.let {
                     if (it.searchQuery == searchQuery) {
                         if (pageToken == null)
@@ -57,9 +58,9 @@ class PlaylistRepository private constructor(
 
     // Playlist item related functions ================================================
     private suspend fun shouldUpdatePlayItemsCache(playlistId: String, pageToken: String?): Boolean {
-        if (getPlaylistItemsSize() != 0) {
+        if (playlistItemDao.getItemCount() != 0) {
             try {
-                val lastItem = getPlaylistItemsInfo()
+                val lastItem = playlistItemDao.getLastItem()
                 lastItem?.let {
                     if (it.playlistId == playlistId) {
                         if (pageToken == null)

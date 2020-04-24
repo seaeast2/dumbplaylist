@@ -2,7 +2,8 @@ package com.example.dumbplaylist.ui
 
 import android.os.Bundle
 import android.view.*
-import android.view.inputmethod.EditorInfo
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -33,7 +34,8 @@ class SearchedPlaylistsFragment : Fragment() {
         initRecyclerView(adapter)
         subscribeUi(adapter) // RecyclerView.Adapter 에 데이터 연결
 
-        initSearch()
+        initActionBar()
+
 
         // Fragment용 메뉴활성화
         setHasOptionsMenu(true)
@@ -55,59 +57,34 @@ class SearchedPlaylistsFragment : Fragment() {
         })
     }
 
-    private fun initSearch() {
-//        mFragmentBinding.input.setOnEditorActionListener { _, actionId, _ ->
-//            if (actionId == EditorInfo.IME_ACTION_GO) {
-//                updatedSearchFromInput()
-//                true
-//            } else {
-//                false
-//            }
-//        }
-//
-//        mFragmentBinding.input.setOnKeyListener { _, keyCode, event ->
-//            if (event.action == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER) {
-//                updatedSearchFromInput()
-//                true
-//            }
-//            else {
-//                false
-//            }
-//        }
-    }
-
-    private fun updatedSearchFromInput() {
-//        mFragmentBinding.input.text.trim().toString().let {
-//            if (it.isNotEmpty()) {
-//                mViewModel.searchPlaylists(it)
-//                //mFragmentBinding.playlistsRcview.scrollToPosition(0)
-//            }
-//        }
+    private fun initActionBar() {
+        (activity as AppCompatActivity).supportActionBar?.show()
     }
 
     private fun subscribeUi(adapter: PlaylistAdapter) {
         mViewModel.playlists.observe(viewLifecycleOwner) {playlists ->
             adapter.submitList(playlists)
+            mViewModel.playlistInfo = PlaylistsViewModel.PlaylistInfo(playlists.size, playlists.last())
         }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.playlist_frag_menu, menu)
-    }
+        inflater.inflate(R.menu.search_toolbar_menu, menu)
 
-    // 메뉴 선택 처리
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when(item.itemId) {
-//            R.id.add_dummy_menu -> {
-//                updateData()
-//                true
-//            }
-//            R.id.del_dummy_menu -> {
-//                true
-//            }
+        val searchItem = menu.findItem(R.id.search_toolbar)
+        val searchView = searchItem.actionView as SearchView
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                query?.let {
+                    mViewModel.searchPlaylists(query)
+                }
+                return false
+            }
 
-            else -> super.onOptionsItemSelected(item)
-        }
+            override fun onQueryTextChange(newText: String?): Boolean {
+                return false
+            }
+        })
     }
 
     companion object {

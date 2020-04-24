@@ -15,6 +15,10 @@ class PlaylistsViewModel(private val repository: PlaylistRepository) : ViewModel
     // video control values
     private var currentPlayInfo = PlayInfo(0, 0f, false)
     val curPlayInfo = currentPlayInfo
+    
+    // Database info
+    var playlistInfo : PlaylistInfo = PlaylistInfo()
+    var playlistItemInfo : PlaylistItemInfo = PlaylistItemInfo()
 
     // laoding Spiner
     private var mSpiner = MutableLiveData<Boolean>(false)
@@ -30,9 +34,10 @@ class PlaylistsViewModel(private val repository: PlaylistRepository) : ViewModel
         }
     }
     fun loadMorePlaylists() {
-        val playlistsInfo = repository.getPlaylistsInfo()
-        playlistsInfo?.let {
-            searchPlaylists(it.searchQuery, it.pageToken)
+        launchDataUpdate {
+            playlistInfo.lastItem?.let {
+                repository.tryUpdatePlaylistsCache(it.searchQuery, it.pageToken)
+            }
         }
     }
 
@@ -43,16 +48,21 @@ class PlaylistsViewModel(private val repository: PlaylistRepository) : ViewModel
         }
     }
     fun loadMorePlaylistItem() {
-        val playlistItemsInfo = repository.getPlaylistItemsInfo()
-        playlistItemsInfo?.let {
-            fetchPlaylistItems(it.playlistId, it.pageToken)
+        launchDataUpdate {
+            playlistItemInfo.lastItem?.let {
+                repository.tryUpdatePlayItemsCache(it.playlistId, it.pageToken)
+            }
         }
     }
 
     // Saved Playlist functions ============================
     fun addSavedPlaylist(selectedPlaylist: SelectedPlaylist) {
         launchDataUpdate {
-            repository.addSavedPlaylist(SavedPlaylist(selectedPlaylist.playlistId, selectedPlaylist.title, selectedPlaylist.thumbnailUrl))
+            repository.addSavedPlaylist(SavedPlaylist(
+                selectedPlaylist.playlistId,
+                selectedPlaylist.title,
+                selectedPlaylist.description,
+                selectedPlaylist.thumbnailUrl))
         }
     }
 
@@ -69,32 +79,34 @@ class PlaylistsViewModel(private val repository: PlaylistRepository) : ViewModel
     fun setCurVideoId(videoId: String) {
         // find index with videoId
         currentPlayInfo.reset()
-        currentPlayInfo.videoIndex = playlistItems.value?.find{
+        currentPlayInfo.videoPosition = playlistItems.value?.find{
             it.id == videoId
         }?.idx?:1
     }
-    fun getCurVideoId() : String? {
-        if (repository.getPlaylistItemsSize() == 0)
-            return null
 
-        return playlistItems.value?.get(currentPlayInfo.videoIndex)?.id
+    fun getCurVideoId() : String? {
+        if (playlistItemInfo.count > 0)
+            return playlistItems.value?.get(currentPlayInfo.videoPosition)?.id
+
+        return null
     }
+
     fun getNextVideoId(): String? {
         // check if play position is at the end of list.
-        if ((currentPlayInfo.videoIndex+1 == repository.getPlaylistItemsSize()) &&
-            (repository.getPlaylistItemsInfo()?.pageToken != null)) {
+        if ((currentPlayInfo.videoPosition+1 == playlistItemInfo.count) &&
+            (playlistItemInfo.lastItem?.pageToken != null)) {
             loadMorePlaylistItem()
             return null
         }
 
         currentPlayInfo.videoSec = 0f
 
-        if (currentPlayInfo.videoIndex < repository.getPlaylistItemsSize())
-            currentPlayInfo.videoIndex++
+        if (currentPlayInfo.videoPosition < playlistItemInfo.count)
+            currentPlayInfo.videoPosition++
         else
             currentPlayInfo.reset()
 
-        return playlistItems.value?.get(currentPlayInfo.videoIndex)?.id
+        return playlistItems.value?.get(currentPlayInfo.videoPosition)?.id
     }
 
     // Coroutine helper
@@ -110,13 +122,16 @@ class PlaylistsViewModel(private val repository: PlaylistRepository) : ViewModel
             }
         }
     }
+    
+    data class PlaylistInfo(val count:Int = 0, val lastItem:Playlist? = null)
+    data class PlaylistItemInfo(val count:Int = 0, val lastItem:PlaylistItem? = null)
 
     data class PlayInfo (
-        var videoIndex: Int,
+        var videoPosition: Int,
         var videoSec: Float,
         var isFullScreen: Boolean) {
         fun reset() {
-            videoIndex = 0
+            videoPosition = 0
             videoSec = 0f
         }
     }

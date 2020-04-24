@@ -15,6 +15,9 @@ interface SavedPlaylistDao {
     suspend fun findByPlaylistId(playlistId: String): Int
 
     @Query("SELECT COUNT(savedplaylist.playlistId) FROM savedplaylist")
+    fun getItemCountNoneSuspend(): Int
+
+    @Query("SELECT COUNT(savedplaylist.playlistId) FROM savedplaylist")
     suspend fun getItemCount(): Int
 
     @Delete

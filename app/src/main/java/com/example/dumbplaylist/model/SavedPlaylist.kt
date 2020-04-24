@@ -8,6 +8,7 @@ data class SavedPlaylist(
     @PrimaryKey
     val playlistId: String,
     val title: String?,
+    val description: String?,
     val thumbnailUrl: String?) {
     override fun toString() = playlistId
 }
