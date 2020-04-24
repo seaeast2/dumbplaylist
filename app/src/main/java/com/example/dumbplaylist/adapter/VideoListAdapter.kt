@@ -7,10 +7,10 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.dumbplaylist.databinding.ListItemVideolistBinding
-import com.example.dumbplaylist.model.PlaylistItem
+import com.example.dumbplaylist.viewmodel.PlayingViewModel
 
 class VideoListAdapter(private val playSelectedVideo: (videoId:String)->Unit) :
-    ListAdapter<PlaylistItem, RecyclerView.ViewHolder>(PlayItemDiffCallback()) {
+    ListAdapter<PlayingViewModel.VideoItem, RecyclerView.ViewHolder>(PlayItemDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return VideoListViewHolder(
@@ -22,7 +22,7 @@ class VideoListAdapter(private val playSelectedVideo: (videoId:String)->Unit) :
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        val item : PlaylistItem? = getItem(position)
+        val item : PlayingViewModel.VideoItem? = getItem(position)
         (holder as VideoListViewHolder).bind(item)
     }
 
@@ -36,12 +36,12 @@ class VideoListAdapter(private val playSelectedVideo: (videoId:String)->Unit) :
         init {
             binding.setClickListener {view ->
                 binding.playlistItem?.let {
-                    func(it.id)
+                    func(it.videoId)
                 }
             }
         }
 
-        fun bind(item: PlaylistItem?) {
+        fun bind(item: PlayingViewModel.VideoItem?) {
             binding.apply {
                 playlistItem = item
                 executePendingBindings()
@@ -50,12 +50,12 @@ class VideoListAdapter(private val playSelectedVideo: (videoId:String)->Unit) :
     }
 }
 
-private class PlayItemDiffCallback : DiffUtil.ItemCallback<PlaylistItem>() {
-    override fun areItemsTheSame(oldItem: PlaylistItem, newItem: PlaylistItem): Boolean {
-        return oldItem.id == newItem.id
+private class PlayItemDiffCallback : DiffUtil.ItemCallback<PlayingViewModel.VideoItem>() {
+    override fun areItemsTheSame(oldItem: PlayingViewModel.VideoItem, newItem: PlayingViewModel.VideoItem): Boolean {
+        return oldItem.videoId == newItem.videoId
     }
 
-    override fun areContentsTheSame(oldItem: PlaylistItem, newItem: PlaylistItem): Boolean {
+    override fun areContentsTheSame(oldItem: PlayingViewModel.VideoItem, newItem: PlayingViewModel.VideoItem): Boolean {
         return oldItem == newItem
     }
 }

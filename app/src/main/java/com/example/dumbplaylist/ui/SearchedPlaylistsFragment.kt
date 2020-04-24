@@ -51,7 +51,9 @@ class SearchedPlaylistsFragment : Fragment() {
                 super.onScrolled(recyclerView, dx, dy)
 
                 if (!recyclerView.canScrollVertically(1)) {
-                    mViewModel.loadMorePlaylists()
+                    mViewModel.playlistInfo.lastItem?.let {playlist ->
+                        mViewModel.loadMorePlaylists(playlist.playlistId, playlist.pageToken)
+                    }
                 }
             }
         })
@@ -64,7 +66,12 @@ class SearchedPlaylistsFragment : Fragment() {
     private fun subscribeUi(adapter: PlaylistAdapter) {
         mViewModel.playlists.observe(viewLifecycleOwner) {playlists ->
             adapter.submitList(playlists)
-            mViewModel.playlistInfo = PlaylistsViewModel.PlaylistInfo(playlists.size, playlists.last())
+
+            // Updates playlist info
+            if (playlists.isNotEmpty())
+                mViewModel.playlistInfo = PlaylistsViewModel.PlaylistInfo(playlists.size, playlists.last())
+            else
+                mViewModel.playlistInfo = PlaylistsViewModel.PlaylistInfo()
         }
     }
 

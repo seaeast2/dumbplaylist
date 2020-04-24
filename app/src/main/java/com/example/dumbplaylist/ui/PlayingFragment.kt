@@ -1,11 +1,11 @@
 package com.example.dumbplaylist.ui
 
 import android.content.Context
-import android.content.pm.ActivityInfo
-import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
-import android.preference.PreferenceManager
-import android.view.*
+import android.view.LayoutInflater
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -13,7 +13,9 @@ import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.Transformations.switchMap
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.observe
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.RecyclerView
@@ -22,10 +24,10 @@ import com.example.dumbplaylist.R
 import com.example.dumbplaylist.adapter.SelectedPlaylist
 import com.example.dumbplaylist.adapter.VideoListAdapter
 import com.example.dumbplaylist.databinding.FragmentPlayingBinding
-import com.example.dumbplaylist.model.Playlist
 import com.example.dumbplaylist.model.SavedPlaylist
 import com.example.dumbplaylist.util.FullScreenHelper
 import com.example.dumbplaylist.util.Injector
+import com.example.dumbplaylist.viewmodel.PlayingViewModel
 import com.example.dumbplaylist.viewmodel.PlaylistsViewModel
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
@@ -35,13 +37,15 @@ import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.Abs
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.YouTubePlayerFullScreenListener
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.utils.loadOrCueVideo
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
-import java.lang.Exception
 
 class PlayingFragment : Fragment() {
     // Recieve argument through navagation.
     private val args: PlayingFragmentArgs by navArgs()
 
-    private lateinit var mViewModel: PlaylistsViewModel
+    private lateinit var mSharedViewModel: PlaylistsViewModel
+    private val mPlayingViewModel: PlayingViewModel by viewModels { 
+        Injector.providePlayingViewModelFactory(requireContext())
+    }
     private val mFullScreenHelper: FullScreenHelper by lazy {
         FullScreenHelper(requireActivity())
     }
@@ -53,13 +57,13 @@ class PlayingFragment : Fragment() {
 
     override fun onCreateView( inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Get Shared ViewModel
-        mViewModel = (activity as MainActivity).viewModel
+        mSharedViewModel = (activity as MainActivity).viewModel
 
         // Fragment binding
         mFragmentBinding = DataBindingUtil.inflate<FragmentPlayingBinding>(inflater,
                 R.layout.fragment_playing, container, false
         ).apply {
-            viewModel = mViewModel
+            viewModel = mSharedViewModel
             lifecycleOwner = viewLifecycleOwner // In case binding has LiveData, lifeCycleOwner is mandatory.
 
             fabCallback = object : FabCallback {
@@ -67,7 +71,7 @@ class PlayingFragment : Fragment() {
                     selectedPlaylist?.let {playlist ->
                         fab?.let {
                             hideFab(it)
-                            mViewModel.addSavedPlaylist(playlist)
+                            mSharedViewModel.addSavedPlaylist(playlist)
                             Snackbar.make(root, "Add playlist to saved list", Snackbar.LENGTH_LONG).show()
                         }
                     }
@@ -78,7 +82,7 @@ class PlayingFragment : Fragment() {
         context ?: return mFragmentBinding.root
 
         val adapter = VideoListAdapter { videoId ->
-            mViewModel.setCurVideoId(videoId)
+            mPlayingViewModel.setCurVideoId(videoId)
             mYouTubePlayer?.loadOrCueVideo(lifecycle, videoId, 0f)
         }
 
@@ -104,17 +108,21 @@ class PlayingFragment : Fragment() {
 
     private fun initRecyclerView(adapter: VideoListAdapter) {
         // set up recyclerview
-        mFragmentBinding.videolistRcview?.let {
-            it.adapter = adapter
+        mFragmentBinding.videolistRcview?.let {rcview ->
+            rcview.adapter = adapter
 
             // 4.2 무한 스크롤을 위해 ScrollListener 등록
-            it.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            rcview.addOnScrollListener(object : RecyclerView.OnScrollListener() {
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                     super.onScrolled(recyclerView, dx, dy)
 
                     // 더 아래로 스크롤 할수 있는지 검사 후 스크롤 불가면 데이터 추가 로딩
                     if (!recyclerView.canScrollVertically(1)) {
-                        mViewModel.loadMorePlaylistItem()
+                        mPlayingViewModel.playlistItemInfo.lastItem?.let {playlistitem ->
+                            mSharedViewModel.loadMorePlaylistItem(playlistitem.playlistId,
+                                playlistitem.pageToken)
+                        }
+
                     }
                 }
             })
@@ -124,12 +132,12 @@ class PlayingFragment : Fragment() {
     private fun initSelectedPlaylist(selectedPlaylist: SelectedPlaylist?) {
         // fetch selected playlist items from youtube api.
         selectedPlaylist?.let {
-            mViewModel.selectedPlaylist = it
-            mViewModel.fetchPlaylistItems(it.playlistId)
+            mSharedViewModel.selectedPlaylist = it
+            mSharedViewModel.fetchPlaylistItems(it.playlistId)
             saveSelectedPlaylist()
         }
-        if ( mViewModel.selectedPlaylist == null) {
-            mViewModel.selectedPlaylist = restoreSelectedPlaylist()
+        if ( mSharedViewModel.selectedPlaylist == null) {
+            mSharedViewModel.selectedPlaylist = restoreSelectedPlaylist()
         }
     }
 
@@ -156,31 +164,34 @@ class PlayingFragment : Fragment() {
     }
 
     private fun subscribeUi(adapter: VideoListAdapter) {
-        mViewModel.playlistItems.observe(viewLifecycleOwner) {
-            adapter.submitList(it)
+        mSharedViewModel.playlistItems.observe(viewLifecycleOwner) {
+            // Convert raw data to display data
+            mPlayingViewModel.videoList = it.map {
+                PlayingViewModel.VideoItem(it.id, it.title, it.description, it.thumbnailUrl, false)
+            }
+            adapter.submitList(mPlayingViewModel.videoList)
 
             if (mPlayerState == PlayerConstants.PlayerState.ENDED) {
-                mViewModel.getCurVideoId()?.let {
-                    mYouTubePlayer?.loadOrCueVideo(lifecycle, it, mViewModel.curPlayInfo.videoSec)
+                mPlayingViewModel.getCurVideoId()?.let {
+                    mYouTubePlayer?.loadOrCueVideo(lifecycle, it, mPlayingViewModel.curPlayInfo.videoSec)
                 }
             }
-            if (!it.isEmpty()) {
-                mViewModel.playlistItemInfo = PlaylistsViewModel.PlaylistItemInfo(it.size, it.last())
-            }
-            else {
-                mViewModel.playlistItemInfo = PlaylistsViewModel.PlaylistItemInfo()
-            }
 
+            // update playlistitem info
+            if (it.isNotEmpty())
+                mPlayingViewModel.playlistItemInfo = PlayingViewModel.PlaylistItemInfo(it.size, it.last())
+            else
+                mPlayingViewModel.playlistItemInfo = PlayingViewModel.PlaylistItemInfo()
         }
 
-        mViewModel.savedlists.observe(viewLifecycleOwner) {
+        mSharedViewModel.savedlists.observe(viewLifecycleOwner) {
             initFab(it)
         }
     }
 
     private fun initFab(list : List<SavedPlaylist>) {
         list.find { savedlist ->
-            savedlist.playlistId == mViewModel.selectedPlaylist?.playlistId
+            savedlist.playlistId == mSharedViewModel.selectedPlaylist?.playlistId
         }?.let {
             mFragmentBinding.fab?.let {fab ->
                 hideFab(fab)
@@ -206,15 +217,15 @@ class PlayingFragment : Fragment() {
         mYouTubePlayerView.addYouTubePlayerListener(object : AbstractYouTubePlayerListener() {
             override fun onReady(youTubePlayer: YouTubePlayer) {
                 mYouTubePlayer = youTubePlayer
-                if (mViewModel.curPlayInfo.isFullScreen) {
+                if (mPlayingViewModel.curPlayInfo.isFullScreen) {
                     // continue play when user enters fullscreen mode
-                    mViewModel.curPlayInfo.isFullScreen = false
-                    mViewModel.getCurVideoId()?.let {
-                        youTubePlayer.loadOrCueVideo(lifecycle, it, mViewModel.curPlayInfo.videoSec)
+                    mPlayingViewModel.curPlayInfo.isFullScreen = false
+                    mPlayingViewModel.getCurVideoId()?.let {
+                        youTubePlayer.loadOrCueVideo(lifecycle, it, mPlayingViewModel.curPlayInfo.videoSec)
                     }
                 }
                 else {
-                    mViewModel.getCurVideoId()?.let {
+                    mPlayingViewModel.getCurVideoId()?.let {
                         youTubePlayer.loadOrCueVideo(lifecycle, it, 0f)
                     }
                 }
@@ -222,20 +233,25 @@ class PlayingFragment : Fragment() {
             }
 
             override fun onCurrentSecond(youTubePlayer: YouTubePlayer, second: Float) {
-                super.onCurrentSecond(youTubePlayer, second)
+                //super.onCurrentSecond(youTubePlayer, second)
                 // backup second for fullscreen change
-                mViewModel.curPlayInfo.videoSec = second
+                mPlayingViewModel.curPlayInfo.videoSec = second
             }
 
             override fun onStateChange(youTubePlayer: YouTubePlayer, state: PlayerConstants.PlayerState) {
-                super.onStateChange(youTubePlayer, state)
-
+                //super.onStateChange(youTubePlayer, state)
                 mPlayerState = state
 
                 if (state == PlayerConstants.PlayerState.ENDED) {
-                    mViewModel.getNextVideoId()?.let {
-                        youTubePlayer.loadOrCueVideo(lifecycle, it, 0f)
+                    if (mPlayingViewModel.getNextVideoId().isNullOrEmpty()) {
+                        mPlayingViewModel.playlistItemInfo.lastItem?.let {
+                            mSharedViewModel.loadMorePlaylistItem(it.playlistId, it.pageToken)
+                        }
                     }
+                    else {
+                        youTubePlayer.loadOrCueVideo(lifecycle, mPlayingViewModel.getNextVideoId()!!, 0f)
+                    }
+
                 }
             }
         })
@@ -274,7 +290,7 @@ class PlayingFragment : Fragment() {
                 mFullScreenHelper.enterFullScreen()
                 // 3. 사용자 버튼 추가
                 addCustomActionsToPlayer()
-                mViewModel.curPlayInfo.isFullScreen = true
+                mPlayingViewModel.curPlayInfo.isFullScreen = true
             }
 
             override fun onYouTubePlayerExitFullScreen() {
@@ -284,7 +300,7 @@ class PlayingFragment : Fragment() {
                 mFullScreenHelper.exitFullScreen()
                 // 3. 사용자 버튼 감추기
                 removeCustomActionsFromPlayer()
-                mViewModel.curPlayInfo.isFullScreen = true
+                mPlayingViewModel.curPlayInfo.isFullScreen = true
             }
         })
     }
@@ -335,10 +351,10 @@ class PlayingFragment : Fragment() {
     private fun saveSelectedPlaylist() {
         val sharedPref = activity?.getPreferences(Context.MODE_PRIVATE) ?: return
         with(sharedPref.edit()) {
-            putString("playlistId", mViewModel.selectedPlaylist?.playlistId)
-            putString("title", mViewModel.selectedPlaylist?.title)
-            putString("description", mViewModel.selectedPlaylist?.description)
-            putString("thumbnailUrl", mViewModel.selectedPlaylist?.thumbnailUrl)
+            putString("playlistId", mSharedViewModel.selectedPlaylist?.playlistId)
+            putString("title", mSharedViewModel.selectedPlaylist?.title)
+            putString("description", mSharedViewModel.selectedPlaylist?.description)
+            putString("thumbnailUrl", mSharedViewModel.selectedPlaylist?.thumbnailUrl)
             commit()
         }
     }
@@ -378,3 +394,12 @@ class PlayingFragment : Fragment() {
     }
 }
 
+
+/**
+ * Factory for creating a [PlaylistsViewModel] with a constructor that takes a [PlaylistRepository].
+ */
+
+class MyPlayingViewModelFactory() : ViewModelProvider.NewInstanceFactory() {
+    @Suppress("UNCHECKED_CAST")
+    override fun <T : ViewModel> create(modelClass: Class<T>) = PlayingViewModel() as T
+}
