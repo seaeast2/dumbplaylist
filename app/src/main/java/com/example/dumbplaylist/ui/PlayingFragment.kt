@@ -13,7 +13,6 @@ import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Transformations.switchMap
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.observe
@@ -25,7 +24,6 @@ import com.example.dumbplaylist.adapter.SelectedPlaylist
 import com.example.dumbplaylist.adapter.VideoListAdapter
 import com.example.dumbplaylist.databinding.FragmentPlayingBinding
 import com.example.dumbplaylist.model.SavedPlaylist
-import com.example.dumbplaylist.util.FullScreenHelper
 import com.example.dumbplaylist.util.Injector
 import com.example.dumbplaylist.viewmodel.PlayingViewModel
 import com.example.dumbplaylist.viewmodel.PlaylistsViewModel
@@ -46,15 +44,16 @@ class PlayingFragment : Fragment() {
     private val mPlayingViewModel: PlayingViewModel by viewModels { 
         Injector.providePlayingViewModelFactory(requireContext())
     }
-    private val mFullScreenHelper: FullScreenHelper by lazy {
-        FullScreenHelper(requireActivity())
-    }
+//    private val mFullScreenHelper: FullScreenHelper by lazy {
+//        FullScreenHelper(requireActivity())
+//    }
 
     private lateinit var mFragmentBinding: FragmentPlayingBinding
     private lateinit var mYouTubePlayerView: YouTubePlayerView
     private var mYouTubePlayer: YouTubePlayer? = null
     private var mPlayerState: PlayerConstants.PlayerState = PlayerConstants.PlayerState.UNKNOWN
     private lateinit var mAdapter : VideoListAdapter
+    private var mFabShowStatus: Boolean = true
 
     override fun onCreateView( inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Get Shared ViewModel
@@ -197,9 +196,16 @@ class PlayingFragment : Fragment() {
         }?.let {
             mFragmentBinding.fab?.let {fab ->
                 hideFab(fab)
+                mFabShowStatus = false
             }
         }
     }
+
+    private fun selectItemAndMove(position: Int) {
+        mAdapter.setSelectedPos(position)
+        mFragmentBinding.videolistRcview.smoothScrollToPosition(position)
+    }
+
 
     // Youtube player initialize functions ====================================
     private fun initYoutubePlayerView() {
@@ -224,13 +230,13 @@ class PlayingFragment : Fragment() {
                     mPlayingViewModel.curPlayInfo.isFullScreen = false
                     mPlayingViewModel.getCurVideoId()?.let {
                         youTubePlayer.loadOrCueVideo(lifecycle, it, mPlayingViewModel.curPlayInfo.videoSec)
-                        mAdapter.setSelectedPos(mPlayingViewModel.curPlayInfo.videoPosition)
+                        selectItemAndMove(mPlayingViewModel.curPlayInfo.videoPosition)
                     }
                 }
                 else {
                     mPlayingViewModel.getCurVideoId()?.let {
                         youTubePlayer.loadOrCueVideo(lifecycle, it, 0f)
-                        mAdapter.setSelectedPos(mPlayingViewModel.curPlayInfo.videoPosition)
+                        selectItemAndMove(mPlayingViewModel.curPlayInfo.videoPosition)
                     }
                 }
                 //setPlayNextVideoButtonClickListener(youTubePlayer)
@@ -254,9 +260,8 @@ class PlayingFragment : Fragment() {
                     }
                     else {
                         youTubePlayer.loadOrCueVideo(lifecycle, mPlayingViewModel.getCurVideoId()!!, 0f)
-                        mAdapter.setSelectedPos(mPlayingViewModel.curPlayInfo.videoPosition)
+                        selectItemAndMove(mPlayingViewModel.curPlayInfo.videoPosition)
                     }
-
                 }
             }
         })
@@ -289,23 +294,24 @@ class PlayingFragment : Fragment() {
     private fun addFullScreenListenerToPlayer() {
         mYouTubePlayerView.addFullScreenListener(object: YouTubePlayerFullScreenListener {
             override fun onYouTubePlayerEnterFullScreen() {
-                // 1. 화면 가로로 변경
                 //activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
-                // 2. 가로화면에 맞추어 UI 변경
-                mFullScreenHelper.enterFullScreen()
-                // 3. 사용자 버튼 추가
+                val mainActivity = activity as MainActivity
+                mainActivity.mFullScreenHelper.enterFullScreen()
                 addCustomActionsToPlayer()
                 mPlayingViewModel.curPlayInfo.isFullScreen = true
+                mFragmentBinding.fab.hide()
             }
 
             override fun onYouTubePlayerExitFullScreen() {
                 // 1. 화면 세로로 변경
                 //activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-                // 2. 세로 화면에 맞추어 UI 변경
-                mFullScreenHelper.exitFullScreen()
+                val mainActivity = activity as MainActivity
+                mainActivity.mFullScreenHelper.exitFullScreen()
                 // 3. 사용자 버튼 감추기
                 removeCustomActionsFromPlayer()
                 mPlayingViewModel.curPlayInfo.isFullScreen = true
+                if(mFabShowStatus)
+                    mFragmentBinding.fab.show()
             }
         })
     }

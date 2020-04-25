@@ -5,9 +5,7 @@
         android:id="@+id/search"
         android:icon="@drawable/ic_search_24px"
         android:contentDescription="Search"
-        android:title="Search"
-        app:actionViewClass="androidx.appcompat.widget.SearchView"
-        app:showAsAction="always" />
+        android:title="Search"/>
     <item
         android:id="@+id/playing"
         android:icon="@drawable/ic_playlist_play_24px"

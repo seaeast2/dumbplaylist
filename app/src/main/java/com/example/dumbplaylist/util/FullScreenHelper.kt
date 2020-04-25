@@ -8,12 +8,9 @@ import android.view.View
  *
  * @author Pierfrancesco Soffritti
  */
+@Suppress("UNCHECKED_CAST")
 class FullScreenHelper(private val context: Activity, vararg views: View) {
-    private val views: Array<View>
-
-    init {
-        this.views = views as Array<View>
-    }
+    private val views: Array<View> = views as Array<View>
 
     /**
      * call this method to enter full screen

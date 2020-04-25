@@ -26,8 +26,7 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/video_list_item"
-            android:background="@drawable/button_state">
+            android:id="@+id/video_list_item">
 
             <ImageView
                 android:id="@+id/thumbnail_image"
