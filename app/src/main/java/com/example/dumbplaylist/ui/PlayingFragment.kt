@@ -54,6 +54,7 @@ class PlayingFragment : Fragment() {
     private lateinit var mYouTubePlayerView: YouTubePlayerView
     private var mYouTubePlayer: YouTubePlayer? = null
     private var mPlayerState: PlayerConstants.PlayerState = PlayerConstants.PlayerState.UNKNOWN
+    private lateinit var mAdapter : VideoListAdapter
 
     override fun onCreateView( inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Get Shared ViewModel
@@ -81,12 +82,12 @@ class PlayingFragment : Fragment() {
 
         context ?: return mFragmentBinding.root
 
-        val adapter = VideoListAdapter { videoId ->
+        mAdapter = VideoListAdapter {  videoId ->
             mPlayingViewModel.setCurVideoId(videoId)
             mYouTubePlayer?.loadOrCueVideo(lifecycle, videoId, 0f)
         }
 
-        initRecyclerView(adapter)
+        initRecyclerView(mAdapter)
 
         initActionBar()
 
@@ -96,7 +97,7 @@ class PlayingFragment : Fragment() {
         initYoutubePlayerView()
 
         // observing playlist item and update recyclerview when new items are added.
-        subscribeUi(adapter)
+        subscribeUi(mAdapter)
 
         return mFragmentBinding.root
     }
@@ -174,6 +175,7 @@ class PlayingFragment : Fragment() {
             if (mPlayerState == PlayerConstants.PlayerState.ENDED) {
                 mPlayingViewModel.getCurVideoId()?.let {
                     mYouTubePlayer?.loadOrCueVideo(lifecycle, it, mPlayingViewModel.curPlayInfo.videoSec)
+                    mAdapter.setSelectedPos(mPlayingViewModel.curPlayInfo.videoPosition)
                 }
             }
 
@@ -222,11 +224,13 @@ class PlayingFragment : Fragment() {
                     mPlayingViewModel.curPlayInfo.isFullScreen = false
                     mPlayingViewModel.getCurVideoId()?.let {
                         youTubePlayer.loadOrCueVideo(lifecycle, it, mPlayingViewModel.curPlayInfo.videoSec)
+                        mAdapter.setSelectedPos(mPlayingViewModel.curPlayInfo.videoPosition)
                     }
                 }
                 else {
                     mPlayingViewModel.getCurVideoId()?.let {
                         youTubePlayer.loadOrCueVideo(lifecycle, it, 0f)
+                        mAdapter.setSelectedPos(mPlayingViewModel.curPlayInfo.videoPosition)
                     }
                 }
                 //setPlayNextVideoButtonClickListener(youTubePlayer)
@@ -249,7 +253,8 @@ class PlayingFragment : Fragment() {
                         }
                     }
                     else {
-                        youTubePlayer.loadOrCueVideo(lifecycle, mPlayingViewModel.getNextVideoId()!!, 0f)
+                        youTubePlayer.loadOrCueVideo(lifecycle, mPlayingViewModel.getCurVideoId()!!, 0f)
+                        mAdapter.setSelectedPos(mPlayingViewModel.curPlayInfo.videoPosition)
                     }
 
                 }
