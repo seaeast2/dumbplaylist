@@ -46,10 +46,6 @@ class PlayingFragment : Fragment() {
     private val mPlayingViewModel: PlayingViewModel by viewModels { 
         Injector.providePlayingViewModelFactory(requireContext())
     }
-//    private val mFullScreenHelper: FullScreenHelper by lazy {
-//        FullScreenHelper(requireActivity())
-//    }
-
     private lateinit var mFragmentBinding: FragmentPlayingBinding
     private lateinit var mYouTubePlayerView: YouTubePlayerView
     private var mYouTubePlayer: YouTubePlayer? = null
@@ -60,7 +56,7 @@ class PlayingFragment : Fragment() {
     override fun onCreateView( inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         super.onCreateView(inflater, container, savedInstanceState)
 
-        Log.d(TAG, "onCreateView")
+        Log.d(TAG, "onCreateView Before inflation")
         // Get Shared ViewModel
         mSharedViewModel = (activity as MainActivity).viewModel
 
@@ -86,6 +82,8 @@ class PlayingFragment : Fragment() {
 
         context ?: return mFragmentBinding.root
 
+        Log.d(TAG, "onCreateView After inflation")
+
         mAdapter = VideoListAdapter {  videoId ->
             mPlayingViewModel.setCurVideoId(videoId)
             mYouTubePlayer?.loadOrCueVideo(lifecycle, videoId, 0f)
@@ -104,6 +102,12 @@ class PlayingFragment : Fragment() {
         subscribeUi(mAdapter)
 
         return mFragmentBinding.root
+    }
+
+    override fun onStart() {
+        super.onStart()
+        if (mPlayingViewModel.currentPlayInfo.isFullScreen)
+            mYouTubePlayerView.enterFullScreen()
     }
 
     private fun initActionBar() {
@@ -224,6 +228,19 @@ class PlayingFragment : Fragment() {
         addFullScreenListenerToPlayer()
     }
 
+    private fun forceHideStatusBar() {
+        activity?.let {
+            val decorView = it.window.decorView
+            decorView.systemUiVisibility = (
+                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                    or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                    or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                    or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                    or View.SYSTEM_UI_FLAG_FULLSCREEN
+                    or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY)
+        }
+    }
+
     private fun addYoutubeListener() {
         mYouTubePlayerView.addYouTubePlayerListener(object : AbstractYouTubePlayerListener() {
             override fun onReady(youTubePlayer: YouTubePlayer) {
@@ -231,6 +248,10 @@ class PlayingFragment : Fragment() {
                 mPlayingViewModel.getCurVideoId()?.let {
                     youTubePlayer.loadOrCueVideo(lifecycle, it, mPlayingViewModel.currentPlayInfo.videoSec)
                     selectItemAndMove(mPlayingViewModel.currentPlayInfo.videoPosition)
+                }
+
+                if (mYouTubePlayerView.isFullScreen()) {
+                    forceHideStatusBar()
                 }
             }
 
@@ -286,7 +307,6 @@ class PlayingFragment : Fragment() {
     private fun addFullScreenListenerToPlayer() {
         mYouTubePlayerView.addFullScreenListener(object: YouTubePlayerFullScreenListener {
             override fun onYouTubePlayerEnterFullScreen() {
-                //activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
                 val mainActivity = activity as MainActivity
                 mainActivity.mFullScreenHelper.enterFullScreen()
                 addCustomActionsToPlayer()
@@ -295,11 +315,8 @@ class PlayingFragment : Fragment() {
             }
 
             override fun onYouTubePlayerExitFullScreen() {
-                // 1. 화면 세로로 변경
-                //activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
                 val mainActivity = activity as MainActivity
                 mainActivity.mFullScreenHelper.exitFullScreen()
-                // 3. 사용자 버튼 감추기
                 removeCustomActionsFromPlayer()
                 mPlayingViewModel.currentPlayInfo.isFullScreen = false
                 if(mFabShowStatus)

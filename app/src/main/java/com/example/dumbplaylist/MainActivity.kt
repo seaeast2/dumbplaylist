@@ -19,8 +19,6 @@ import com.example.dumbplaylist.viewmodel.PlaylistsViewModel
 
 class MainActivity : AppCompatActivity() {
     lateinit var mBinding : MainActivityBinding
-    //private var mCurrentNavController: LiveData<NavController>? = null
-
 
     // viewModel 은 observe 되기 전에 항상 생성되어 있어야 함.
     // 그래서 class 생성시 초기화 되도록 property delegation 으로 처리
@@ -46,7 +44,6 @@ class MainActivity : AppCompatActivity() {
         mFullScreenHelper = FullScreenHelper(this, mBinding.bottomNav)
     }
 
-
     override fun onRestoreInstanceState(savedInstanceState: Bundle?) {
         super.onRestoreInstanceState(savedInstanceState)
         // Now that BottomNavigationBar has restored its instance state
@@ -68,10 +65,6 @@ class MainActivity : AppCompatActivity() {
         mBinding.bottomNav.setupWithNavController(navController)
 
     }
-
-//    override fun onSupportNavigateUp(): Boolean {
-//        return mCurrentNavController?.value?.navigateUp() ?: false
-//    }
 
     companion object {
         private val TAG = "MainActivity"
