@@ -1,9 +1,11 @@
 package com.example.dumbplaylist.ui
 
 import android.content.Context
+import android.content.pm.ActivityInfo
+import android.content.res.Configuration
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
-import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
@@ -56,6 +58,9 @@ class PlayingFragment : Fragment() {
     private var mFabShowStatus: Boolean = true
 
     override fun onCreateView( inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        super.onCreateView(inflater, container, savedInstanceState)
+
+        Log.d(TAG, "onCreateView")
         // Get Shared ViewModel
         mSharedViewModel = (activity as MainActivity).viewModel
 
@@ -141,26 +146,24 @@ class PlayingFragment : Fragment() {
         }
     }
 
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
 
 
-    // Menu ====================================
-//    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-//        inflater.inflate(R.menu.playlist_frag_menu, menu)
-//    }
+        if(newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) { // 세로 전환
 
-    // 메뉴 선택 처리
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when(item.itemId) {
-//            R.id.add_dummy_menu -> {
-//                viewModel.loadMorePlaylistItem()
-//                true
+//            if (mPlayingViewModel.currentPlayInfo.isFullScreen) {
 //            }
-//            R.id.del_dummy_menu -> {
-//                true
-//            }
-
-            else -> super.onOptionsItemSelected(item)
+            Log.d(TAG, "onConfigurationChanged : ORIENTATION_PORTRAIT")
         }
+        else if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) { // 가로 전환
+            //mYouTubePlayerView.toggleFullScreen()
+
+
+            Log.d(TAG, "onConfigurationChanged : ORIENTATION_LANDSCAPE")
+        }
+
+        Log.d(TAG, "onConfigurationChanged : Do something else here")
     }
 
     private fun subscribeUi(adapter: VideoListAdapter) {
@@ -173,8 +176,8 @@ class PlayingFragment : Fragment() {
 
             if (mPlayerState == PlayerConstants.PlayerState.ENDED) {
                 mPlayingViewModel.getCurVideoId()?.let {
-                    mYouTubePlayer?.loadOrCueVideo(lifecycle, it, mPlayingViewModel.curPlayInfo.videoSec)
-                    mAdapter.setSelectedPos(mPlayingViewModel.curPlayInfo.videoPosition)
+                    mYouTubePlayer?.loadOrCueVideo(lifecycle, it, mPlayingViewModel.currentPlayInfo.videoSec)
+                    mAdapter.setSelectedPos(mPlayingViewModel.currentPlayInfo.videoPosition)
                 }
             }
 
@@ -225,27 +228,16 @@ class PlayingFragment : Fragment() {
         mYouTubePlayerView.addYouTubePlayerListener(object : AbstractYouTubePlayerListener() {
             override fun onReady(youTubePlayer: YouTubePlayer) {
                 mYouTubePlayer = youTubePlayer
-                if (mPlayingViewModel.curPlayInfo.isFullScreen) {
-                    // continue play when user enters fullscreen mode
-                    mPlayingViewModel.curPlayInfo.isFullScreen = false
-                    mPlayingViewModel.getCurVideoId()?.let {
-                        youTubePlayer.loadOrCueVideo(lifecycle, it, mPlayingViewModel.curPlayInfo.videoSec)
-                        selectItemAndMove(mPlayingViewModel.curPlayInfo.videoPosition)
-                    }
+                mPlayingViewModel.getCurVideoId()?.let {
+                    youTubePlayer.loadOrCueVideo(lifecycle, it, mPlayingViewModel.currentPlayInfo.videoSec)
+                    selectItemAndMove(mPlayingViewModel.currentPlayInfo.videoPosition)
                 }
-                else {
-                    mPlayingViewModel.getCurVideoId()?.let {
-                        youTubePlayer.loadOrCueVideo(lifecycle, it, 0f)
-                        selectItemAndMove(mPlayingViewModel.curPlayInfo.videoPosition)
-                    }
-                }
-                //setPlayNextVideoButtonClickListener(youTubePlayer)
             }
 
             override fun onCurrentSecond(youTubePlayer: YouTubePlayer, second: Float) {
                 //super.onCurrentSecond(youTubePlayer, second)
                 // backup second for fullscreen change
-                mPlayingViewModel.curPlayInfo.videoSec = second
+                mPlayingViewModel.currentPlayInfo.videoSec = second
             }
 
             override fun onStateChange(youTubePlayer: YouTubePlayer, state: PlayerConstants.PlayerState) {
@@ -260,7 +252,7 @@ class PlayingFragment : Fragment() {
                     }
                     else {
                         youTubePlayer.loadOrCueVideo(lifecycle, mPlayingViewModel.getCurVideoId()!!, 0f)
-                        selectItemAndMove(mPlayingViewModel.curPlayInfo.videoPosition)
+                        selectItemAndMove(mPlayingViewModel.currentPlayInfo.videoPosition)
                     }
                 }
             }
@@ -298,7 +290,7 @@ class PlayingFragment : Fragment() {
                 val mainActivity = activity as MainActivity
                 mainActivity.mFullScreenHelper.enterFullScreen()
                 addCustomActionsToPlayer()
-                mPlayingViewModel.curPlayInfo.isFullScreen = true
+                mPlayingViewModel.currentPlayInfo.isFullScreen = true
                 mFragmentBinding.fab.hide()
             }
 
@@ -309,7 +301,7 @@ class PlayingFragment : Fragment() {
                 mainActivity.mFullScreenHelper.exitFullScreen()
                 // 3. 사용자 버튼 감추기
                 removeCustomActionsFromPlayer()
-                mPlayingViewModel.curPlayInfo.isFullScreen = true
+                mPlayingViewModel.currentPlayInfo.isFullScreen = false
                 if(mFabShowStatus)
                     mFragmentBinding.fab.show()
             }
@@ -402,6 +394,10 @@ class PlayingFragment : Fragment() {
     // FloatingActionButton Callback
     interface FabCallback {
         fun add(selectedPlaylist: SelectedPlaylist?)
+    }
+
+    companion object {
+        private val TAG = "PlayingFragment"
     }
 }
 

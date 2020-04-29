@@ -60,4 +60,8 @@ class SavedPlaylistFragment : Fragment() {
             adapter.submitSavedList(it)
         }
     }
+
+    companion object {
+        private val TAG = "SavedPlaylistFragment"
+    }
 }

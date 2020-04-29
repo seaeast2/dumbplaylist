@@ -1,6 +1,9 @@
 package com.example.dumbplaylist
 
+import android.content.pm.ActivityInfo
+import android.content.res.Configuration
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
@@ -16,7 +19,7 @@ import com.example.dumbplaylist.viewmodel.PlaylistsViewModel
 
 class MainActivity : AppCompatActivity() {
     lateinit var mBinding : MainActivityBinding
-    private var mCurrentNavController: LiveData<NavController>? = null
+    //private var mCurrentNavController: LiveData<NavController>? = null
 
 
     // viewModel 은 observe 되기 전에 항상 생성되어 있어야 함.
@@ -29,8 +32,10 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Log.d(TAG, "onCreate")
+
         // After Navigation
-        mBinding = setContentView<MainActivityBinding>(this, R.layout.main_activity)
+        mBinding = setContentView(this, R.layout.main_activity)
 
         // 최초 실행
         if (savedInstanceState == null) {
@@ -64,9 +69,9 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    override fun onSupportNavigateUp(): Boolean {
-        return mCurrentNavController?.value?.navigateUp() ?: false
-    }
+//    override fun onSupportNavigateUp(): Boolean {
+//        return mCurrentNavController?.value?.navigateUp() ?: false
+//    }
 
     companion object {
         private val TAG = "MainActivity"

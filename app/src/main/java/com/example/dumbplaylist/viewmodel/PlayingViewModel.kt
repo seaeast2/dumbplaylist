@@ -10,8 +10,9 @@ class PlayingViewModel : ViewModel() {
     var videoList : List<VideoItem>? = null
 
     // video control values
-    private var currentPlayInfo = PlayInfo()
-    val curPlayInfo = currentPlayInfo
+    var currentPlayInfo = PlayInfo()
+
+    //val curPlayInfo = currentPlayInfo
 
     // Database info
     var playlistItemInfo : PlaylistItemInfo = PlaylistItemInfo()

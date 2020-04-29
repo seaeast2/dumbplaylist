@@ -95,7 +95,7 @@ class SearchedPlaylistsFragment : Fragment() {
     }
 
     companion object {
-        private val TAG = "PlaylistsFragment"
+        private val TAG = "SearchedPlaylistsFragment"
     }
 }
 
