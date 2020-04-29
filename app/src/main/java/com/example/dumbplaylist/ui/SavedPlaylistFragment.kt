@@ -1,6 +1,8 @@
 package com.example.dumbplaylist.ui
 
+import android.content.pm.ActivityInfo
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
@@ -37,6 +39,16 @@ class SavedPlaylistFragment : Fragment() {
         initRecyclerView(adapter)
         subscribeUi(adapter)
         initActionBar()
+
+        val mainActivity = activity as MainActivity
+        if (!mainActivity.mBinding.bottomNav.isShown) {
+            mainActivity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+            mainActivity.window.decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE )
+            mainActivity.mBinding.bottomNav.visibility = View.VISIBLE
+            mainActivity.mBinding.bottomNav.invalidate()
+            Log.d(TAG, "turn on boottomNav visible")
+        }
+
         return mFragmentBinding.root
     }
 

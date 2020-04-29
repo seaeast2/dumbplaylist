@@ -6,6 +6,7 @@ import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
@@ -25,6 +26,7 @@ import com.example.dumbplaylist.R
 import com.example.dumbplaylist.adapter.SelectedPlaylist
 import com.example.dumbplaylist.adapter.VideoListAdapter
 import com.example.dumbplaylist.databinding.FragmentPlayingBinding
+import com.example.dumbplaylist.generated.callback.OnClickListener
 import com.example.dumbplaylist.model.SavedPlaylist
 import com.example.dumbplaylist.util.Injector
 import com.example.dumbplaylist.viewmodel.PlayingViewModel
@@ -101,6 +103,8 @@ class PlayingFragment : Fragment() {
         // observing playlist item and update recyclerview when new items are added.
         subscribeUi(mAdapter)
 
+
+
         return mFragmentBinding.root
     }
 
@@ -148,26 +152,6 @@ class PlayingFragment : Fragment() {
         if ( mSharedViewModel.selectedPlaylist == null) {
             mSharedViewModel.selectedPlaylist = restoreSelectedPlaylist()
         }
-    }
-
-    override fun onConfigurationChanged(newConfig: Configuration) {
-        super.onConfigurationChanged(newConfig)
-
-
-        if(newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) { // 세로 전환
-
-//            if (mPlayingViewModel.currentPlayInfo.isFullScreen) {
-//            }
-            Log.d(TAG, "onConfigurationChanged : ORIENTATION_PORTRAIT")
-        }
-        else if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) { // 가로 전환
-            //mYouTubePlayerView.toggleFullScreen()
-
-
-            Log.d(TAG, "onConfigurationChanged : ORIENTATION_LANDSCAPE")
-        }
-
-        Log.d(TAG, "onConfigurationChanged : Do something else here")
     }
 
     private fun subscribeUi(adapter: VideoListAdapter) {
@@ -219,7 +203,7 @@ class PlayingFragment : Fragment() {
         // get observe youtube player instance
         mYouTubePlayerView = mFragmentBinding.youtubePlayerView
 
-        initPlayerMenu()
+        //initPlayerMenu()
         addYoutubeListener()
         // The player will automatically release itself when the activity is destroyed.
         // The player will automatically pause when the activity is stopped
@@ -284,7 +268,7 @@ class PlayingFragment : Fragment() {
         mYouTubePlayerView.getPlayerUiController().showMenuButton(true)
             .getMenu()?.
                 addItem(
-                    com.pierfrancescosoffritti.androidyoutubeplayer.core.ui.menu.MenuItem("menu item1",
+                    com.pierfrancescosoffritti.androidyoutubeplayer.core.ui.menu.MenuItem("Touch block",
                         R.drawable.ic_android_black_24dp, View.OnClickListener { view: View? ->
                             Toast.makeText(requireContext(), "item1 clicked", Toast.LENGTH_SHORT).show()
                         })
@@ -307,17 +291,20 @@ class PlayingFragment : Fragment() {
     private fun addFullScreenListenerToPlayer() {
         mYouTubePlayerView.addFullScreenListener(object: YouTubePlayerFullScreenListener {
             override fun onYouTubePlayerEnterFullScreen() {
+
                 val mainActivity = activity as MainActivity
+                mainActivity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
                 mainActivity.mFullScreenHelper.enterFullScreen()
-                addCustomActionsToPlayer()
+                //addCustomActionsToPlayer()
                 mPlayingViewModel.currentPlayInfo.isFullScreen = true
                 mFragmentBinding.fab.hide()
             }
 
             override fun onYouTubePlayerExitFullScreen() {
                 val mainActivity = activity as MainActivity
+                mainActivity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
                 mainActivity.mFullScreenHelper.exitFullScreen()
-                removeCustomActionsFromPlayer()
+                //removeCustomActionsFromPlayer()
                 mPlayingViewModel.currentPlayInfo.isFullScreen = false
                 if(mFabShowStatus)
                     mFragmentBinding.fab.show()
@@ -349,7 +336,9 @@ class PlayingFragment : Fragment() {
         customAction1Icon?.let {
             mYouTubePlayerView.getPlayerUiController().setCustomAction1(it,
                 View.OnClickListener { view: View? ->
-                    Toast.makeText(requireContext(),"custom action1 clicked",Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(),"custom action2 clicked",Toast.LENGTH_SHORT).show()
+
+
                 }
             )
         }

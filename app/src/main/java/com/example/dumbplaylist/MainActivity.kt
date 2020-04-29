@@ -63,7 +63,6 @@ class MainActivity : AppCompatActivity() {
     private fun setupBottomNavigationBar() {
         val navController = findNavController(R.id.nav_host_fragment)
         mBinding.bottomNav.setupWithNavController(navController)
-
     }
 
     companion object {
