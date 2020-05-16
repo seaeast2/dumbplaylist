@@ -8,7 +8,7 @@
         android:title="Search"/>
     <item
         android:id="@+id/playing"
-        android:icon="@drawable/ic_playlist_play_24px"
+        android:icon="@drawable/ic_playlist_play_active"
         android:contentDescription="Play"
         android:title="Play" />
     <item

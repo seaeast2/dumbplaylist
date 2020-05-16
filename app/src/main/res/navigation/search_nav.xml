@@ -2,41 +2,26 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    app:startDestination="@+id/search">
+    app:startDestination="@+id/view_pager2_fragment">
 
     <fragment
-        android:id="@+id/search"
-        android:name="com.example.dumbplaylist.ui.SearchedPlaylistsFragment"
-        android:label="Search"
-        tools:layout="@layout/fragment_searched_playlists">
+        android:id="@+id/view_pager2_fragment"
+        android:name="com.example.dumbplaylist.ui.HomeViewPager2Fragment"
+        tools:layout="@layout/fragment_home_view_pager2">
         <action
-            android:id="@+id/action_searchedPlaylistsFragment_to_playingFragment"
-            app:destination="@id/playing" />
+            android:id="@+id/action_view_pager2_fragment_to_playing_fragment"
+            app:destination="@id/playing_fragment" />
     </fragment>
 
     <fragment
-        android:id="@+id/playing"
+        android:id="@+id/playing_fragment"
         android:name="com.example.dumbplaylist.ui.PlayingFragment"
-        android:label="Playing"
         tools:layout="@layout/fragment_playing" >
         <argument
             android:name="selectedPlaylist"
             app:argType="com.example.dumbplaylist.adapter.SelectedPlaylist"
             android:defaultValue="@null"
             app:nullable="true" />
-        <action
-            android:id="@+id/action_playingFragment_to_savedPlaylistFragment2"
-            app:destination="@id/saved" />
-    </fragment>
-
-    <fragment
-        android:id="@+id/saved"
-        android:name="com.example.dumbplaylist.ui.SavedPlaylistFragment"
-        android:label="SavedPlaylistFragment"
-        tools:layout="@layout/fragment_saved_playlist">
-        <action
-            android:id="@+id/action_savedPlaylistFragment2_to_playingFragment"
-            app:destination="@id/playing" />
     </fragment>
 
 

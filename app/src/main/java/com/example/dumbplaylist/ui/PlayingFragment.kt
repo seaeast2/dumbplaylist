@@ -1,5 +1,6 @@
 package com.example.dumbplaylist.ui
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.ActivityInfo
 import android.content.res.Configuration
@@ -28,6 +29,7 @@ import com.example.dumbplaylist.adapter.VideoListAdapter
 import com.example.dumbplaylist.databinding.FragmentPlayingBinding
 import com.example.dumbplaylist.generated.callback.OnClickListener
 import com.example.dumbplaylist.model.SavedPlaylist
+import com.example.dumbplaylist.util.FullScreenHelper
 import com.example.dumbplaylist.util.Injector
 import com.example.dumbplaylist.viewmodel.PlayingViewModel
 import com.example.dumbplaylist.viewmodel.PlaylistsViewModel
@@ -54,6 +56,9 @@ class PlayingFragment : Fragment() {
     private var mPlayerState: PlayerConstants.PlayerState = PlayerConstants.PlayerState.UNKNOWN
     private lateinit var mAdapter : VideoListAdapter
     private var mFabShowStatus: Boolean = true
+    private val mFullScreenHelper: FullScreenHelper by lazy {
+        FullScreenHelper(requireActivity())
+    }
 
     override fun onCreateView( inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         super.onCreateView(inflater, container, savedInstanceState)
@@ -290,11 +295,12 @@ class PlayingFragment : Fragment() {
 
     private fun addFullScreenListenerToPlayer() {
         mYouTubePlayerView.addFullScreenListener(object: YouTubePlayerFullScreenListener {
+            @SuppressLint("SourceLockedOrientationActivity")
             override fun onYouTubePlayerEnterFullScreen() {
 
                 val mainActivity = activity as MainActivity
                 mainActivity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
-                mainActivity.mFullScreenHelper.enterFullScreen()
+                mFullScreenHelper.enterFullScreen()
                 //addCustomActionsToPlayer()
                 mPlayingViewModel.currentPlayInfo.isFullScreen = true
                 mFragmentBinding.fab.hide()
@@ -303,7 +309,7 @@ class PlayingFragment : Fragment() {
             override fun onYouTubePlayerExitFullScreen() {
                 val mainActivity = activity as MainActivity
                 mainActivity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
-                mainActivity.mFullScreenHelper.exitFullScreen()
+                mFullScreenHelper.exitFullScreen()
                 //removeCustomActionsFromPlayer()
                 mPlayingViewModel.currentPlayInfo.isFullScreen = false
                 if(mFabShowStatus)

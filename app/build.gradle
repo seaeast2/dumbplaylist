@@ -68,6 +68,7 @@ dependencies {
     implementation "androidx.room:room-runtime:$versions.androidxRoom"
     implementation "androidx.room:room-ktx:$versions.androidxRoom"
     implementation "androidx.legacy:legacy-support-v4:$versions.androidxLegacy"
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     kapt "androidx.room:room-compiler:$versions.androidxRoom"
 
     // ViewModel and LiveData

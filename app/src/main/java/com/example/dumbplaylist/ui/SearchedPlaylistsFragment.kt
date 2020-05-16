@@ -32,19 +32,20 @@ class SearchedPlaylistsFragment : Fragment() {
         // shared ViewModel
         mViewModel = (activity as MainActivity).viewModel
 
-        val adapter = PlaylistAdapter(PlaylistAdapter.FragmentType.SEARCH)
+        val adapter = PlaylistAdapter()
         initRecyclerView(adapter)
         subscribeUi(adapter) // RecyclerView.Adapter 에 데이터 연결
 
-        initActionBar()
+        //initActionBar()
         // Fragment용 메뉴활성화
         setHasOptionsMenu(true)
         return mFragmentBinding.root
     }
 
-    override fun onStart() {
+    /*override fun onStart() {
         super.onStart()
 
+       // bottom navigation 초기화
         val mainActivity = activity as MainActivity
         if (!mainActivity.mBinding.bottomNav.isShown) {
             mainActivity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
@@ -53,7 +54,7 @@ class SearchedPlaylistsFragment : Fragment() {
             mainActivity.mBinding.bottomNav.invalidate()
             Log.d(TAG, "turn on boottomNav visible")
         }
-    }
+    }*/
 
     private fun initRecyclerView(adapter: PlaylistAdapter) {
         // binding 을 사용해서 RecyclerView.Adapter 를 연결함

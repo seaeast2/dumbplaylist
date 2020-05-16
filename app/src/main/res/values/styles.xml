@@ -23,4 +23,7 @@
         <item name="cornerSizeBottomLeft">24dp</item>
     </style>
 
+
+    <style name="Theme.DumbPlaylist.AppBarOverlay" parent="ThemeOverlay.MaterialComponents.Dark.ActionBar"/>
+
 </resources>

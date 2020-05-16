@@ -20,7 +20,7 @@ class SwipeToRemoveCallback(private val viewModel: PlaylistsViewModel, private v
     ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
 
     private val icon: Drawable? = context?.let { ContextCompat.getDrawable(context, R.drawable.ic_nav_drawer_menu_24dp) }
-    private val background: ColorDrawable = ColorDrawable(Color.RED)
+    private val background: ColorDrawable = ColorDrawable(Color.GRAY)
 
     override fun onChildDraw(
         c: Canvas,
@@ -45,7 +45,7 @@ class SwipeToRemoveCallback(private val viewModel: PlaylistsViewModel, private v
 
         background.draw(c)
 
-        // adding icon
+        // add icon
         icon?.let {
             val iconMargin = (itemView.height - it.intrinsicHeight) / 2
             val iconTop = itemView.top + (itemView.height - it.intrinsicHeight) / 2

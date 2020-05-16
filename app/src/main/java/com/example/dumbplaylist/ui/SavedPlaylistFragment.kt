@@ -35,11 +35,13 @@ class SavedPlaylistFragment : Fragment() {
 
         context ?: return mFragmentBinding.root
 
-        val adapter = PlaylistAdapter(PlaylistAdapter.FragmentType.SAVED)
+        val adapter = PlaylistAdapter()
         initRecyclerView(adapter)
         subscribeUi(adapter)
-        initActionBar()
+        //initActionBar()
 
+        // bottom navigation 초기화
+        /*
         val mainActivity = activity as MainActivity
         if (!mainActivity.mBinding.bottomNav.isShown) {
             mainActivity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
@@ -47,14 +49,14 @@ class SavedPlaylistFragment : Fragment() {
             mainActivity.mBinding.bottomNav.visibility = View.VISIBLE
             mainActivity.mBinding.bottomNav.invalidate()
             Log.d(TAG, "turn on boottomNav visible")
-        }
+        }*/
 
         return mFragmentBinding.root
     }
 
     private fun initActionBar() {
         //setHasOptionsMenu(true)
-        (activity as AppCompatActivity).supportActionBar?.hide()
+        //(activity as AppCompatActivity).supportActionBar?.hide()
     }
 
 //    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {

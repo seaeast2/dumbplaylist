@@ -11,20 +11,16 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.dumbplaylist.databinding.ListItemPlaylistBinding
 import com.example.dumbplaylist.model.Playlist
 import com.example.dumbplaylist.model.SavedPlaylist
-import com.example.dumbplaylist.ui.SavedPlaylistFragmentDirections
-import com.example.dumbplaylist.ui.SearchedPlaylistsFragmentDirections
+import com.example.dumbplaylist.ui.HomeViewPager2FragmentDirections
 import kotlinx.android.parcel.Parcelize
 
 
-class PlaylistAdapter(private val fragType: FragmentType):
+class PlaylistAdapter:
     ListAdapter<Playlist, RecyclerView.ViewHolder>(SearchedListCallback()) {
 
     // 뷰홀더가 필요할 때마다 호출해서 뷰홀더를 생성한다.
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        return PlaylistViewHolder(
-            ListItemPlaylistBinding.inflate(
-                LayoutInflater.from(viewGroup.context),
-                viewGroup, false), fragType)
+        return PlaylistViewHolder( ListItemPlaylistBinding.inflate(LayoutInflater.from(viewGroup.context),viewGroup, false))
     }
 
     // position 에 해당하는 데이터를 가져다 viewholder 에 들어 있는 item 에 업데이트
@@ -44,32 +40,24 @@ class PlaylistAdapter(private val fragType: FragmentType):
 
     // ViewHolder 가 실제적인 item 껍데기를 가지고 있음.
     // 화면 출력에 필요한 양만큼 생성된다.
-    class PlaylistViewHolder(private val binding: ListItemPlaylistBinding, private val fragType: FragmentType) :
+    class PlaylistViewHolder(private val binding: ListItemPlaylistBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
         init {
             // Click 이벤트는 이곳에서 구현
             binding.setClickListener {view ->
                 binding.playlist?.let {playlist ->
-                    navigateToVideoList(view, playlist)
+                    navigateToPlaying(view, playlist)
                 }
             }
         }
 
-        fun navigateToVideoList(view: View, playlist: Playlist) {
+        fun navigateToPlaying(view: View, playlist: Playlist) {
             // SafeArgs 를 통해 이동
             val selectedPlaylist = SelectedPlaylist(playlist.playlistId, playlist.title,
-                playlist.description, playlist.thumbnailUrl)
+                    playlist.description, playlist.thumbnailUrl)
 
-            // Fragment에 따라서 다르게 동작하도록 설정. 뭔가 backstack 에 영향이 있을거라 생각중.
-            val direction = when (fragType) {
-                FragmentType.SEARCH -> {
-                    SearchedPlaylistsFragmentDirections.actionSearchedPlaylistsFragmentToPlayingFragment(selectedPlaylist)
-                }
-                FragmentType.SAVED -> {
-                    SavedPlaylistFragmentDirections.actionSavedPlaylistFragment2ToPlayingFragment(selectedPlaylist)
-                }
-            }
+            val direction = HomeViewPager2FragmentDirections.actionViewPager2FragmentToPlayingFragment(selectedPlaylist)
             view.findNavController().navigate(direction)
         }
 
