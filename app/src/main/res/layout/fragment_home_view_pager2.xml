@@ -23,7 +23,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fitsSystemWindows="true"
-            android:theme="@style/Theme.DumbPlaylist.AppBarOverlay">
+            android:theme="@style/Theme.DumbPlaylist.AppBarOverlay"
+            app:layout_behavior=".util.BlockableAppBarLayoutBehavior">
 
             <com.google.android.material.appbar.CollapsingToolbarLayout
                 android:id="@+id/toolbar_layout"
@@ -36,7 +37,7 @@
                     android:id="@+id/toolbar"
                     android:layout_width="match_parent"
                     android:layout_height="?attr/actionBarSize"
-                    android:background="@color/design_default_color_error"
+                    android:background="@color/colorYoutubeRed"
                     android:theme="@style/ThemeOverlay.AppCompat.Dark"
                     app:popupTheme="@style/AppTheme.PopupOverlay"
                     app:titleTextColor="@android:color/black" />
@@ -48,9 +49,9 @@
                 android:id="@+id/tabs"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                android:background="@color/design_default_color_error"
+                android:background="@color/colorYoutubeRed"
                 app:tabIconTint="@drawable/tab_icon_color_selector"
-                app:tabTextColor="?attr/colorPrimaryDark"/>
+                app:tabTextColor="@drawable/tab_icon_color_selector"/>
 
         </com.google.android.material.appbar.AppBarLayout>
 

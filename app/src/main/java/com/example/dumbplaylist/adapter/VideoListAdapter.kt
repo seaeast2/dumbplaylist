@@ -34,7 +34,7 @@ class VideoListAdapter(private val playSelectedVideo: (videoId:String)->Unit) :
 
         // setting up selected state change
         if (selectedPos == position) {
-            holder.binding.videoListItem.setBackgroundColor(Color.BLUE)
+            holder.binding.videoListItem.setBackgroundColor(Color.argb(255, 204, 229, 255))
         }
         else {
             holder.binding.videoListItem.setBackgroundColor(Color.WHITE)

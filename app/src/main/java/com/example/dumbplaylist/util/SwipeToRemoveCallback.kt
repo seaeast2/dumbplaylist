@@ -17,9 +17,9 @@ import com.example.dumbplaylist.viewmodel.PlaylistsViewModel
     https://medium.com/@zackcosborn/step-by-step-recyclerview-swipe-to-delete-and-undo-7bbae1fce27e
  */
 class SwipeToRemoveCallback(private val viewModel: PlaylistsViewModel, private val context: Context?) :
-    ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
+    ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT /*or ItemTouchHelper.RIGHT*/) {
 
-    private val icon: Drawable? = context?.let { ContextCompat.getDrawable(context, R.drawable.ic_nav_drawer_menu_24dp) }
+    private val icon: Drawable? = context?.let { ContextCompat.getDrawable(context, R.drawable.ic_delete_24px) }
     private val background: ColorDrawable = ColorDrawable(Color.GRAY)
 
     override fun onChildDraw(
