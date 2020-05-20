@@ -92,8 +92,10 @@ class PlayingFragment : Fragment() {
         Log.d(TAG, "onCreateView After inflation")
 
         mAdapter = VideoListAdapter {  videoId ->
-            mPlayingViewModel.setCurVideoId(videoId)
-            mYouTubePlayer?.loadOrCueVideo(lifecycle, videoId, 0f)
+            if (mPlayingViewModel.getCurVideoId() != videoId) {
+                mPlayingViewModel.setCurVideoId(videoId)
+                mYouTubePlayer?.loadOrCueVideo(lifecycle, videoId, 0f)
+            }
         }
 
         initRecyclerView(mAdapter)

@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.dumbplaylist.databinding.ListItemVideolistBinding
 import com.example.dumbplaylist.viewmodel.PlayingViewModel
 
-class VideoListAdapter(private val playSelectedVideo: (videoId:String)->Unit) :
+class VideoListAdapter(private val playSelectedVideo: (videoId:String) -> Unit) :
     ListAdapter<PlayingViewModel.VideoItem, RecyclerView.ViewHolder>(PlayItemDiffCallback()) {
     private var selectedPos : Int = -1
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -24,7 +24,7 @@ class VideoListAdapter(private val playSelectedVideo: (videoId:String)->Unit) :
         val myholder = (holder as VideoListViewHolder)
         myholder.bind(item)
 
-        myholder.binding.setClickListener {view ->
+        myholder.binding.setClickListener { _ ->
             myholder.binding.playlistItem?.let {
                 playSelectedVideo(it.videoId)
             }
