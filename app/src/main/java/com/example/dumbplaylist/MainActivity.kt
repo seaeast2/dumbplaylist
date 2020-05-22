@@ -8,6 +8,9 @@ import androidx.databinding.DataBindingUtil.setContentView
 import com.example.dumbplaylist.databinding.MainActivityBinding
 import com.example.dumbplaylist.util.Injector
 import com.example.dumbplaylist.viewmodel.PlaylistsViewModel
+import com.google.android.gms.ads.MobileAds
+import com.google.android.gms.ads.RequestConfiguration
+import java.util.*
 
 class MainActivity : AppCompatActivity() {
     //lateinit var mBinding : MainActivityBinding
@@ -37,6 +40,21 @@ class MainActivity : AppCompatActivity() {
 
         //mFullScreenHelper = FullScreenHelper(this, mBinding.bottomNav)
         //mFullScreenHelper = FullScreenHelper(this)
+
+
+        // Initialize the Mobile Ads SDK.
+        MobileAds.initialize(this) {}
+
+
+        // Set your test devices. Check your logcat output for the hashed device ID to
+        // get test ads on a physical device. e.g.
+        // "Use RequestConfiguration.Builder().setTestDeviceIds(Arrays.asList("ABCDEF012345"))
+        // to get test ads on this device."
+        MobileAds.setRequestConfiguration(
+            RequestConfiguration.Builder()
+                .setTestDeviceIds(Arrays.asList("ABCDEF012345"))
+                .build()
+        )
     }
 
 //    override fun onRestoreInstanceState(savedInstanceState: Bundle?) {

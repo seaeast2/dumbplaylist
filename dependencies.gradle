@@ -45,6 +45,7 @@ ext.versions = [
         googleApiServicesYoutube        : 'v3-rev198-1.23.0',
         googleApiGson                   : '2.8.6',
         googleMultidex                  : '1.0.3',
+        googleAdMob                     : '19.1.0',
 
         // Rx
         rxJava                          : '2.2.2',

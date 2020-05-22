@@ -2,7 +2,7 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    app:startDestination="@+id/view_pager2_fragment">
+    app:startDestination="@id/splashFragment">
 
     <fragment
         android:id="@+id/view_pager2_fragment"
@@ -26,6 +26,29 @@
             app:argType="com.example.dumbplaylist.adapter.SelectedPlaylist"
             android:defaultValue="@null"
             app:nullable="true" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/adMobFragment"
+        android:name="com.example.dumbplaylist.ui.AdMobFragment"
+        android:label="fragment_ad_mob"
+        tools:layout="@layout/fragment_ad_mob" >
+        <action
+            android:id="@+id/action_adMobFragment_to_view_pager2_fragment"
+            app:destination="@id/view_pager2_fragment"
+            app:popUpTo="@id/adMobFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+    <fragment
+        android:id="@+id/splashFragment"
+        android:name="com.example.dumbplaylist.ui.SplashFragment"
+        android:label="fragment_splash"
+        tools:layout="@layout/fragment_splash" >
+        <action
+            android:id="@+id/action_splashFragment_to_adMobFragment"
+            app:destination="@id/adMobFragment"
+            app:popUpTo="@id/splashFragment"
+            app:popUpToInclusive="true" />
     </fragment>
 
 
