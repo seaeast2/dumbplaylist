@@ -54,22 +54,5 @@
                 app:tabTextColor="@drawable/tab_icon_color_selector"/>
 
         </com.google.android.material.appbar.AppBarLayout>
-
-<!--        <include-->
-<!--            android:id="@+id/toolbar"-->
-<!--            layout="@layout/layout_toolbar"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="?attr/actionBarSize"/>-->
-
-<!--        <com.google.android.material.bottomnavigation.BottomNavigationView-->
-<!--            android:id="@+id/bottom_nav"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:background="@color/colorLightGray"-->
-<!--            android:visibility="visible"-->
-<!--            app:menu="@menu/playlist_frag_menu" />-->
-
-
-
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>

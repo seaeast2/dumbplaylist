@@ -4,8 +4,8 @@
     <item
         android:id="@+id/search_toolbar"
         android:icon="@android:drawable/ic_menu_search"
-        android:contentDescription="Search"
-        android:title="Search"
+        android:contentDescription="@string/search_tab_title"
+        android:title="@string/search_tab_title"
         app:actionViewClass="androidx.appcompat.widget.SearchView"
         app:showAsAction="always" />
 </menu>
