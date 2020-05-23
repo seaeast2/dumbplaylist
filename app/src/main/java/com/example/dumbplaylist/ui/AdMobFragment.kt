@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.dumbplaylist.R
@@ -38,8 +37,6 @@ class AdMobFragment : Fragment() {
 
         interstitialAd1 = newInterstitialAd(appContext)
         loadInterstitial()
-
-        Toast.makeText(appContext, TOAST_TEXT, Toast.LENGTH_LONG).show()
     }
 
 
@@ -49,7 +46,6 @@ class AdMobFragment : Fragment() {
         interstitialAd.adListener = object : AdListener() {
             override fun onAdLoaded() {
                 showInterstitial(context)
-                Toast.makeText(context, "onAdLoaded()", Toast.LENGTH_SHORT).show()
             }
 
             override fun onAdFailedToLoad(errorCode: Int) {
@@ -59,7 +55,6 @@ class AdMobFragment : Fragment() {
                     navigateToHome(context)
                 else
                     loadInterstitial()
-                Toast.makeText(context, "onAdFailedToLoad()", Toast.LENGTH_SHORT).show()
             }
 
             override fun onAdClosed() {
@@ -76,7 +71,6 @@ class AdMobFragment : Fragment() {
         if (interstitialAd.isLoaded) {
             interstitialAd.show()
         } else {
-            Toast.makeText(context, "Ad did not load", Toast.LENGTH_SHORT).show()
             navigateToHome(context)
         }
     }
@@ -94,6 +88,8 @@ class AdMobFragment : Fragment() {
         val direction = AdMobFragmentDirections.actionAdMobFragmentToViewPager2Fragment()
         findNavController().navigate(direction)
     }
+
+
 
     companion object {
         // Remove the below line after defining your own ad unit ID.

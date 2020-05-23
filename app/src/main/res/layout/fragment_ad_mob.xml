@@ -9,5 +9,4 @@
         android:background="@color/design_default_color_on_secondary"
         tools:context=".ui.AdMobFragment">
     </FrameLayout>
-
 </layout>

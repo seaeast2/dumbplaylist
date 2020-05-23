@@ -84,8 +84,8 @@ class HomeViewPager2Fragment : Fragment() {
 
     private fun getTabTitle(position: Int): String? {
         return when(position) {
-            SEARCH_PLAYLIST_PAGE_INDEX -> "Search"
-            SAVED_PLAYLIST_PAGE_INDEX -> "My Playlists"
+            SEARCH_PLAYLIST_PAGE_INDEX -> getString(R.string.search_tab_title)
+            SAVED_PLAYLIST_PAGE_INDEX -> getString(R.string.saved_tab_title)
             else -> null
         }
     }
