@@ -13,6 +13,12 @@
     <!-- -
         This is an ad unit ID for an interstitial test ad. Replace with your own interstitial ad unit id.
         For more information, see https://support.google.com/admob/answer/3052638
+
+        admob app id : ca-app-pub-5210022175309889~5423408105
+        admob real id : ca-app-pub-5210022175309889/6414369224
+
+        test ads id ca-app-pub-3940256099942544/8691691433
     <!- -->
-    <string name="interstitial_ad_unit_id">ca-app-pub-3940256099942544/1033173712</string>
+<!--  Test ad   <string name="interstitial_ad_unit_id"></string>-->
+    <string name="interstitial_ad_unit_id">ca-app-pub-5210022175309889/6414369224</string>
 </resources>

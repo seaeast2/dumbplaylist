@@ -43,7 +43,6 @@ class PlayingViewModel : ViewModel() {
     fun getNextVideoId(): String? {
         // check if play position is at the end of list.
         currentPlayInfo.videoSec = 0f
-
         return if (currentPlayInfo.videoPosition < playlistItemInfo.count) {
             currentPlayInfo.videoPosition++
             videoList?.let {
@@ -51,9 +50,24 @@ class PlayingViewModel : ViewModel() {
             }
         } else {
             currentPlayInfo.videoPosition++
-            currentPlayInfo.reset()
             null
         }
+    }
+
+    fun getPrevVideoId(): String? {
+        // check if play position is at the end of list.
+        videoList?.let {
+            currentPlayInfo.videoSec = 0f
+
+            if (currentPlayInfo.videoPosition == 0) {
+                return@getPrevVideoId it[0].videoId
+            } else {
+                currentPlayInfo.videoPosition--
+                return@getPrevVideoId it[currentPlayInfo.videoPosition].videoId
+            }
+        }
+
+        return null
     }
 
     // database info

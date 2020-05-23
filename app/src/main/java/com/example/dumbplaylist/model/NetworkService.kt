@@ -76,8 +76,7 @@ class NetworkService {
     }
 }
 
-// Key sample : AIzaSyAdDix7i7a3an-gyXiquTV_14cIsr8-DZg
-// Key seaeast22 : AIzaSyDeiMcA8WswiJJu6IyUYit3Zjg7vmo7U9A
+// Key seaeast22 : AIzaSyDeiMcA8WswiJJu6IyUYit3Zjg7vmo7U9A   <== 이거 사용중
 // Key seaeast2 : AIzaSyBOm13DNySWTiLFdVL1oHOlK2RKJbOVRDo
 interface YoutubeService {
     // Search

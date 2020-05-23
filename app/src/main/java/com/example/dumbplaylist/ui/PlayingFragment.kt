@@ -3,11 +3,9 @@ package com.example.dumbplaylist.ui
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.ActivityInfo
-import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
-import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
@@ -27,7 +25,6 @@ import com.example.dumbplaylist.R
 import com.example.dumbplaylist.adapter.SelectedPlaylist
 import com.example.dumbplaylist.adapter.VideoListAdapter
 import com.example.dumbplaylist.databinding.FragmentPlayingBinding
-import com.example.dumbplaylist.generated.callback.OnClickListener
 import com.example.dumbplaylist.model.SavedPlaylist
 import com.example.dumbplaylist.util.FullScreenHelper
 import com.example.dumbplaylist.util.Injector
@@ -91,6 +88,9 @@ class PlayingFragment : Fragment() {
 
         Log.d(TAG, "onCreateView After inflation")
 
+        // youtube player ui initialization
+        initYoutubePlayerView()
+
         mAdapter = VideoListAdapter {  videoId ->
             if (mPlayingViewModel.getCurVideoId() != videoId) {
                 mPlayingViewModel.setCurVideoId(videoId)
@@ -104,13 +104,8 @@ class PlayingFragment : Fragment() {
 
         initSelectedPlaylist(args.selectedPlaylist)
 
-        // youtube player ui initialization
-        initYoutubePlayerView()
-
         // observing playlist item and update recyclerview when new items are added.
         subscribeUi(mAdapter)
-
-
 
         return mFragmentBinding.root
     }
@@ -217,6 +212,7 @@ class PlayingFragment : Fragment() {
         // If you don't add YouTubePlayerView as a lifecycle observer, you will have to release it manually.
         lifecycle.addObserver(mYouTubePlayerView)
         addFullScreenListenerToPlayer()
+        addCustomActionsToPlayer()
     }
 
     private fun forceHideStatusBar() {
@@ -256,19 +252,35 @@ class PlayingFragment : Fragment() {
                 //super.onStateChange(youTubePlayer, state)
                 mPlayerState = state
 
-                if (state == PlayerConstants.PlayerState.ENDED) {
-                    if (mPlayingViewModel.getNextVideoId().isNullOrEmpty()) {
-                        mPlayingViewModel.playlistItemInfo.lastItem?.let {
-                            mSharedViewModel.loadMorePlaylistItem(it.playlistId, it.pageToken)
-                        }
-                    }
-                    else {
-                        youTubePlayer.loadOrCueVideo(lifecycle, mPlayingViewModel.getCurVideoId()!!, 0f)
-                        selectItemAndMove(mPlayingViewModel.currentPlayInfo.videoPosition)
-                    }
-                }
+                if (state == PlayerConstants.PlayerState.ENDED)
+                    playNextVideo(youTubePlayer)
             }
         })
+    }
+
+    private fun playNextVideo(youTubePlayer: YouTubePlayer) {
+        if (mPlayingViewModel.getNextVideoId().isNullOrEmpty()) {
+            mPlayingViewModel.playlistItemInfo.lastItem?.let {
+                mSharedViewModel.loadMorePlaylistItem(it.playlistId, it.pageToken)
+            }
+        }
+        else {
+            youTubePlayer.loadOrCueVideo(lifecycle, mPlayingViewModel.getCurVideoId()!!, 0f)
+            selectItemAndMove(mPlayingViewModel.currentPlayInfo.videoPosition)
+        }
+    }
+
+    private fun playPrevVideo(youTubePlayer: YouTubePlayer) {
+        if (mPlayingViewModel.getPrevVideoId().isNullOrEmpty()) {
+            youTubePlayer.pause()
+//            mPlayingViewModel.playlistItemInfo.lastItem?.let {
+//                mSharedViewModel.loadMorePlaylistItem(it.playlistId, it.pageToken)
+//            }
+        }
+        else {
+            youTubePlayer.loadOrCueVideo(lifecycle, mPlayingViewModel.getCurVideoId()!!, 0f)
+            selectItemAndMove(mPlayingViewModel.currentPlayInfo.videoPosition)
+        }
     }
 
     private fun initPlayerMenu() {
@@ -338,23 +350,25 @@ class PlayingFragment : Fragment() {
      * Custom actions are shown next to the Play/Pause button in the middle of the player.
      */
     private fun addCustomActionsToPlayer() {
-        val customAction1Icon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_fast_rewind_white_24dp)
-        val customAction2Icon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_fast_forward_white_24dp)
+        val moveToPrevVideo = ContextCompat.getDrawable(requireContext(), R.drawable.ic_fast_rewind_white_24dp)
+        val moveToNextVideo = ContextCompat.getDrawable(requireContext(), R.drawable.ic_fast_forward_white_24dp)
 
-        customAction1Icon?.let {
+        moveToPrevVideo?.let {
             mYouTubePlayerView.getPlayerUiController().setCustomAction1(it,
                 View.OnClickListener { view: View? ->
-                    Toast.makeText(requireContext(),"custom action2 clicked",Toast.LENGTH_SHORT).show()
-
-
+                    mYouTubePlayer?.let {
+                        playPrevVideo(it)
+                    }
                 }
             )
         }
 
-        customAction2Icon?.let {
+        moveToNextVideo?.let {
             mYouTubePlayerView.getPlayerUiController().setCustomAction2(it,
                 View.OnClickListener { view: View? ->
-                    Toast.makeText(requireContext(), "custom action2 clicked", Toast.LENGTH_SHORT).show()
+                    mYouTubePlayer?.let {
+                        playNextVideo(it)
+                    }
                 }
             )
         }

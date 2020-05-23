@@ -52,7 +52,7 @@ class MainActivity : AppCompatActivity() {
         // to get test ads on this device."
         MobileAds.setRequestConfiguration(
             RequestConfiguration.Builder()
-                .setTestDeviceIds(Arrays.asList("ABCDEF012345"))
+//                .setTestDeviceIds(Arrays.asList("ABCDEF012345"))
                 .build()
         )
     }
