@@ -31,22 +31,6 @@ class MainActivity : AppCompatActivity() {
         Log.d(TAG, "onCreate")
         setContentView(R.layout.main_activity)
 
-        //setContentView<MainActivityBinding>(this, R.layout.main_activity)
-
-        // After Navigation
-        //mBinding = setContentView(this, R.layout.main_activity)
-
-        // 최초 실행
-//        if (savedInstanceState == null) {
-//            setupBottomNavigationBar()
-//        } // Else, need to wait for onRestoreInstanceState
-
-        //initToolBar()
-
-        //mFullScreenHelper = FullScreenHelper(this, mBinding.bottomNav)
-        //mFullScreenHelper = FullScreenHelper(this)
-
-
         // Initialize the Mobile Ads SDK.
         MobileAds.initialize(this) {}
 
@@ -61,14 +45,6 @@ class MainActivity : AppCompatActivity() {
                 .build()
         )
     }
-
-//    override fun onRestoreInstanceState(savedInstanceState: Bundle?) {
-//        super.onRestoreInstanceState(savedInstanceState)
-//        // Now that BottomNavigationBar has restored its instance state
-//        // and its selectedItemId, we can proceed with setting up the
-//        // BottomNavigationBar with Navigation
-//        //setupBottomNavigationBar()
-//    }
 
     override fun onBackPressed() {
         when (viewModel.currentFragmentType) {
@@ -96,20 +72,6 @@ class MainActivity : AppCompatActivity() {
         }
 
     }
-
-//    private fun initToolBar() {
-//        val toolBar = findViewById<Toolbar>(R.id.toolbar)
-//        setSupportActionBar(toolBar)
-//    }
-
-    /**
-     * Called on first creation and when restoring state.
-     */
-//    private fun setupBottomNavigationBar() {
-//        val navController = findNavController(R.id.nav_host_fragment)
-//        mBinding.bottomNav.setupWithNavController(navController)
-//    }
-
     companion object {
         private val TAG = "MainActivity"
     }

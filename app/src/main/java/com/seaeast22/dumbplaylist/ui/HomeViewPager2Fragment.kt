@@ -3,9 +3,11 @@ package com.seaeast22.dumbplaylist.ui
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.SearchView
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import com.seaeast22.dumbplaylist.R
 import com.seaeast22.dumbplaylist.adapter.PlaylistPageAdapter
@@ -65,7 +67,6 @@ class HomeViewPager2Fragment : Fragment() {
 
 
         (activity as AppCompatActivity).setSupportActionBar(binding.toolbar)
-
         return binding.root
     }
 

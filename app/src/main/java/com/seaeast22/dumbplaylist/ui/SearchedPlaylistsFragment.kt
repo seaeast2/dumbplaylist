@@ -42,20 +42,6 @@ class SearchedPlaylistsFragment : Fragment() {
         return mFragmentBinding.root
     }
 
-    /*override fun onStart() {
-        super.onStart()
-
-       // bottom navigation 초기화
-        val mainActivity = activity as MainActivity
-        if (!mainActivity.mBinding.bottomNav.isShown) {
-            mainActivity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
-            mainActivity.window.decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE)
-            mainActivity.mBinding.bottomNav.visibility = View.VISIBLE
-            mainActivity.mBinding.bottomNav.invalidate()
-            Log.d(TAG, "turn on boottomNav visible")
-        }
-    }*/
-
     private fun initRecyclerView(adapter: PlaylistAdapter) {
         // binding 을 사용해서 RecyclerView.Adapter 를 연결함
         mFragmentBinding.playlistsRcview.adapter = adapter
@@ -73,9 +59,9 @@ class SearchedPlaylistsFragment : Fragment() {
         })
     }
 
-    private fun initActionBar() {
-        (activity as AppCompatActivity).supportActionBar?.show()
-    }
+//    private fun initActionBar() {
+//        (activity as AppCompatActivity).supportActionBar?.show()
+//    }
 
     private fun subscribeUi(adapter: PlaylistAdapter) {
         mViewModel.playlists.observe(viewLifecycleOwner) {playlists ->
@@ -106,6 +92,7 @@ class SearchedPlaylistsFragment : Fragment() {
                 return false
             }
         })
+        //searchView.isIconified = false
     }
 
     companion object {
