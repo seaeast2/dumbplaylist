@@ -38,17 +38,18 @@ import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.Abs
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.YouTubePlayerFullScreenListener
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.utils.loadOrCueVideo
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
+import com.seaeast22.dumbplaylist.viewmodel.PLAYING_FRAGMENT
 
 class PlayingFragment : Fragment() {
     // Recieve argument through navagation.
     private val args: PlayingFragmentArgs by navArgs()
 
     private lateinit var mSharedViewModel: PlaylistsViewModel
-    private val mPlayingViewModel: PlayingViewModel by viewModels { 
+    val mPlayingViewModel: PlayingViewModel by viewModels {
         Injector.providePlayingViewModelFactory(requireContext())
     }
     private lateinit var mFragmentBinding: FragmentPlayingBinding
-    private lateinit var mYouTubePlayerView: YouTubePlayerView
+    lateinit var mYouTubePlayerView: YouTubePlayerView
     private var mYouTubePlayer: YouTubePlayer? = null
     private var mPlayerState: PlayerConstants.PlayerState = PlayerConstants.PlayerState.UNKNOWN
     private lateinit var mAdapter : VideoListAdapter
@@ -63,6 +64,7 @@ class PlayingFragment : Fragment() {
         Log.d(TAG, "onCreateView Before inflation")
         // Get Shared ViewModel
         mSharedViewModel = (activity as MainActivity).viewModel
+        mSharedViewModel.currentFragmentType = PLAYING_FRAGMENT
 
         // Fragment binding
         mFragmentBinding = DataBindingUtil.inflate<FragmentPlayingBinding>(inflater,
@@ -120,6 +122,8 @@ class PlayingFragment : Fragment() {
         // hide action bar
         (activity as AppCompatActivity).supportActionBar?.hide()
     }
+
+
 
     private fun initRecyclerView(adapter: VideoListAdapter) {
         // set up recyclerview

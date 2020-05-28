@@ -6,13 +6,19 @@ import com.seaeast22.dumbplaylist.model.*
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
+const val SEARCH_FRAGMENT = 0
+const val SAVED_FRAGMENT = 1
+const val PLAYING_FRAGMENT = 2
+
 class PlaylistsViewModel(private val repository: PlaylistRepository) : ViewModel() {
     // LiveData
     val playlists = repository.playlists
     val playlistItems = repository.playlistItems
     val savedlists = repository.savedPlaylists
 
-    var playlistInfo : PlaylistInfo = PlaylistInfo()
+    var playlistInfo: PlaylistInfo = PlaylistInfo()
+
+    var currentFragmentType: Int = SEARCH_FRAGMENT
 
     // laoding Spiner
     private var mSpiner = MutableLiveData<Boolean>(false)

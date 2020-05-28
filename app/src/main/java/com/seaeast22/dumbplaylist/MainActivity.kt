@@ -4,10 +4,16 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import com.google.android.gms.ads.MobileAds
 import com.google.android.gms.ads.RequestConfiguration
+import com.seaeast22.dumbplaylist.ui.PlayingFragment
 import com.seaeast22.dumbplaylist.util.Injector
+import com.seaeast22.dumbplaylist.viewmodel.PLAYING_FRAGMENT
 import com.seaeast22.dumbplaylist.viewmodel.PlaylistsViewModel
+import com.seaeast22.dumbplaylist.viewmodel.SAVED_FRAGMENT
+import com.seaeast22.dumbplaylist.viewmodel.SEARCH_FRAGMENT
+import kotlinx.android.synthetic.main.main_activity.*
 
 class MainActivity : AppCompatActivity() {
     //lateinit var mBinding : MainActivityBinding
@@ -64,9 +70,32 @@ class MainActivity : AppCompatActivity() {
 //        //setupBottomNavigationBar()
 //    }
 
-//    override fun onBackPressed() {
-//        super.onBackPressed()
-//    }
+    override fun onBackPressed() {
+        when (viewModel.currentFragmentType) {
+            SEARCH_FRAGMENT -> {
+                super.onBackPressed()
+            }
+            SAVED_FRAGMENT -> {
+                super.onBackPressed()
+            }
+            PLAYING_FRAGMENT -> {
+                // 전체화면에서 Back키 누를 경우 처리
+                val navHostFrag = supportFragmentManager.findFragmentById(R.id.nav_host_fragment)
+                val curFrag = navHostFrag?.childFragmentManager?.fragments?.get(0) as PlayingFragment?
+                curFrag?.let {
+                    if (it.mPlayingViewModel.currentPlayInfo.isFullScreen) {
+                        it.mYouTubePlayerView.exitFullScreen()
+                    }
+                    else
+                        super.onBackPressed()
+                }
+            }
+            else -> {
+                super.onBackPressed()
+            }
+        }
+
+    }
 
 //    private fun initToolBar() {
 //        val toolBar = findViewById<Toolbar>(R.id.toolbar)

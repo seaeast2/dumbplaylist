@@ -15,6 +15,7 @@ import com.seaeast22.dumbplaylist.adapter.PlaylistAdapter
 import com.seaeast22.dumbplaylist.databinding.FragmentSearchedPlaylistsBinding
 import com.seaeast22.dumbplaylist.model.PlaylistRepository
 import com.seaeast22.dumbplaylist.viewmodel.PlaylistsViewModel
+import com.seaeast22.dumbplaylist.viewmodel.SEARCH_FRAGMENT
 
 
 class SearchedPlaylistsFragment : Fragment() {
@@ -29,6 +30,7 @@ class SearchedPlaylistsFragment : Fragment() {
 
         // shared ViewModel
         mViewModel = (activity as MainActivity).viewModel
+        mViewModel.currentFragmentType = SEARCH_FRAGMENT
 
         val adapter = PlaylistAdapter()
         initRecyclerView(adapter)

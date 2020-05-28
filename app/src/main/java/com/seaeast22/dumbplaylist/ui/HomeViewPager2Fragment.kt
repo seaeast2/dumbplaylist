@@ -7,7 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.coordinatorlayout.widget.CoordinatorLayout
-
 import com.seaeast22.dumbplaylist.R
 import com.seaeast22.dumbplaylist.adapter.PlaylistPageAdapter
 import com.seaeast22.dumbplaylist.adapter.SAVED_PLAYLIST_PAGE_INDEX

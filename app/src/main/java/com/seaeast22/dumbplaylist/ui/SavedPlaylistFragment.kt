@@ -12,6 +12,7 @@ import com.seaeast22.dumbplaylist.adapter.PlaylistAdapter
 import com.seaeast22.dumbplaylist.databinding.FragmentSavedPlaylistBinding
 import com.seaeast22.dumbplaylist.util.SwipeToRemoveCallback
 import com.seaeast22.dumbplaylist.viewmodel.PlaylistsViewModel
+import com.seaeast22.dumbplaylist.viewmodel.SAVED_FRAGMENT
 
 
 class SavedPlaylistFragment : Fragment() {
@@ -25,6 +26,7 @@ class SavedPlaylistFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         mViewModel = (activity as MainActivity).viewModel
+        mViewModel.currentFragmentType = SAVED_FRAGMENT
 
         mFragmentBinding = DataBindingUtil.inflate<FragmentSavedPlaylistBinding>(inflater,
             R.layout.fragment_saved_playlist, container, false)
