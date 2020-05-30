@@ -4,14 +4,14 @@ ext.versions = [
         compileSdk                   : 29,
         buildTools                   : '29.0.3',
 
-        publishVersion_dumbplaylist  : '1.0.0',
-        publishVersionCode_dumbplaylist : 1,
+        publishVersion_dumbplaylist  : '1.0.1',
+        publishVersionCode_dumbplaylist : 2,
 
         publishVersion_core          : '10.0.5',
         publishVersionCode_core      : 15,
 
         // Plugins
-        gradlePlugin                 : '3.6.3',
+        gradlePlugin                 : '4.0.0',
         bintrayPlugin                : '0.9.1',
 
         // Kotlin

@@ -161,23 +161,23 @@ class PlayingFragment : Fragment() {
     }
 
     private fun subscribeUi(adapter: VideoListAdapter) {
-        mSharedViewModel.playlistItems.observe(viewLifecycleOwner) {
+        mSharedViewModel.playlistItems.observe(viewLifecycleOwner) {list ->
             // Convert raw data to display data
-            mPlayingViewModel.videoList = it.map {
-                PlayingViewModel.VideoItem(it.id, it.title, it.description, it.thumbnailUrl, false)
+            mPlayingViewModel.videoList = list.map {item ->
+                PlayingViewModel.VideoItem(item.id, item.title, item.description, item.thumbnailUrl, false)
             }
             adapter.submitList(mPlayingViewModel.videoList)
 
             if (mPlayerState == PlayerConstants.PlayerState.ENDED) {
-                mPlayingViewModel.getCurVideoId()?.let {
-                    mYouTubePlayer?.loadOrCueVideo(lifecycle, it, mPlayingViewModel.currentPlayInfo.videoSec)
+                mPlayingViewModel.getCurVideoId()?.let { videoId ->
+                    mYouTubePlayer?.loadOrCueVideo(lifecycle, videoId, mPlayingViewModel.currentPlayInfo.videoSec)
                     mAdapter.setSelectedPos(mPlayingViewModel.currentPlayInfo.videoPosition)
                 }
             }
 
             // update playlistitem info
-            if (it.isNotEmpty())
-                mPlayingViewModel.playlistItemInfo = PlayingViewModel.PlaylistItemInfo(it.size, it.last())
+            if (list.isNotEmpty())
+                mPlayingViewModel.playlistItemInfo = PlayingViewModel.PlaylistItemInfo(list.size, list.last())
             else
                 mPlayingViewModel.playlistItemInfo = PlayingViewModel.PlaylistItemInfo()
         }
@@ -264,14 +264,19 @@ class PlayingFragment : Fragment() {
 
     private fun playNextVideo(youTubePlayer: YouTubePlayer) {
         if (mPlayingViewModel.getNextVideoId().isNullOrEmpty()) {
-            mPlayingViewModel.playlistItemInfo.lastItem?.let {
-                mSharedViewModel.loadMorePlaylistItem(it.playlistId, it.pageToken)
+            mPlayingViewModel.playlistItemInfo.lastItem?.let {lastItem ->
+                if (lastItem.pageToken != null) {
+                    mSharedViewModel.loadMorePlaylistItem(lastItem.playlistId, lastItem.pageToken)
+                    return
+                }
+
+                // 더이상 불러올 페이지가 없는 경우
+                mPlayingViewModel.currentPlayInfo.reset()
             }
         }
-        else {
-            youTubePlayer.loadOrCueVideo(lifecycle, mPlayingViewModel.getCurVideoId()!!, 0f)
-            selectItemAndMove(mPlayingViewModel.currentPlayInfo.videoPosition)
-        }
+
+        youTubePlayer.loadOrCueVideo(lifecycle, mPlayingViewModel.getCurVideoId()!!, 0f)
+        selectItemAndMove(mPlayingViewModel.currentPlayInfo.videoPosition)
     }
 
     private fun playPrevVideo(youTubePlayer: YouTubePlayer) {
