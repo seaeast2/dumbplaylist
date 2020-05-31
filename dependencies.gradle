@@ -4,8 +4,8 @@ ext.versions = [
         compileSdk                   : 29,
         buildTools                   : '29.0.3',
 
-        publishVersion_dumbplaylist  : '1.0.3',
-        publishVersionCode_dumbplaylist : 4,
+        publishVersion_dumbplaylist  : '1.0.4',
+        publishVersionCode_dumbplaylist : 5,
 
         publishVersion_core          : '10.0.5',
         publishVersionCode_core      : 15,

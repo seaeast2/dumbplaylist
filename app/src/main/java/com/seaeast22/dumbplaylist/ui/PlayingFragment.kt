@@ -318,11 +318,11 @@ class PlayingFragment : Fragment() {
 
     private fun addFullScreenListenerToPlayer() {
         mYouTubePlayerView.addFullScreenListener(object: YouTubePlayerFullScreenListener {
-            @SuppressLint("SourceLockedOrientationActivity")
+            //@SuppressLint("SourceLockedOrientationActivity")
             override fun onYouTubePlayerEnterFullScreen() {
 
                 val mainActivity = activity as MainActivity
-                mainActivity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+                mainActivity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR
                 mFullScreenHelper.enterFullScreen()
                 //addCustomActionsToPlayer()
                 mPlayingViewModel.currentPlayInfo.isFullScreen = true
