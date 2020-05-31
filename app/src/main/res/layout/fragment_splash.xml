@@ -25,7 +25,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="132dp"
-            android:text="@string/dumb_tube"
+            android:text="@string/playlist_tube"
             android:textColor="@color/colorLightGray"
             android:textSize="30sp"
             app:layout_constraintBottom_toTopOf="@+id/network_status"
@@ -40,7 +40,7 @@
             android:layout_marginBottom="16dp"
             android:text="@string/check_network_status"
             android:textColor="@color/colorLightGray"
-            android:textSize="20sp"
+            android:textSize="12sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />

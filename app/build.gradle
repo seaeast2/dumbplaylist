@@ -14,7 +14,7 @@ android {
     buildToolsVersion versions.buildTools
 
     defaultConfig {
-        applicationId "com.seaeast22.dumbplaylist"
+        applicationId "com.seaeast22.playlisttube"
         minSdkVersion versions.minSdk
         targetSdkVersion versions.compileSdk
         versionCode versions.publishVersionCode_dumbplaylist

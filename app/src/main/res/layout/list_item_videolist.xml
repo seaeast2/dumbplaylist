@@ -6,7 +6,7 @@
     <data>
         <variable
             name="playlistItem"
-            type="com.seaeast22.dumbplaylist.viewmodel.PlayingViewModel.VideoItem" />
+            type="com.seaeast22.playlisttube.viewmodel.PlayingViewModel.VideoItem" />
 
         <variable
             name="clickListener"

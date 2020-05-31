@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.seaeast22.dumbplaylist">
+    package="com.seaeast22.playlisttube">
 
     <!-- Include required permissions for Google Mobile Ads to run. -->
     <uses-permission android:name="android.permission.INTERNET" />
@@ -22,7 +22,7 @@
             android:name="com.google.android.gms.ads.APPLICATION_ID"
             android:value="ca-app-pub-5210022175309889~5423408105" />
 
-        <activity android:name="com.seaeast22.dumbplaylist.MainActivity">
+        <activity android:name="com.seaeast22.playlisttube.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
