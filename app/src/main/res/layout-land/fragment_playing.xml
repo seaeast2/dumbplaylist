@@ -7,10 +7,10 @@
     <data>
         <variable
             name="viewModel"
-            type="com.seaeast22.playlisttube.viewmodel.PlaylistsViewModel" />
+            type="com.seaeast22.dumbplaylist.viewmodel.PlaylistsViewModel" />
         <variable
             name="fabCallback"
-            type="com.seaeast22.playlisttube.ui.PlayingFragment.FabCallback" />
+            type="com.seaeast22.dumbplaylist.ui.PlayingFragment.FabCallback" />
     </data>
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
