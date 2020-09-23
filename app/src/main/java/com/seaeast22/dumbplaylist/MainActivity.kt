@@ -4,8 +4,6 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import com.google.android.gms.ads.MobileAds
-import com.google.android.gms.ads.RequestConfiguration
 import com.seaeast22.dumbplaylist.ui.PlayingFragment
 import com.seaeast22.dumbplaylist.util.Injector
 import com.seaeast22.dumbplaylist.viewmodel.PLAYING_FRAGMENT
@@ -28,20 +26,6 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         Log.d(TAG, "onCreate")
         setContentView(R.layout.main_activity)
-
-        // Initialize the Mobile Ads SDK.
-        MobileAds.initialize(this) {}
-
-
-        // Set your test devices. Check your logcat output for the hashed device ID to
-        // get test ads on a physical device. e.g.
-        // "Use RequestConfiguration.Builder().setTestDeviceIds(Arrays.asList("ABCDEF012345"))
-        // to get test ads on this device."
-        MobileAds.setRequestConfiguration(
-            RequestConfiguration.Builder()
-//                .setTestDeviceIds(Arrays.asList("ABCDEF012345"))
-                .build()
-        )
     }
 
     override fun onBackPressed() {

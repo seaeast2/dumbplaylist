@@ -29,25 +29,14 @@
     </fragment>
 
     <fragment
-        android:id="@+id/adMobFragment"
-        android:name="com.seaeast22.dumbplaylist.ui.AdMobFragment"
-        android:label="fragment_ad_mob"
-        tools:layout="@layout/fragment_ad_mob" >
-        <action
-            android:id="@+id/action_adMobFragment_to_view_pager2_fragment"
-            app:destination="@id/view_pager2_fragment"
-            app:popUpTo="@id/adMobFragment"
-            app:popUpToInclusive="true" />
-    </fragment>
-
-    <fragment
         android:id="@+id/splashFragment"
         android:name="com.seaeast22.dumbplaylist.ui.SplashFragment"
         android:label="SplashFragment"
         tools:layout="@layout/fragment_splash">
         <action
-            android:id="@+id/action_splashFragment_to_adMobFragment"
-            app:destination="@id/adMobFragment"
+            android:id="@+id/action_splashFragment_to_view_pager2_fragment"
+            app:destination="@id/view_pager2_fragment"
+            app:launchSingleTop="true"
             app:popUpTo="@id/splashFragment"
             app:popUpToInclusive="true" />
     </fragment>

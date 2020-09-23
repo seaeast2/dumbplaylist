@@ -6,12 +6,17 @@ apply plugin: "androidx.navigation.safeargs.kotlin"
 apply from: '../dependencies.gradle'
 
 android {
-    dataBinding {
-        enabled = true
+
+    buildFeatures {
+
+        dataBinding = true
+
+        // for view binding:
+        // viewBinding true
     }
 
-    compileSdkVersion versions.compileSdk
-    buildToolsVersion versions.buildTools
+    compileSdkVersion 29
+    buildToolsVersion '29.0.3'
 
     defaultConfig {
         applicationId "com.seaeast22.dumbplaylist"
@@ -38,6 +43,10 @@ android {
     // work-runtime-ktx 2.1.0 and above now requires Java 8
     kotlinOptions {
         jvmTarget = versions.jvmTarget
+    }
+    dependenciesInfo {
+        includeInApk true
+        includeInBundle true
     }
 }
 
@@ -71,7 +80,7 @@ dependencies {
     kapt "androidx.room:room-compiler:$versions.androidxRoom"
 
     // Google AdMob
-    implementation "com.google.android.gms:play-services-ads:$versions.googleAdMob"
+    //implementation "com.google.android.gms:play-services-ads:$versions.googleAdMob"
 
     // ViewModel and LiveData
     implementation "androidx.lifecycle:lifecycle-extensions:$versions.androidxLifecycleRuntime"

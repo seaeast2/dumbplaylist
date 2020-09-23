@@ -14,14 +14,6 @@
         android:supportsRtl="true"
         android:theme="@style/Base.Theme.DumbPlaylist">
 
-        <!--
-        This is the sample AdMob App ID. Insert your own AdMob App ID in quotes
-        https://googlemobileadssdk.page.link/admob-android-update-manifest
-        -->
-        <meta-data
-            android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="ca-app-pub-5210022175309889~5423408105" />
-
         <activity android:name="com.seaeast22.dumbplaylist.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

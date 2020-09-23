@@ -61,7 +61,7 @@ class SplashFragment : Fragment() {
         mCountDownTimer = object : CountDownTimer(millisecond, 500) {
             override fun onFinish() {
                 if (mIsConnected) {
-                    val direction = SplashFragmentDirections.actionSplashFragmentToAdMobFragment()
+                    val direction = SplashFragmentDirections.actionSplashFragmentToViewPager2Fragment() /*.actionSplashFragmentToAdMobFragment()*/
                     findNavController().navigate(direction)
                 }
                 else {

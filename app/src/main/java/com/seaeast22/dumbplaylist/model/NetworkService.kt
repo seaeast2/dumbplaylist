@@ -74,16 +74,15 @@ class NetworkService {
     }
 }
 
-// Key seaeast22 : AIzaSyDeiMcA8WswiJJu6IyUYit3Zjg7vmo7U9A   <== 이거 사용중
-// Key seaeast2 : AIzaSyBOm13DNySWTiLFdVL1oHOlK2RKJbOVRDo
+
 interface YoutubeService {
     // Search
-    @GET("youtube/v3/search?part=snippet&type=playlist&key=AIzaSyDeiMcA8WswiJJu6IyUYit3Zjg7vmo7U9A&maxResults=50")
+    @GET("youtube/v3/search?part=snippet&type=playlist&key=AIzaSyAdDix7i7a3an-gyXiquTV_14cIsr8-DZg&maxResults=50")
     suspend fun fetchSearchResult(@Query("q")searchTerm: String,
                                   @Query("pageToken")pageToken: String?): PlaylistsSearchResult
 
     // fetch playlist items
-    @GET("youtube/v3/playlistItems?part=snippet&key=AIzaSyDeiMcA8WswiJJu6IyUYit3Zjg7vmo7U9A&maxResults=50")
+    @GET("youtube/v3/playlistItems?part=snippet&key=AIzaSyAdDix7i7a3an-gyXiquTV_14cIsr8-DZg&maxResults=50")
     suspend fun fetchPlaylistItems(@Query("playlistId")playlistId: String,
                                    @Query("pageToken")pageToken: String?): PlaylistItemsList
 }
